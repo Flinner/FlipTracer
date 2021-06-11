@@ -63,6 +63,13 @@ mod points {
         let expected_vector = Vector::new(-2.0, -4.0, -6.0);
         assert_eq!(new_vector, expected_vector);
     }
+
+    #[test]
+    fn negate_points() {
+        let point = Point::new(3.0, -2.0, 5.0);
+        let expected_point = Point::new(-3.0, 2.0, -5.0);
+        assert_eq!(-point, expected_point)
+    }
 }
 
 mod vectors {
@@ -104,5 +111,12 @@ mod vectors {
         let expected_point = Vector::new(1.0, 1.0, 6.0);
 
         assert_eq!(new_vector, expected_point);
+    }
+
+    #[test]
+    fn negate_vectors() {
+        let vector = Vector::new(3.0, -2.0, 5.0);
+        let expected_vector = Vector::new(-3.0, 2.0, -5.0);
+        assert_eq!(-vector, expected_vector)
     }
 }
