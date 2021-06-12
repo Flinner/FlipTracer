@@ -133,4 +133,27 @@ mod vectors {
         let expected_vector = Vector::new(-1.5, 1.0, -2.5);
         assert_eq!(vector / -2.0, expected_vector)
     }
+
+    #[test]
+    fn magnitude_of_unit_vectors() {
+        let vectors: Vec<Vector> = vec![
+            Vector::new(1.0, 0.0, 0.0),
+            Vector::new(0.0, 1.0, 0.0),
+            Vector::new(0.0, 0.0, 1.0),
+        ];
+        for vector in vectors {
+            assert_eq!(vector.magnitude(), 1.0);
+        }
+    }
+
+    #[test]
+    fn magnitude_of_positive_vectors() {
+        let vector = Vector::new(1.0, 2.0, 3.0);
+        assert_eq!(vector.magnitude(), f64::sqrt(14.0));
+    }
+    #[test]
+    fn magnitude_of_negative_vectors() {
+        let vector = Vector::new(-1.0, -2.0, -3.0);
+        assert_eq!(vector.magnitude(), f64::sqrt(14.0));
+    }
 }

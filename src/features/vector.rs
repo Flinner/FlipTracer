@@ -22,6 +22,10 @@ impl Vector {
             z: self.z + vector2.z,
         }
     }
+
+    pub fn magnitude(self: &Self) -> f64 {
+        f64::sqrt(self.x.powi(2) + self.y.powi(2) + self.z.powi(2))
+    }
 }
 
 impl Neg for Vector {
