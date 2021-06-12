@@ -1,5 +1,21 @@
 use std::ops::{Div, Mul, Neg};
 
+pub const UNIT_X: Vector = Vector {
+    x: 1.0,
+    y: 0.0,
+    z: 0.0,
+};
+pub const UNIT_Y: Vector = Vector {
+    x: 0.0,
+    y: 1.0,
+    z: 0.0,
+};
+pub const UNIT_Z: Vector = Vector {
+    x: 0.0,
+    y: 0.0,
+    z: 1.0,
+};
+
 #[derive(PartialEq, Debug)]
 /// Represents a `Vector` in a Cartesian Space
 pub struct Vector {
