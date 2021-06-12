@@ -1,4 +1,4 @@
-use std::ops::{Div, Mul, Neg};
+use std::ops::{Add, Div, Mul, Neg};
 
 pub const UNIT_X: Vector = Vector {
     x: 1.0,
@@ -30,13 +30,9 @@ impl Vector {
         Vector { x, y, z }
     }
 
-    /// Adds Two `Vector`s together Producing a `Vector`
-    pub fn add(self: &Self, vector2: &Vector) -> Vector {
-        Vector {
-            x: self.x + vector2.x,
-            y: self.y + vector2.y,
-            z: self.z + vector2.z,
-        }
+    /// DEPRECIATED: Adds Two `Vector`s together Producing a `Vector`:
+    pub fn add(self: &Self, other: &Vector) -> Self {
+        *self + *other
     }
 
     /// Returns the magnitude of the Vector
@@ -101,6 +97,19 @@ impl Div<f64> for Vector {
             x: self.x / d,
             y: self.y / d,
             z: self.z / d,
+        }
+    }
+}
+
+impl Add<Vector> for Vector {
+    type Output = Self;
+
+    /// using `Add` (`/`) for Adding `Vectors` and `Vectors`: `Vector` + `Vector`
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
         }
     }
 }

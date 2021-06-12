@@ -35,9 +35,6 @@ pub fn run() {
 fn tick(environment: &Environment, projectile: &Projectile) -> Projectile {
     Projectile {
         position: projectile.position.displacment(&projectile.velocity),
-        velocity: projectile
-            .velocity
-            .add(&environment.gravity)
-            .add(&environment.wind),
+        velocity: projectile.velocity + environment.gravity + environment.wind,
     }
 }
