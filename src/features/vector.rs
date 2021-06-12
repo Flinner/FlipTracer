@@ -42,6 +42,16 @@ impl Vector {
     pub fn magnitude(self: &Self) -> f64 {
         f64::sqrt(self.x.powi(2) + self.y.powi(2) + self.z.powi(2))
     }
+
+    /// Normalize the `Vector`
+    pub fn normalize(self: &Self) -> Self {
+        let magnitude = self.magnitude();
+        Self {
+            x: self.x / magnitude,
+            y: self.y / magnitude,
+            z: self.z / magnitude,
+        }
+    }
 }
 
 impl Neg for Vector {

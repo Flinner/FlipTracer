@@ -156,4 +156,22 @@ mod vectors {
         let vector = Vector::new(-1.0, -2.0, -3.0);
         assert_eq!(vector.magnitude(), f64::sqrt(14.0));
     }
+
+    #[test]
+    fn normalizing_vectors() {
+        let sqrt14 = f64::sqrt(14.0);
+
+        // (Vector, NormalizedVector)
+        let vectors: Vec<(Vector, Vector)> = vec![
+            (Vector::new(4.0, 0.0, 0.0), Vector::new(1.0, 0.0, 0.0)),
+            (
+                Vector::new(1.0, 2.0, 3.0),
+                Vector::new(1.0 / sqrt14, 2.0 / sqrt14, 3.0 / sqrt14),
+            ),
+        ];
+        for vector in vectors {
+            assert_eq!(vector.0.normalize(), vector.1);
+            assert_eq!(vector.0.normalize().magnitude(), 1.0);
+        }
+    }
 }
