@@ -1,4 +1,5 @@
 use raytracer::features::point::Point;
+use raytracer::features::vector;
 use raytracer::features::vector::Vector;
 use std::any::Any;
 use std::any::TypeId;
@@ -68,10 +69,20 @@ fn magnitude_of_unit_vectors() {
         Vector::new(1.0, 0.0, 0.0),
         Vector::new(0.0, 1.0, 0.0),
         Vector::new(0.0, 0.0, 1.0),
+        vector::UNIT_X,
+        vector::UNIT_Y,
+        vector::UNIT_Z,
     ];
     for vector in vectors {
         assert_eq!(vector.magnitude(), 1.0);
     }
+}
+
+#[test]
+fn test_unit_vectors() {
+    assert_eq!(Vector::new(1.0, 0.0, 0.0), vector::UNIT_X);
+    assert_eq!(Vector::new(0.0, 1.0, 0.0), vector::UNIT_Y);
+    assert_eq!(Vector::new(0.0, 0.0, 1.0), vector::UNIT_Z);
 }
 
 #[test]
