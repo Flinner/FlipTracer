@@ -78,7 +78,7 @@ impl Neg for Vector {
 }
 
 impl Mul<f64> for Vector {
-    /// using `Mul` (`*`) for multiplying `Vectors`: `Vector` * `f64`
+    /// using `Mul` (`*`) for multiplying `Vectors` with `Scalars`: `Vector` * `f64`
     type Output = Self;
 
     fn mul(self, m: f64) -> Self::Output {
@@ -92,6 +92,7 @@ impl Mul<f64> for Vector {
 
 impl Div<f64> for Vector {
     type Output = Self;
+    /// using `Div` (`/`) for dividing `Vectors` with `Scalars`: `Vector` / `f64`
     fn div(self, d: f64) -> Self {
         Self {
             x: self.x / d,
