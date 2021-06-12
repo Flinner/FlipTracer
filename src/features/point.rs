@@ -1,6 +1,12 @@
 use super::vector::Vector;
 use std::ops::Neg;
 
+pub const ORIGIN: Point = Point {
+    x: 0.0,
+    y: 0.0,
+    z: 0.0,
+};
+
 // ========== POINT =============///
 #[derive(PartialEq, Debug)]
 /// Represents a 3D point in a Cartesian Space
