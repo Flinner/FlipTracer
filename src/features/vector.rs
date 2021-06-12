@@ -35,3 +35,27 @@ impl Neg for Vector {
         }
     }
 }
+
+impl Mul<f64> for Vector {
+    /// using `Mul` (`*`) for multiplying `Vectors`: `Vector` * `f64`
+    type Output = Self;
+
+    fn mul(self, m: f64) -> Self::Output {
+        Self {
+            x: self.x * m,
+            y: self.y * m,
+            z: self.z * m,
+        }
+    }
+}
+
+impl Div<f64> for Vector {
+    type Output = Self;
+    fn div(self, d: f64) -> Self {
+        Self {
+            x: self.x / d,
+            y: self.y / d,
+            z: self.z / d,
+        }
+    }
+}

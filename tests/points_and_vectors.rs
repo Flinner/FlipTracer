@@ -119,4 +119,18 @@ mod vectors {
         let expected_vector = Vector::new(-3.0, 2.0, -5.0);
         assert_eq!(-vector, expected_vector)
     }
+
+    #[test]
+    fn scalar_multiplication() {
+        let vector = Vector::new(3.0, -2.0, 5.0);
+        let expected_vector = Vector::new(-6.0, 4.0, -10.0);
+        assert_eq!(vector * -2.0, expected_vector)
+    }
+
+    #[test]
+    fn scalar_division() {
+        let vector = Vector::new(3.0, -2.0, 5.0);
+        let expected_vector = Vector::new(-1.5, 1.0, -2.5);
+        assert_eq!(vector / -2.0, expected_vector)
+    }
 }
