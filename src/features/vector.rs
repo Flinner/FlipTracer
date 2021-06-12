@@ -38,6 +38,7 @@ impl Vector {
             z: self.z + vector2.z,
         }
     }
+
     /// Returns the magnitude of the Vector
     pub fn magnitude(self: &Self) -> f64 {
         f64::sqrt(self.x.powi(2) + self.y.powi(2) + self.z.powi(2))
@@ -50,6 +51,20 @@ impl Vector {
             x: self.x / magnitude,
             y: self.y / magnitude,
             z: self.z / magnitude,
+        }
+    }
+
+    /// Dot Product of two vectors, producing a scalar, order doesn't matter
+    pub fn dot_product(self: &Self, vector2: &Vector) -> f64 {
+        self.x * vector2.x + self.y * vector2.y + self.z * vector2.z
+    }
+
+    /// Vector Product of two vectors, producing a Vector, order IS important
+    pub fn cross_product(self: &Self, vector2: &Vector) -> Self {
+        Vector {
+            x: self.y * vector2.z - self.z * vector2.y,
+            y: self.z * vector2.x - self.x * vector2.z,
+            z: self.x * vector2.y - self.y * vector2.x,
         }
     }
 }

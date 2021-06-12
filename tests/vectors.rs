@@ -102,3 +102,27 @@ fn normalizing_vectors() {
         assert_eq!(vector.0.normalize().magnitude(), 1.0);
     }
 }
+
+#[test]
+fn dot_product() {
+    let vector1 = Vector::new(1.0, 2.0, 3.0);
+    let vector2 = Vector::new(2.0, 3.0, 4.0);
+
+    let dot_product = vector1.dot_product(&vector2);
+
+    assert_eq!(dot_product, 20.0);
+}
+
+#[test]
+fn cross_product() {
+    let vector1 = Vector::new(1.0, 2.0, 3.0);
+    let vector2 = Vector::new(2.0, 3.0, 4.0);
+
+    let cross_product = vector1.cross_product(&vector2);
+    let expected_vector = Vector::new(-1.0, 2.0, -1.0);
+    assert_eq!(cross_product, expected_vector);
+
+    let cross_product_reverse = vector2.cross_product(&vector1);
+    let expected_vector_reverse = Vector::new(1.0, -2.0, 1.0);
+    assert_eq!(cross_product_reverse, expected_vector_reverse);
+}
