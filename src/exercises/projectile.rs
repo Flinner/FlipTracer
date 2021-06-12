@@ -1,7 +1,4 @@
-use crate::features::{
-    point::{self, Point},
-    vector::Vector,
-};
+use crate::features::{point::Point, vector::Vector};
 
 #[derive(Debug)]
 struct Projectile {
