@@ -16,7 +16,7 @@ pub const UNIT_Z: Vector = Vector {
     z: 1.0,
 };
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Clone, Copy, Debug)]
 /// Represents a `Vector` in a Cartesian Space
 pub struct Vector {
     pub x: f64,

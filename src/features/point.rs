@@ -8,7 +8,7 @@ pub const ORIGIN: Point = Point {
 };
 
 // ========== POINT =============///
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 /// Represents a 3D point in a Cartesian Space
 pub struct Point {
     pub x: f64,
