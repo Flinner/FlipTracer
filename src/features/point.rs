@@ -8,7 +8,7 @@ pub const ORIGIN: Point = Point {
 };
 
 // ========== POINT =============///
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 /// Represents a 3D point in a Cartesian Space
 pub struct Point {
     pub x: f64,
@@ -59,5 +59,14 @@ impl Neg for Point {
             y: -self.y,
             z: -self.z,
         }
+    }
+}
+
+impl PartialEq for Point {
+    fn eq(&self, other: &Self) -> bool {
+        use std::f64::EPSILON;
+        (self.x - other.x).abs() < EPSILON
+            && (self.y - other.y).abs() < EPSILON
+            && (self.z - other.z).abs() < EPSILON
     }
 }

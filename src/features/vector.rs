@@ -16,7 +16,7 @@ pub const UNIT_Z: Vector = Vector {
     z: 1.0,
 };
 
-#[derive(PartialEq, Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug)]
 /// Represents a `Vector` in a Cartesian Space
 pub struct Vector {
     pub x: f64,
@@ -112,5 +112,14 @@ impl Add<Vector> for Vector {
             y: self.y + other.y,
             z: self.z + other.z,
         }
+    }
+}
+
+impl PartialEq for Vector {
+    fn eq(&self, other: &Self) -> bool {
+        use std::f64::EPSILON;
+        (self.x - other.x).abs() < EPSILON
+            && (self.y - other.y).abs() < EPSILON
+            && (self.z - other.z).abs() < EPSILON
     }
 }
