@@ -3,12 +3,43 @@ use std::ops::{Add, Mul, Sub};
 
 #[derive(Clone, Copy, Debug)]
 /// RGB color triplet, values idly be between
-/// /// `0` and `1`, but not restriced.
+/// `0` and `1`, but not restriced.
 pub struct Color {
     pub red: f64,
     pub green: f64,
     pub blue: f64,
 }
+
+/// Red Color, Equivelent of `Color::new(1.0, 0.0, 0.0)`
+pub const RED: Color = Color {
+    red: 1.0,
+    blue: 0.0,
+    green: 0.0,
+};
+/// Green Color, Equivelent of `Color::new(0.0, 1.0, 0.0)`
+pub const GREEN: Color = Color {
+    red: 0.0,
+    green: 1.0,
+    blue: 0.0,
+};
+/// Blue Color, Equivelent of `Color::new(0.0, 0.0, 1.0)`
+pub const BLUE: Color = Color {
+    red: 0.0,
+    green: 0.0,
+    blue: 1.0,
+};
+/// Black Color, Equivelent of `Color::new(0.0, 0.0, 0.0)`
+pub const BLACK: Color = Color {
+    red: 0.0,
+    green: 0.0,
+    blue: 0.0,
+};
+/// White Color, Equivelent of `Color::new(1.0, 1.0, 1.0)`
+pub const WHITE: Color = Color {
+    red: 1.0,
+    green: 1.0,
+    blue: 1.0,
+};
 
 impl Color {
     /// Generate a new `Color`.
