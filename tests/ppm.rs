@@ -33,3 +33,14 @@ fn pixel_data_constructed() {
     assert_eq!("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0", image_line[4]);
     assert_eq!("0 0 0 0 0 0 0 0 0 0 0 0 0 0 255", image_line[5]);
 }
+
+#[test]
+fn split_long_lines() {
+    let color = Color::new(1.0, 0.8, 0.6);
+    let canvas = Canvas::new_color(10, 2, color);
+
+    let ppm = ppm::new(canvas);
+    for line in ppm.lines() {
+        assert!(line.chars().count() <= 70)
+    }
+}
