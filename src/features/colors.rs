@@ -10,6 +10,9 @@ pub struct Color {
     pub blue: f64,
 }
 
+pub const MAX: f64 = 255.0;
+pub const MIN: f64 = 0.0;
+
 /// Red Color, Equivelent of `Color::new(1.0, 0.0, 0.0)`
 pub const RED: Color = Color {
     red: 1.0,
@@ -45,6 +48,22 @@ impl Color {
     /// Generate a new `Color`.
     pub fn new(red: f64, green: f64, blue: f64) -> Color {
         Color { red, green, blue }
+    }
+
+    /// Restricts all colors in `Color` to a certain range
+    pub fn scale(&self, min: f64, max: f64) -> Self {
+        Self {
+            red: (self.red * max).clamp(min, max),
+            green: (self.green * max).clamp(min, max),
+            blue: (self.blue * max).clamp(min, max),
+        }
+    }
+    pub fn round(&self) -> Self {
+        Self {
+            red: self.red.round(),
+            green: self.green.round(),
+            blue: self.blue.round(),
+        }
     }
 }
 
