@@ -1,5 +1,5 @@
-use raytracer::features::point::Point;
-use raytracer::features::vector::Vector;
+use raytracer::math::point::Point;
+use raytracer::math::vector::Vector;
 use std::any::Any;
 use std::any::TypeId;
 

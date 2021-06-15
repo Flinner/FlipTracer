@@ -1,4 +1,4 @@
-use raytracer::features::{point::Point, vector::Vector};
+use raytracer::math::{point::Point, vector::Vector};
 
 #[derive(Debug)]
 struct Projectile {

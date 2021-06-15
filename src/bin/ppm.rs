@@ -1,7 +1,7 @@
-use raytracer::features::{point::Point, vector::Vector};
 use raytracer::graphics::canvas::Canvas;
 use raytracer::graphics::color;
 use raytracer::graphics::ppm;
+use raytracer::math::{point::Point, vector::Vector};
 
 #[derive(Debug)]
 struct Projectile {
