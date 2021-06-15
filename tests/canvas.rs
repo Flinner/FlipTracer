@@ -15,7 +15,7 @@ fn write_to_canvas() {
     let mut canvas = Canvas::new(10, 20);
     canvas.write(2, 3, colors::RED);
 
-    assert_eq!(canvas.grid[2][3], colors::RED);
+    assert_eq!(canvas.grid[3][2], colors::RED);
 }
 
 #[test]

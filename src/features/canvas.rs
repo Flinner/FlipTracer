@@ -22,10 +22,10 @@ impl Canvas {
     /// Modify (`x`, `y`) to `color`. Mutates `self`
     pub fn write(self: &mut Self, x: usize, y: usize, color: Color) {
         //(&self.grid[width][height]) = &color;
-        self.grid[x][y] = color;
+        self.grid[y][x] = color;
     }
     /// Get `Color` at point (`x`,`y`). Equivalent to `self.grid[x][y]`
     pub fn get(self, x: usize, y: usize) -> Color {
-        self.grid[x][y]
+        self.grid[y][x]
     }
 }
