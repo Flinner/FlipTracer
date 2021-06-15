@@ -1,4 +1,4 @@
-use crate::features::{point::Point, vector::Vector};
+use raytracer::features::{point::Point, vector::Vector};
 
 #[derive(Debug)]
 struct Projectile {
@@ -10,7 +10,7 @@ struct Environment {
     wind: Vector,
 }
 
-pub fn run() {
+pub fn main() {
     let init_projectile = Projectile {
         position: Point::new(0.0, 1.0, 0.0),
         velocity: Vector::new(1.0, 1.0, 0.0).normalize(),
