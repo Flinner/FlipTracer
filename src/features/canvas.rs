@@ -12,10 +12,15 @@ pub struct Canvas {
 impl Canvas {
     /// Returns a new blank `Canvas` with `colors::BLACK`
     pub fn new(width: usize, height: usize) -> Self {
+        Canvas::new_color(width, height, colors::BLACK)
+    }
+
+    /// Returns a new blank `Canvas` with a specified `Color`
+    pub fn new_color(width: usize, height: usize, color: Color) -> Self {
         Canvas {
             width,
             height,
-            grid: vec![vec![colors::BLACK; width]; height],
+            grid: vec![vec![color; width]; height],
         }
     }
 

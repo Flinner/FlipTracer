@@ -28,9 +28,9 @@ fn body(canvas: Canvas) -> String {
 
     rows.join("\n")
 }
-
+/// returns ppm image encoded in a `String`
 pub fn new(canvas: Canvas) -> String {
     let header = header(canvas.width, canvas.height);
     let body = body(canvas);
-    format!("{}\n{}", header, body)
+    format!("{}\n{}\n", header, body)
 }
