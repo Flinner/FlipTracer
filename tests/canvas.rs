@@ -1,5 +1,5 @@
 //
-use raytracer::features::{canvas::Canvas, colors};
+use raytracer::graphics::{canvas::Canvas, color};
 
 #[test]
 fn create_empty_canvas() {
@@ -7,21 +7,21 @@ fn create_empty_canvas() {
 
     assert_eq!(canvas.height, 20);
     assert_eq!(canvas.width, 10);
-    assert_eq!(canvas.grid, vec![vec![colors::BLACK; 10]; 20]);
+    assert_eq!(canvas.grid, vec![vec![color::BLACK; 10]; 20]);
 }
 
 #[test]
 fn write_to_canvas() {
     let mut canvas = Canvas::new(10, 20);
-    canvas.write(2, 3, colors::RED);
+    canvas.write(2, 3, color::RED);
 
-    assert_eq!(canvas.grid[3][2], colors::RED);
+    assert_eq!(canvas.grid[3][2], color::RED);
 }
 
 #[test]
 fn get_pixel_at_coordinates() {
     let mut canvas = Canvas::new(10, 20);
-    canvas.write(2, 3, colors::RED);
+    canvas.write(2, 3, color::RED);
 
-    assert_eq!(canvas.get(2, 3), colors::RED);
+    assert_eq!(canvas.get(2, 3), color::RED);
 }

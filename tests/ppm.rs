@@ -1,5 +1,5 @@
-use raytracer::features::canvas::Canvas;
-use raytracer::features::colors::Color;
+use raytracer::graphics::canvas::Canvas;
+use raytracer::graphics::color::Color;
 use raytracer::graphics::ppm;
 
 #[test]

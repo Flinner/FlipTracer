@@ -1,6 +1,6 @@
-use crate::features::{
+use crate::graphics::{
     canvas::Canvas,
-    colors::{self, Color},
+    color::{self, Color},
 };
 
 fn header(width: usize, height: usize) -> String {

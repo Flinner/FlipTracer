@@ -1,5 +1,5 @@
-use super::colors::Color;
-use crate::features::colors;
+use super::color::Color;
+use crate::graphics::color;
 
 #[derive(Debug)]
 /// Canvas, a grid of pixels, with `height` and `width` (for faster access)
@@ -12,7 +12,7 @@ pub struct Canvas {
 impl Canvas {
     /// Returns a new blank `Canvas` with `colors::BLACK`
     pub fn new(width: usize, height: usize) -> Self {
-        Canvas::new_color(width, height, colors::BLACK)
+        Canvas::new_color(width, height, color::BLACK)
     }
 
     /// Returns a new blank `Canvas` with a specified `Color`

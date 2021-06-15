@@ -1,4 +1,4 @@
-use raytracer::features::colors::Color;
+use raytracer::graphics::color::Color;
 
 #[test]
 fn generate_color_with_new() {
