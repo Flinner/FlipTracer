@@ -21,4 +21,8 @@ impl Canvas {
         //(&self.grid[width][height]) = &color;
         self.grid[x][y] = color;
     }
+
+    pub fn get(self, x: usize, y: usize) -> Color {
+        self.grid[x][y]
+    }
 }

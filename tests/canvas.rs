@@ -17,3 +17,11 @@ fn write_to_canvas() {
 
     assert_eq!(canvas.grid[2][3], colors::RED);
 }
+
+#[test]
+fn get_pixel_at_coordinates() {
+    let mut canvas = Canvas::new(10, 20);
+    canvas.write(2, 3, colors::RED);
+
+    assert_eq!(canvas.get(2, 3), colors::RED);
+}
