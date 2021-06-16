@@ -1,7 +1,4 @@
-use crate::graphics::{
-    canvas::Canvas,
-    color::{self, Color},
-};
+use crate::graphics::canvas::Canvas;
 
 fn header(width: usize, height: usize) -> String {
     format!("P3\n{} {}\n255", width, height)

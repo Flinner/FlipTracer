@@ -1,4 +1,4 @@
-use raytracer::math::matrix::{self, Matrix};
+use raytracer::math::matrix::Matrix;
 
 #[test]
 fn construct_4x4_matrix() {
