@@ -7,6 +7,44 @@ pub struct Matrix {
     pub data: Vec<f64>,
 }
 
+pub mod identity {
+    use super::Matrix;
+
+    /// IDENTITY `Matrix` of size 2
+    pub fn two() -> Matrix {
+        Matrix {
+            rows: 2,
+            columns: 2,
+            data: vec![1.0, 0.0, 0.0, 1.0],
+        }
+    }
+    /// IDENTITY `Matrix` of size 3
+    pub fn three() -> Matrix {
+        Matrix {
+            rows: 3,
+            columns: 3,
+            data: vec![
+                1.0, 0.0, 0.0, //
+                0.0, 1.0, 0.0, //
+                0.0, 0.0, 1.0,
+            ],
+        }
+    }
+    /// IDENTITY `Matrix` of size 4
+    pub fn four() -> Matrix {
+        Matrix {
+            rows: 3,
+            columns: 3,
+            data: vec![
+                1.0, 0.0, 0.0, 0.0, //
+                0.0, 1.0, 0.0, 0.0, //
+                0.0, 0.0, 1.0, 0.0, //
+                0.0, 0.0, 0.0, 1.0, //
+            ],
+        }
+    }
+}
+
 impl Matrix {
     /// Create a new `zero Matrix`` of given size.
     pub fn new(rows: usize, columns: usize) -> Self {
@@ -28,6 +66,16 @@ impl Matrix {
             columns,
             data: vec,
         }
+    }
+
+    /// Creates Identity Square Matrix. use only when size greater than 4 is needed.
+    /// other wise is `matrix::identity:TWO...`
+    pub fn identity(size: usize) -> Self {
+        let mut val = vec![0.0; size * size];
+        for i in 0..size {
+            val[size * i] = 1.0
+        }
+        Matrix::new_from_vec(size, size, val)
     }
 
     /// gets at point (x,y), zero indexed
