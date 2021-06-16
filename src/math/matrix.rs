@@ -92,7 +92,7 @@ impl Matrix {
 impl Mul<Matrix> for Matrix {
     type Output = Self;
 
-    /// Only for 4x4 Matrices!, `panics` if can't multply
+    /// Multiply two Matrices together
     fn mul(self, rhs: Self) -> Self::Output {
         let mut output = Matrix::new(self.rows, rhs.columns);
 
