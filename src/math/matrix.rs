@@ -87,6 +87,17 @@ impl Matrix {
     pub fn write(&mut self, row: usize, column: usize, value: f64) {
         self.data[column + row * self.columns] = value;
     }
+
+    /// Transposes the `Matrix`. rows are converted to columns and vice versa.
+    pub fn transpose(self) -> Self {
+        let mut matrix = Matrix::new(self.rows, self.columns);
+        for column in 0..self.columns {
+            for row in 0..self.rows {
+                matrix.write(column, row, self.get(row, column));
+            }
+        }
+        matrix
+    }
 }
 
 impl Mul<Matrix> for Matrix {

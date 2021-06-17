@@ -1,4 +1,4 @@
-use raytracer::math::matrix::Matrix;
+use raytracer::math::matrix::{self, Matrix};
 
 #[test]
 fn construct_4x4_matrix() {
@@ -125,4 +125,32 @@ fn multiply_4x4_by_4x1() {
 
     let expected = Matrix::new_from_vec(4, 1, vec3);
     assert_eq!(matrix1 * matrix2, expected)
+}
+
+#[test]
+fn transpose_matrix() {
+    let vec = vec![
+        24.0, 49.0, 98.0, 196.0, //
+        31.0, 64.0, 128.0, 256.0, //
+        38.0, 79.0, 158.0, 316.0, //
+        45.0, 94.0, 188.0, 376.0,
+    ];
+
+    let transposed = vec![
+        24.0, 31.0, 38.0, 45.0, //
+        49.0, 64.0, 79.0, 94.0, //
+        98.0, 128.0, 158.0, 188.0, //
+        196.0, 256.0, 316.0, 376.0,
+    ];
+    let matrix = Matrix::new_from_vec(4, 4, vec);
+    let trans_matrix = Matrix::new_from_vec(4, 4, transposed);
+    assert_eq!(matrix.transpose(), trans_matrix);
+}
+
+#[test]
+fn transpose_identity_matrix() {
+    let identity = matrix::identity::four();
+    let inv = matrix::identity::four().transpose();
+
+    assert_eq!(identity, inv)
 }
