@@ -127,3 +127,78 @@ impl Mul<Matrix> for Matrix {
         output
     }
 }
+
+/// Determinant of 2x2 matrix
+fn determinant_2x2(matrix: Matrix) -> f64 {
+    matrix.get(0, 0) * matrix.get(1, 1) - matrix.get(1, 0) * matrix.get(0, 1)
+}
+
+/// Removes `row_to_remove` and `column_to_remove`. returns a matrix that
+/// is 1 row and 1 column smaller
+fn submatrix(matrix: Matrix, row_to_remove: usize, column_to_remove: usize) -> Matrix {
+    Matrix {
+        rows: matrix.rows - 1,
+        columns: matrix.columns - 1,
+        data: matrix
+            .data
+            .iter()
+            .enumerate()
+            .filter_map(|(i, x)| -> Option<f64> {
+                let (row, column) = (i / matrix.columns, i % matrix.columns);
+                if row == row_to_remove || column == column_to_remove {
+                    None
+                } else {
+                    Some(*x)
+                }
+            })
+            .collect(),
+    }
+}
+
+#[test]
+fn submatrix_of_3x3_is_2x2() {
+    let vec3 = vec![
+        1.0, 2.0, 3.0, //
+        5.5, 6.5, 7.5, //
+        9.0, 10.0, 11.0, //
+    ];
+    let vec2 = vec![
+        1.0, 3.0, //
+        9.0, 11.0, //
+    ];
+
+    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+    let matrix2 = Matrix::new_from_vec(2, 2, vec2);
+
+    assert_eq!(submatrix(matrix3, 1, 1), matrix2)
+}
+
+#[test]
+fn submatrix_of_4x3_is_3x3() {
+    let vec4 = vec![
+        9.0, 8.0, 6.0, 7.0, //
+        1.0, 2.0, 3.0, 9.0, //
+        5.5, 6.5, 7.5, 1.8, //
+        9.0, 10.0, 11.0, 99.0, //
+    ];
+    let vec3 = vec![
+        1.0, 2.0, 3.0, //
+        5.5, 6.5, 7.5, //
+        9.0, 10.0, 11.0, //
+    ];
+
+    let matrix4 = Matrix::new_from_vec(4, 4, vec4);
+    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+
+    assert_eq!(submatrix(matrix4, 0, 3), matrix3)
+}
+
+#[test]
+fn determinant_of_2x2_matrix() {
+    let vec = vec![
+        -3.0, 5.0, //
+        1.0, -2.0,
+    ];
+    let matrix = Matrix::new_from_vec(2, 2, vec);
+    assert_eq!(determinant_2x2(matrix), 1.0);
+}
