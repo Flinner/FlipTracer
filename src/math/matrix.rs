@@ -174,7 +174,7 @@ fn submatrix_of_3x3_is_2x2() {
 }
 
 #[test]
-fn submatrix_of_4x3_is_3x3() {
+fn submatrix_of_4x4_is_3x3() {
     let vec4 = vec![
         9.0, 8.0, 6.0, 7.0, //
         1.0, 2.0, 3.0, 9.0, //
