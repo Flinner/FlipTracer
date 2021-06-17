@@ -33,8 +33,8 @@ pub mod identity {
     /// IDENTITY `Matrix` of size 4
     pub fn four() -> Matrix {
         Matrix {
-            rows: 3,
-            columns: 3,
+            rows: 4,
+            columns: 4,
             data: vec![
                 1.0, 0.0, 0.0, 0.0, //
                 0.0, 1.0, 0.0, 0.0, //
