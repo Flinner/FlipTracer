@@ -1,4 +1,4 @@
-use std::ops::Mul;
+use std::ops::{Div, Mul};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Matrix {
@@ -139,6 +139,18 @@ impl Mul<Matrix> for Matrix {
         }
 
         output
+    }
+}
+
+impl Div<f64> for Matrix {
+    type Output = Self;
+
+    fn div(self, rhs: f64) -> Self {
+        Matrix::new_from_vec(
+            self.rows,
+            self.columns,
+            self.data.iter().map(|x| x / rhs).collect(),
+        )
     }
 }
 
