@@ -98,6 +98,20 @@ impl Matrix {
         }
         matrix
     }
+
+    /// Find `Matrix` determinant. Might not work with greater than 4x4.
+    pub fn determinant(&self) -> f64 {
+        // 2x2
+        if (self.columns == 2) && (self.rows == 2) {
+            self.get(0, 0) * self.get(1, 1) - self.get(1, 0) * self.get(0, 1)
+
+        // 3x3 and more (recursrion) not sure if works with greater than 4x4!
+        } else {
+            (0..self.columns).fold(0.0, |a, column| {
+                a + self.get(0, column) * matrix_cofactor(self, 0, column)
+            })
+        }
+    }
 }
 
 impl Mul<Matrix> for Matrix {
@@ -128,11 +142,6 @@ impl Mul<Matrix> for Matrix {
     }
 }
 
-/// Determinant of 2x2 matrix
-fn determinant_2x2(matrix: Matrix) -> f64 {
-    matrix.get(0, 0) * matrix.get(1, 1) - matrix.get(1, 0) * matrix.get(0, 1)
-}
-
 /// Removes `row_to_remove` and `column_to_remove`. returns a matrix that
 /// is 1 row and 1 column smaller
 fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize) -> Matrix {
@@ -156,17 +165,14 @@ fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize) -> 
 }
 
 /// Removes `row` and `column`. and finds determinant of the matrix.
-/// Accepts ONLY `3x3` matrices
 fn matrix_minor(matrix: &Matrix, row: usize, column: usize) -> f64 {
     let sub = submatrix(matrix, row, column);
-    determinant_2x2(sub)
+    sub.determinant()
 }
 
 /// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
-/// Accepts ONLY `3x3` matrices
 fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
-    let sub = submatrix(matrix, row, column);
-    determinant_2x2(sub) * (if row + column % 2 != 0 { -1.0 } else { 1.0 })
+    matrix_minor(matrix, row, column) * (if row + column % 2 != 0 { -1.0 } else { 1.0 })
 }
 
 #[test]
@@ -214,7 +220,7 @@ fn determinant_of_2x2_matrix() {
         1.0, -2.0,
     ];
     let matrix = Matrix::new_from_vec(2, 2, vec);
-    assert_eq!(determinant_2x2(matrix), 1.0);
+    assert_eq!(matrix.determinant(), 1.0);
 }
 
 #[test]

@@ -154,3 +154,28 @@ fn transpose_identity_matrix() {
 
     assert_eq!(identity, inv)
 }
+
+#[test]
+fn determinant_of_3x3_matrix() {
+    let vec3 = vec![
+        1.0, 2.0, 6.0, //
+        -5.0, 8.0, -4.0, //
+        2.0, 6.0, 4.0,
+    ];
+    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+
+    assert_eq!(matrix3.determinant(), -196.0);
+}
+
+#[test]
+fn determinant_of_4x4_matrix() {
+    let vec4 = vec![
+        -2.0, -8.0, 3.0, 5.0, //
+        -3.0, 1.0, 7.0, 3.0, //
+        1.0, 2.0, -9.0, 6.0, //
+        -6.0, 7.0, 7.0, -9.0,
+    ];
+    let matrix4 = Matrix::new_from_vec(4, 4, vec4);
+
+    assert_eq!(matrix4.determinant(), -4071.0);
+}
