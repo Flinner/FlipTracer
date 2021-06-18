@@ -201,7 +201,7 @@ fn matrix_minor(matrix: &Matrix, row: usize, column: usize) -> f64 {
 
 /// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
 fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
-    matrix_minor(matrix, row, column) * (if row + column % 2 != 0 { -1.0 } else { 1.0 })
+    matrix_minor(matrix, row, column) * (if (row + column) % 2 != 0 { -1.0 } else { 1.0 })
 }
 
 #[test]
