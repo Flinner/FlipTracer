@@ -155,6 +155,11 @@ fn submatrix(matrix: Matrix, row_to_remove: usize, column_to_remove: usize) -> M
     }
 }
 
+fn matrix_minor(matrix: Matrix, row: usize, column: usize) -> f64 {
+    let sub = submatrix(matrix, row, column);
+    determinant_2x2(sub)
+}
+
 #[test]
 fn submatrix_of_3x3_is_2x2() {
     let vec3 = vec![
@@ -201,4 +206,16 @@ fn determinant_of_2x2_matrix() {
     ];
     let matrix = Matrix::new_from_vec(2, 2, vec);
     assert_eq!(determinant_2x2(matrix), 1.0);
+}
+
+#[test]
+fn minor_of_matrix() {
+    let vec3 = vec![
+        1.0, 2.0, 3.0, //
+        5.5, 6.5, 7.5, //
+        9.0, 10.0, 11.0, //
+    ];
+    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+    let minor = matrix_minor(matrix3, 1, 0);
+    assert_eq!(-8.0, minor)
 }
