@@ -155,9 +155,18 @@ fn submatrix(matrix: Matrix, row_to_remove: usize, column_to_remove: usize) -> M
     }
 }
 
+/// Removes `row` and `column`. and finds determinant of the matrix.
+/// Accepts ONLY `3x3` matrices
 fn matrix_minor(matrix: Matrix, row: usize, column: usize) -> f64 {
     let sub = submatrix(matrix, row, column);
     determinant_2x2(sub)
+}
+
+/// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
+/// Accepts ONLY `3x3` matrices
+fn matrix_cofactor(matrix: Matrix, row: usize, column: usize) -> f64 {
+    let sub = submatrix(matrix, row, column);
+    determinant_2x2(sub) * (if row + column % 2 != 0 { -1.0 } else { 1.0 })
 }
 
 #[test]
@@ -218,4 +227,16 @@ fn minor_of_matrix() {
     let matrix3 = Matrix::new_from_vec(3, 3, vec3);
     let minor = matrix_minor(matrix3, 1, 0);
     assert_eq!(-8.0, minor)
+}
+
+#[test]
+fn cofactor_of_matrix() {
+    let vec3 = vec![
+        1.0, 2.0, 3.0, //
+        5.5, 6.5, 7.5, //
+        9.0, 10.0, 11.0, //
+    ];
+    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+    let cofactor = matrix_cofactor(matrix3, 1, 0);
+    assert_eq!(8.0, cofactor)
 }
