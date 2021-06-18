@@ -112,6 +112,23 @@ impl Matrix {
             })
         }
     }
+
+    /// Inverses `Matrix`, returns None if can't inverse (`Matrix.determinant ==0 `)
+    pub fn inverse(&self) -> Option<Self> {
+        let mut cofactors = vec![];
+        let determinant = self.determinant();
+
+        if determinant == 0.0 {
+            None
+        } else {
+            for row in 0..self.rows {
+                for column in 0..self.columns {
+                    cofactors.push(matrix_cofactor(self, row, column));
+                }
+            }
+            Some(Matrix::new_from_vec(self.rows, self.columns, cofactors).transpose() / determinant)
+        }
+    }
 }
 
 impl Mul<Matrix> for Matrix {
