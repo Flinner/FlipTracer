@@ -215,3 +215,35 @@ fn inverse_matrix() {
     assert_eq!(matrix4.determinant(), 532.0);
     assert_eq!(matrix4.inverse(), Some(inverse));
 }
+
+#[test]
+fn multiplying_product_with_inverse() {
+    let a = vec![
+        3.0, -9.0, 7.0, 3.0, //
+        3.0, -8.0, 2.0, -9.0, //
+        -4.0, 4.0, 4.0, 1.0, //
+        -6.0, 5.0, -1.0, 1.0,
+    ];
+    let b = vec![
+        8.0, 2.0, 2.0, 2.0, //
+        3.0, -1.0, 7.0, 0.0, //
+        7.0, 0.0, 5.0, 4.0, //
+        6.0, -2.0, 0.0, 5.0,
+    ];
+
+    let ma = Matrix::new_from_vec(4, 4, a);
+    let mb = Matrix::new_from_vec(4, 4, b);
+
+    let mc = ma.clone() * mb.clone();
+
+    let new_ma = mc * mb.inverse().unwrap();
+
+    assert_eq!(new_ma.rows, ma.rows);
+    assert_eq!(new_ma.columns, ma.columns);
+
+    assert!(new_ma
+        .data
+        .iter()
+        .zip(ma.data.iter())
+        .all(|(c, a)| (c - a).abs() < 100.0 * f64::EPSILON));
+}
