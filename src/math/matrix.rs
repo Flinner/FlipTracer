@@ -135,7 +135,7 @@ fn determinant_2x2(matrix: Matrix) -> f64 {
 
 /// Removes `row_to_remove` and `column_to_remove`. returns a matrix that
 /// is 1 row and 1 column smaller
-fn submatrix(matrix: Matrix, row_to_remove: usize, column_to_remove: usize) -> Matrix {
+fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize) -> Matrix {
     Matrix {
         rows: matrix.rows - 1,
         columns: matrix.columns - 1,
@@ -157,14 +157,14 @@ fn submatrix(matrix: Matrix, row_to_remove: usize, column_to_remove: usize) -> M
 
 /// Removes `row` and `column`. and finds determinant of the matrix.
 /// Accepts ONLY `3x3` matrices
-fn matrix_minor(matrix: Matrix, row: usize, column: usize) -> f64 {
+fn matrix_minor(matrix: &Matrix, row: usize, column: usize) -> f64 {
     let sub = submatrix(matrix, row, column);
     determinant_2x2(sub)
 }
 
 /// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
 /// Accepts ONLY `3x3` matrices
-fn matrix_cofactor(matrix: Matrix, row: usize, column: usize) -> f64 {
+fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
     let sub = submatrix(matrix, row, column);
     determinant_2x2(sub) * (if row + column % 2 != 0 { -1.0 } else { 1.0 })
 }
@@ -184,7 +184,7 @@ fn submatrix_of_3x3_is_2x2() {
     let matrix3 = Matrix::new_from_vec(3, 3, vec3);
     let matrix2 = Matrix::new_from_vec(2, 2, vec2);
 
-    assert_eq!(submatrix(matrix3, 1, 1), matrix2)
+    assert_eq!(submatrix(&matrix3, 1, 1), matrix2)
 }
 
 #[test]
@@ -204,7 +204,7 @@ fn submatrix_of_4x4_is_3x3() {
     let matrix4 = Matrix::new_from_vec(4, 4, vec4);
     let matrix3 = Matrix::new_from_vec(3, 3, vec3);
 
-    assert_eq!(submatrix(matrix4, 0, 3), matrix3)
+    assert_eq!(submatrix(&matrix4, 0, 3), matrix3)
 }
 
 #[test]
@@ -225,7 +225,7 @@ fn minor_of_matrix() {
         9.0, 10.0, 11.0, //
     ];
     let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-    let minor = matrix_minor(matrix3, 1, 0);
+    let minor = matrix_minor(&matrix3, 1, 0);
     assert_eq!(-8.0, minor)
 }
 
@@ -237,6 +237,6 @@ fn cofactor_of_matrix() {
         9.0, 10.0, 11.0, //
     ];
     let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-    let cofactor = matrix_cofactor(matrix3, 1, 0);
+    let cofactor = matrix_cofactor(&matrix3, 1, 0);
     assert_eq!(8.0, cofactor)
 }
