@@ -1,5 +1,5 @@
-use super::vector::Vector;
-use std::ops::Neg;
+use super::{matrix::Matrix, transformations::Transformation, vector::Vector};
+use std::ops::{Mul, Neg};
 
 pub const ORIGIN: Point = Point {
     x: 0.0,
@@ -59,6 +59,31 @@ impl Neg for Point {
             y: -self.y,
             z: -self.z,
         }
+    }
+}
+
+impl Mul<Matrix> for Point {
+    /// using `Mul` (`*`) for multiplying `Points` with `Matrix` (Tansformation): `Point` * `Matrix`
+    type Output = Self;
+
+    fn mul(self, m: Matrix) -> Self::Output {
+        // 1.0 is the 'magic' number, used to distinguish between vectors and points
+        // the point is converted to a matrix to allow multiplication
+        let self_matrix = Matrix::new_from_vec(4, 1, vec![self.x, self.y, self.z, 1.0]);
+        let product = m * self_matrix;
+        Self {
+            x: product.data[0],
+            y: product.data[1],
+            z: product.data[2],
+        }
+    }
+}
+
+impl Mul<Transformation> for Point {
+    type Output = Point;
+
+    fn mul(self, rhs: Transformation) -> Point {
+        self * rhs.matrix
     }
 }
 
