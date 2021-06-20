@@ -10,6 +10,13 @@ use super::{
 #[derive(Debug, Clone)]
 pub struct Transformation {
     pub matrix: Matrix,
+    pub trans_type: TransformationType,
+}
+
+#[derive(Debug, Clone)]
+pub enum TransformationType {
+    Translation,
+    Scaling,
 }
 
 impl Transformation {
@@ -19,13 +26,19 @@ impl Transformation {
         matrix.write(0, 3, x);
         matrix.write(1, 3, y);
         matrix.write(2, 3, z);
-        Transformation { matrix }
+        Transformation {
+            matrix,
+            trans_type: TransformationType::Translation,
+        }
     }
 
     /// Inverses the Transformation
     pub fn inverse(self) -> Option<Transformation> {
         match self.matrix.inverse() {
-            Some(matrix) => Some(Transformation { matrix }),
+            Some(matrix) => Some(Transformation {
+                matrix,
+                trans_type: self.trans_type,
+            }),
             None => None,
         }
     }
