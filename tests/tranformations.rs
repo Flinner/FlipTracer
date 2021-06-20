@@ -4,7 +4,7 @@ use raytracer::math::{
 };
 
 #[test]
-fn multiplying_by_translation_matrix() {
+fn multiplying_point_by_translation_matrix() {
     let transform = Transformation::translation(5.0, -3.0, 2.0);
     let point = Point::new(-3.0, 4.0, 5.0);
 
@@ -14,7 +14,7 @@ fn multiplying_by_translation_matrix() {
 }
 
 #[test]
-fn multiplying_by_inverse_of_translation_matrix() {
+fn multiplying_point_by_inverse_of_translation_matrix() {
     let transform = Transformation::translation(5.0, -3.0, 2.0);
     let inv = transform.inverse();
     let point = Point::new(-3.0, 4.0, 5.0);
