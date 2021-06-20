@@ -1,6 +1,6 @@
 use std::ops::{Add, Div, Mul, Neg};
 
-use super::matrix::Matrix;
+use super::{matrix::Matrix, transformations::Transformation};
 
 pub const UNIT_X: Vector = Vector {
     x: 1.0,
@@ -98,6 +98,16 @@ impl Mul<Matrix> for Vector {
     type Output = Self;
 
     fn mul(self, _m: Matrix) -> Self::Output {
+        self
+    }
+}
+
+impl Mul<Transformation> for Vector {
+    /// using `Mul` (`*`) for multiplying `Vectors` with `Matrix` for Translations:
+    /// Doesn't Affect Vector.
+    type Output = Self;
+
+    fn mul(self, _m: Transformation) -> Self::Output {
         self
     }
 }
