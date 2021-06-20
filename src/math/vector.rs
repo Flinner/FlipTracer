@@ -97,8 +97,16 @@ impl Mul<Matrix> for Vector {
     /// Doesn't Affect Vector.
     type Output = Self;
 
-    fn mul(self, _m: Matrix) -> Self::Output {
-        self
+    fn mul(self, m: Matrix) -> Self::Output {
+        // 1.0 is the 'magic' number, used to distinguish between vectors and points
+        // the point is converted to a matrix to allow multiplication
+        let self_matrix = Matrix::new_from_vec(4, 1, vec![self.x, self.y, self.z, 0.0]);
+        let product = m * self_matrix;
+        Self {
+            x: product.data[0],
+            y: product.data[1],
+            z: product.data[2],
+        }
     }
 }
 

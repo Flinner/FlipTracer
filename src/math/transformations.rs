@@ -42,6 +42,21 @@ impl Transformation {
             None => None,
         }
     }
+
+    /// Return a Scaling Transformation. works for both `Point` and `Vectors`
+    pub fn scaling(x: f64, y: f64, z: f64) -> Transformation {
+        let vec = vec![
+            x, 0.0, 0.0, 0.0, //
+            0.0, y, 0.0, 0.0, //
+            0.0, 0.0, z, 0.0, //
+            0.0, 0.0, 0.0, 1.0,
+        ];
+        let matrix = Matrix::new_from_vec(4, 4, vec);
+        Transformation {
+            trans_type: TransformationType::Scaling,
+            matrix,
+        }
+    }
 }
 
 impl Mul<Point> for Transformation {
@@ -57,6 +72,9 @@ impl Mul<Vector> for Transformation {
 
     // Transformation doesn't affect vectors
     fn mul(self, rhs: Vector) -> Vector {
-        rhs
+        match self.trans_type {
+            TransformationType::Translation => rhs,
+            TransformationType::Scaling => rhs * self.matrix,
+        }
     }
 }
