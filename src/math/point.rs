@@ -1,4 +1,4 @@
-use super::{matrix::Matrix, transformations::Transformation, vector::Vector};
+use super::{matrix::Matrix, vector::Vector};
 use std::ops::{Mul, Neg};
 
 pub const ORIGIN: Point = Point {
@@ -76,14 +76,6 @@ impl Mul<Matrix> for Point {
             y: product.data[1],
             z: product.data[2],
         }
-    }
-}
-
-impl Mul<Transformation> for Point {
-    type Output = Point;
-
-    fn mul(self, rhs: Transformation) -> Point {
-        self * rhs.matrix
     }
 }
 

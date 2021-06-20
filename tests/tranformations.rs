@@ -10,7 +10,7 @@ fn multiplying_point_by_translation_matrix() {
 
     let expected = Point::new(2.0, 1.0, 7.0);
 
-    assert_eq!(point * transform, expected)
+    assert_eq!(transform * point, expected)
 }
 
 #[test]
@@ -22,5 +22,4 @@ fn multiplying_point_by_inverse_of_translation_matrix() {
     let expected = Point::new(-8.0, 7.0, 3.0);
 
     assert_eq!(inv.clone().unwrap() * point, expected);
-    assert_eq!(point * inv.clone().unwrap(), expected)
 }
