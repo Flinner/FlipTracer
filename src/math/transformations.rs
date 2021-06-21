@@ -77,6 +77,25 @@ impl Transformation {
             matrix,
         }
     }
+
+    /// Return an Y Rotation Transformation. works for both `Point` Only!
+    /// takes `rad` angle in radians only!
+    pub fn rotate_y(rad: f64) -> Transformation {
+        let cos = rad.cos();
+        let sin = rad.sin();
+
+        let vec = vec![
+            cos, 0.0, sin, 0.0, //
+            0.0, 1.0, 0.0, 0.0, //
+            -sin, 0.0, cos, 0.0, //
+            0.0, 0.0, 0.0, 1.0,
+        ];
+        let matrix = Matrix::new_from_vec(4, 4, vec);
+        Transformation {
+            trans_type: TransformationType::Rotation,
+            matrix,
+        }
+    }
 }
 
 impl Mul<Point> for Transformation {
