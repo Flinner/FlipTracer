@@ -93,8 +93,7 @@ impl Mul<f64> for Vector {
 }
 
 impl Mul<Matrix> for Vector {
-    /// using `Mul` (`*`) for multiplying `Vectors` with `Matrix` for Translations:
-    /// Doesn't Affect Vector.
+    /// using `Mul` (`*`) for multiplying `Vectors` with `Matrix` for Translations
     type Output = Self;
 
     fn mul(self, m: Matrix) -> Self::Output {
