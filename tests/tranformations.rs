@@ -108,4 +108,18 @@ mod rotation {
         assert_eq!(half_quarter * p, e_p1);
         assert_eq!(full_quarter * p, e_p2);
     }
+
+    #[test]
+    fn point_around_z() {
+        let p = Point::new(0.0, 1.0, 0.0);
+
+        let half_quarter = Transformation::rotate_z(PI / 4.0);
+        let full_quarter = Transformation::rotate_z(PI / 2.0);
+
+        let e_p1 = Point::new(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0);
+        let e_p2 = Point::new(-1.0, 0.0, 0.0);
+
+        assert_eq!(half_quarter * p, e_p1);
+        assert_eq!(full_quarter * p, e_p2);
+    }
 }

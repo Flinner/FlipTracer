@@ -96,6 +96,25 @@ impl Transformation {
             matrix,
         }
     }
+
+    /// Return an Z Rotation Transformation. works for both `Point` Only!
+    /// takes `rad` angle in radians only!
+    pub fn rotate_z(rad: f64) -> Transformation {
+        let cos = rad.cos();
+        let sin = rad.sin();
+
+        let vec = vec![
+            cos, -sin, 0.0, 0.0, //
+            sin, cos, 0.0, 0.0, //
+            0.0, 0.0, 1.0, 0.0, //
+            0.0, 0.0, 0.0, 1.0,
+        ];
+        let matrix = Matrix::new_from_vec(4, 4, vec);
+        Transformation {
+            trans_type: TransformationType::Rotation,
+            matrix,
+        }
+    }
 }
 
 impl Mul<Point> for Transformation {
