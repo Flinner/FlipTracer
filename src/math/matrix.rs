@@ -222,74 +222,79 @@ fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
     matrix_minor(matrix, row, column) * (if (row + column) % 2 != 0 { -1.0 } else { 1.0 })
 }
 
-#[test]
-fn submatrix_of_3x3_is_2x2() {
-    let vec3 = vec![
-        1.0, 2.0, 3.0, //
-        5.5, 6.5, 7.5, //
-        9.0, 10.0, 11.0, //
-    ];
-    let vec2 = vec![
-        1.0, 3.0, //
-        9.0, 11.0, //
-    ];
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-    let matrix2 = Matrix::new_from_vec(2, 2, vec2);
+    #[test]
+    fn submatrix_of_3x3_is_2x2() {
+        let vec3 = vec![
+            1.0, 2.0, 3.0, //
+            5.5, 6.5, 7.5, //
+            9.0, 10.0, 11.0, //
+        ];
+        let vec2 = vec![
+            1.0, 3.0, //
+            9.0, 11.0, //
+        ];
 
-    assert_eq!(submatrix(&matrix3, 1, 1), matrix2)
-}
+        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+        let matrix2 = Matrix::new_from_vec(2, 2, vec2);
 
-#[test]
-fn submatrix_of_4x4_is_3x3() {
-    let vec4 = vec![
-        9.0, 8.0, 6.0, 7.0, //
-        1.0, 2.0, 3.0, 9.0, //
-        5.5, 6.5, 7.5, 1.8, //
-        9.0, 10.0, 11.0, 99.0, //
-    ];
-    let vec3 = vec![
-        1.0, 2.0, 3.0, //
-        5.5, 6.5, 7.5, //
-        9.0, 10.0, 11.0, //
-    ];
+        assert_eq!(submatrix(&matrix3, 1, 1), matrix2)
+    }
 
-    let matrix4 = Matrix::new_from_vec(4, 4, vec4);
-    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+    #[test]
+    fn submatrix_of_4x4_is_3x3() {
+        let vec4 = vec![
+            9.0, 8.0, 6.0, 7.0, //
+            1.0, 2.0, 3.0, 9.0, //
+            5.5, 6.5, 7.5, 1.8, //
+            9.0, 10.0, 11.0, 99.0, //
+        ];
+        let vec3 = vec![
+            1.0, 2.0, 3.0, //
+            5.5, 6.5, 7.5, //
+            9.0, 10.0, 11.0, //
+        ];
 
-    assert_eq!(submatrix(&matrix4, 0, 3), matrix3)
-}
+        let matrix4 = Matrix::new_from_vec(4, 4, vec4);
+        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
 
-#[test]
-fn determinant_of_2x2_matrix() {
-    let vec = vec![
-        -3.0, 5.0, //
-        1.0, -2.0,
-    ];
-    let matrix = Matrix::new_from_vec(2, 2, vec);
-    assert_eq!(matrix.determinant(), 1.0);
-}
+        assert_eq!(submatrix(&matrix4, 0, 3), matrix3)
+    }
 
-#[test]
-fn minor_of_matrix() {
-    let vec3 = vec![
-        1.0, 2.0, 3.0, //
-        5.5, 6.5, 7.5, //
-        9.0, 10.0, 11.0, //
-    ];
-    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-    let minor = matrix_minor(&matrix3, 1, 0);
-    assert_eq!(-8.0, minor)
-}
+    #[test]
+    fn determinant_of_2x2_matrix() {
+        let vec = vec![
+            -3.0, 5.0, //
+            1.0, -2.0,
+        ];
+        let matrix = Matrix::new_from_vec(2, 2, vec);
+        assert_eq!(matrix.determinant(), 1.0);
+    }
 
-#[test]
-fn cofactor_of_matrix() {
-    let vec3 = vec![
-        1.0, 2.0, 3.0, //
-        5.5, 6.5, 7.5, //
-        9.0, 10.0, 11.0, //
-    ];
-    let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-    let cofactor = matrix_cofactor(&matrix3, 1, 0);
-    assert_eq!(8.0, cofactor)
+    #[test]
+    fn minor_of_matrix() {
+        let vec3 = vec![
+            1.0, 2.0, 3.0, //
+            5.5, 6.5, 7.5, //
+            9.0, 10.0, 11.0, //
+        ];
+        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+        let minor = matrix_minor(&matrix3, 1, 0);
+        assert_eq!(-8.0, minor)
+    }
+
+    #[test]
+    fn cofactor_of_matrix() {
+        let vec3 = vec![
+            1.0, 2.0, 3.0, //
+            5.5, 6.5, 7.5, //
+            9.0, 10.0, 11.0, //
+        ];
+        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+        let cofactor = matrix_cofactor(&matrix3, 1, 0);
+        assert_eq!(8.0, cofactor)
+    }
 }
