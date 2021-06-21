@@ -98,7 +98,7 @@ impl Mul<Matrix> for Vector {
     type Output = Self;
 
     fn mul(self, m: Matrix) -> Self::Output {
-        // 1.0 is the 'magic' number, used to distinguish between vectors and points
+        // 0.0 is the 'magic' number, used to distinguish between vectors and points
         // the point is converted to a matrix to allow multiplication
         let self_matrix = Matrix::new_from_vec(4, 1, vec![self.x, self.y, self.z, 0.0]);
         let product = m * self_matrix;
