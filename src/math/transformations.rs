@@ -10,16 +10,7 @@ use super::{
 #[derive(Debug, Clone)]
 pub struct Transformation {
     pub matrix: Matrix,
-    pub trans_type: TransformationType,
 }
-
-#[derive(Debug, Clone)]
-pub enum TransformationType {
-    Translation,
-    Scaling,
-    Rotation,
-}
-
 impl Transformation {
     /// Creates a translation, that only works with `Points` and not `Vectors`
     pub fn translation(x: f64, y: f64, z: f64) -> Transformation {
@@ -27,19 +18,13 @@ impl Transformation {
         matrix.write(0, 3, x);
         matrix.write(1, 3, y);
         matrix.write(2, 3, z);
-        Transformation {
-            matrix,
-            trans_type: TransformationType::Translation,
-        }
+        Transformation { matrix }
     }
 
     /// Inverses the Transformation
     pub fn inverse(self) -> Option<Transformation> {
         match self.matrix.inverse() {
-            Some(matrix) => Some(Transformation {
-                matrix,
-                trans_type: self.trans_type,
-            }),
+            Some(matrix) => Some(Transformation { matrix }),
             None => None,
         }
     }
@@ -53,10 +38,7 @@ impl Transformation {
             0.0, 0.0, 0.0, 1.0,
         ];
         let matrix = Matrix::new_from_vec(4, 4, vec);
-        Transformation {
-            trans_type: TransformationType::Scaling,
-            matrix,
-        }
+        Transformation { matrix }
     }
 
     /// Return an X Rotation Transformation. works for both `Point` Only!
@@ -72,10 +54,7 @@ impl Transformation {
             0.0, 0.0, 0.0, 1.0,
         ];
         let matrix = Matrix::new_from_vec(4, 4, vec);
-        Transformation {
-            trans_type: TransformationType::Rotation,
-            matrix,
-        }
+        Transformation { matrix }
     }
 
     /// Return an Y Rotation Transformation. works for both `Point` Only!
@@ -91,10 +70,7 @@ impl Transformation {
             0.0, 0.0, 0.0, 1.0,
         ];
         let matrix = Matrix::new_from_vec(4, 4, vec);
-        Transformation {
-            trans_type: TransformationType::Rotation,
-            matrix,
-        }
+        Transformation { matrix }
     }
 
     /// Return an Z Rotation Transformation. works for both `Point` Only!
@@ -110,10 +86,7 @@ impl Transformation {
             0.0, 0.0, 0.0, 1.0,
         ];
         let matrix = Matrix::new_from_vec(4, 4, vec);
-        Transformation {
-            trans_type: TransformationType::Rotation,
-            matrix,
-        }
+        Transformation { matrix }
     }
 
     /// Return a Shear(skew) `Transformation`. each component is affected by other two components
@@ -132,10 +105,7 @@ impl Transformation {
             0.0, 0.0, 0.0, 1.0,
         ];
         let matrix = Matrix::new_from_vec(4, 4, vec);
-        Transformation {
-            trans_type: TransformationType::Rotation,
-            matrix,
-        }
+        Transformation { matrix }
     }
 }
 
@@ -152,11 +122,10 @@ impl Mul<Vector> for Transformation {
 
     // Transformation doesn't affect vectors
     fn mul(self, rhs: Vector) -> Vector {
-        match self.trans_type {
-            TransformationType::Translation => rhs,
-            //TransformationType::Scaling => self.matrix * rhs,
-            //TransformationType::Rotation => self.matrix * rhs,
-            _ => self.matrix * rhs,
+        self.matrix * rhs
+    }
+}
+
         }
     }
 }
