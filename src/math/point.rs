@@ -1,4 +1,4 @@
-use super::{matrix::Matrix, vector::Vector};
+use super::{matrix::Matrix, transformations::Transformation, vector::Vector};
 use std::ops::{Mul, Neg};
 
 pub const ORIGIN: Point = Point {
@@ -47,6 +47,47 @@ impl Point {
             y: self.y - point2.y,
             z: self.z - point2.z,
         }
+    }
+}
+
+/**
+Transformations, Fluent API, allows chaining
+```
+use raytracer::math::point::Point;
+use std::f64::consts::PI;
+
+let p = Point::new(1.0,0.0,1.0)
+            .rotate_x(PI/2.0)
+            .scaling(5.0,5.0,5.0)
+            .translation(10.0,5.0,7.0);
+
+assert_eq!(p, Point::new(15.0, 0.0, 7.0));
+```
+*/
+impl Point {
+    /// Equivelent of `Transformation::rotate_x(rad) * self`
+    pub fn rotate_x(self, rad: f64) -> Point {
+        Transformation::rotate_x(rad) * self
+    }
+    /// Equivelent of `Transformation::rotate_y(rad) * self`
+    pub fn rotate_y(self, rad: f64) -> Point {
+        Transformation::rotate_y(rad) * self
+    }
+    /// Equivelent of `Transformation::rotate_z(rad) * self`
+    pub fn rotate_z(self, rad: f64) -> Point {
+        Transformation::rotate_z(rad) * self
+    }
+    /// Equivelent of `Transformation::scaling(x, y, z) * self`
+    pub fn scaling(self, x: f64, y: f64, z: f64) -> Point {
+        Transformation::scaling(x, y, z) * self
+    }
+    /// Equivelent of `Transformation::shearing(x_y, x_z, y_x, y_z, z_x, z_y) * self`
+    pub fn shearing(self, x_y: f64, x_z: f64, y_x: f64, y_z: f64, z_x: f64, z_y: f64) -> Point {
+        Transformation::shearing(x_y, x_z, y_x, y_z, z_x, z_y) * self
+    }
+    /// Equivelent of `Transformation::translation(x, y, z) * self`
+    pub fn translation(self, x: f64, y: f64, z: f64) -> Point {
+        Transformation::translation(x, y, z) * self
     }
 }
 
