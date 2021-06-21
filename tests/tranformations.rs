@@ -47,3 +47,14 @@ fn multiplying_vector_by_scaling_matrix() {
     let expected = Vector::new(-8.0, 18.0, 32.0);
     assert_eq!(transform * vector, expected)
 }
+
+#[test]
+fn multiplying_vector_by_inverse_of_scaling_matrix() {
+    let transform = Transformation::scaling(2.0, 3.0, 4.0);
+    let inv = transform.inverse();
+    let vector = Vector::new(-4.0, 6.0, 8.0);
+
+    let expected = Vector::new(-2.0, 2.0, 2.0);
+
+    assert_eq!(inv.unwrap() * vector, expected);
+}
