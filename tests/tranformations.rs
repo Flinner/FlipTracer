@@ -1,4 +1,5 @@
 use raytracer::math::{point::Point, transformations::Transformation, vector::Vector};
+use std::f64::consts::PI;
 
 mod translation {
     use super::*;
@@ -63,5 +64,34 @@ mod scaling {
         let expected = Vector::new(-2.0, 2.0, 2.0);
 
         assert_eq!(inv.unwrap() * vector, expected);
+    }
+}
+
+mod rotation {
+
+    use super::*;
+    #[test]
+    fn point_around_x() {
+        let p = Point::new(0.0, 1.0, 0.0);
+
+        let half_quarter = Transformation::rotate_x(PI / 4.0);
+        let full_quarter = Transformation::rotate_x(PI / 2.0);
+
+        let e_p1 = Point::new(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0);
+        let e_p2 = Point::new(0.0, 0.0, 1.0);
+
+        assert_eq!(half_quarter * p, e_p1);
+        assert_eq!(full_quarter * p, e_p2);
+    }
+
+    #[test]
+    fn inverse_point_around_x() {
+        let p = Point::new(0.0, 1.0, 0.0);
+
+        let half_quarter = Transformation::rotate_x(PI / 4.0);
+
+        let e_p1 = Point::new(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
+
+        assert_eq!(half_quarter.inverse().unwrap() * p, e_p1);
     }
 }

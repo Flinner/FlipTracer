@@ -17,6 +17,7 @@ pub struct Transformation {
 pub enum TransformationType {
     Translation,
     Scaling,
+    Rotation,
 }
 
 impl Transformation {
@@ -57,6 +58,25 @@ impl Transformation {
             matrix,
         }
     }
+
+    /// Return an X Rotation Transformation. works for both `Point` Only!
+    /// takes `rad` angle in radians only!
+    pub fn rotate_x(rad: f64) -> Transformation {
+        let cos = rad.cos();
+        let sin = rad.sin();
+
+        let vec = vec![
+            1.0, 0.0, 0.0, 0.0, //
+            0.0, cos, -sin, 0.0, //
+            0.0, sin, cos, 0.0, //
+            0.0, 0.0, 0.0, 1.0,
+        ];
+        let matrix = Matrix::new_from_vec(4, 4, vec);
+        Transformation {
+            trans_type: TransformationType::Rotation,
+            matrix,
+        }
+    }
 }
 
 impl Mul<Point> for Transformation {
@@ -74,7 +94,9 @@ impl Mul<Vector> for Transformation {
     fn mul(self, rhs: Vector) -> Vector {
         match self.trans_type {
             TransformationType::Translation => rhs,
-            TransformationType::Scaling => rhs * self.matrix,
+            //TransformationType::Scaling => self.matrix * rhs,
+            //TransformationType::Rotation => self.matrix * rhs,
+            _ => self.matrix * rhs,
         }
     }
 }
