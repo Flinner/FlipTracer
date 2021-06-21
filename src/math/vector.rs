@@ -31,17 +31,17 @@ impl Vector {
     }
 
     /// DEPRECIATED: Adds Two `Vector`s together Producing a `Vector`:
-    pub fn add(self: &Self, other: &Vector) -> Self {
+    pub fn add(&self, other: &Vector) -> Self {
         *self + *other
     }
 
     /// Returns the magnitude of the Vector
-    pub fn magnitude(self: &Self) -> f64 {
+    pub fn magnitude(&self) -> f64 {
         f64::sqrt(self.x.powi(2) + self.y.powi(2) + self.z.powi(2))
     }
 
     /// Normalize the `Vector`
-    pub fn normalize(self: &Self) -> Self {
+    pub fn normalize(&self) -> Self {
         let magnitude = self.magnitude();
         Self {
             x: self.x / magnitude,
@@ -51,12 +51,12 @@ impl Vector {
     }
 
     /// Dot Product of two vectors, producing a scalar, order doesn't matter
-    pub fn dot_product(self: &Self, vector2: &Vector) -> f64 {
+    pub fn dot_product(&self, vector2: &Vector) -> f64 {
         self.x * vector2.x + self.y * vector2.y + self.z * vector2.z
     }
 
     /// Vector Product of two vectors, producing a Vector, order IS important
-    pub fn cross_product(self: &Self, vector2: &Vector) -> Self {
+    pub fn cross_product(&self, vector2: &Vector) -> Self {
         Vector {
             x: self.y * vector2.z - self.z * vector2.y,
             y: self.z * vector2.x - self.x * vector2.z,

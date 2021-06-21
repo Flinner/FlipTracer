@@ -25,7 +25,7 @@ impl Canvas {
     }
 
     /// Modify (`x`, `y`) to `color`. Mutates `self`
-    pub fn write(self: &mut Self, x: usize, y: usize, color: Color) {
+    pub fn write(&mut self, x: usize, y: usize, color: Color) {
         // make sure it is not out of bounds
         if self.height > y && self.width > x {
             self.grid[y][x] = color;
