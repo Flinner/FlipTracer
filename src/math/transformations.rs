@@ -126,6 +126,13 @@ impl Mul<Vector> for Transformation {
     }
 }
 
+impl Mul<Transformation> for Transformation {
+    type Output = Transformation;
+
+    // Transformation doesn't affect vectors
+    fn mul(self, rhs: Self) -> Self {
+        Transformation {
+            matrix: self.matrix * rhs.matrix,
         }
     }
 }

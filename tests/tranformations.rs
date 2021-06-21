@@ -187,3 +187,45 @@ mod shearing {
         assert_eq!(transform * p, expected);
     }
 }
+
+mod chainining {
+    use super::*;
+
+    #[test]
+    fn apply_individually() {
+        let p = Point::new(1.0, 0.0, 1.0);
+
+        let rotation = Transformation::rotate_x(PI / 2.0);
+        let scaling = Transformation::scaling(5.0, 5.0, 5.0);
+        let translation = Transformation::translation(10.0, 5.0, 7.0);
+
+        // rotation first
+        let p2 = rotation.clone() * p;
+        assert_eq!(p2, Point::new(1.0, -1.0, 0.0));
+
+        // then scaling
+        // this test has floating problems :(
+        let p3 = scaling.clone() * p2;
+        let e_p3 = Point::new(5.0, -5.0, 0.0);
+        assert!((p3.x - e_p3.x).abs() < 0.0001);
+        assert!((p3.y - e_p3.y).abs() < 0.0001);
+        assert!((p3.z - e_p3.z).abs() < 0.0001);
+
+        // then translation
+        let p4 = translation.clone() * p3;
+        assert_eq!(p4, Point::new(15.0, 0.0, 7.0));
+    }
+
+    #[test]
+    fn chained_transformations() {
+        let p = Point::new(1.0, 0.0, 1.0);
+
+        let rotation = Transformation::rotate_x(PI / 2.0);
+        let scaling = Transformation::scaling(5.0, 5.0, 5.0);
+        let translation = Transformation::translation(10.0, 5.0, 7.0);
+
+        let transformation = translation * scaling * rotation;
+
+        assert_eq!(transformation * p, Point::new(15.0, 0.0, 7.0));
+    }
+}
