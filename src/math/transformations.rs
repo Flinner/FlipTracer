@@ -115,6 +115,28 @@ impl Transformation {
             matrix,
         }
     }
+
+    /// Return a Shear(skew) `Transformation`. each component is affected by other two components
+    /// there is a total of 6 params
+    /// - x in proportion to y
+    /// - x in proportion to z
+    /// - y in proportion to x
+    /// - y in proportion to z
+    /// - z in proportion to x
+    /// - z in proportion to y
+    pub fn shearing(x_y: f64, x_z: f64, y_x: f64, y_z: f64, z_x: f64, z_y: f64) -> Transformation {
+        let vec = vec![
+            1.0, x_y, x_z, 0.0, //
+            y_x, 1.0, y_z, 0.0, //
+            z_x, z_y, 1.0, 0.0, //
+            0.0, 0.0, 0.0, 1.0,
+        ];
+        let matrix = Matrix::new_from_vec(4, 4, vec);
+        Transformation {
+            trans_type: TransformationType::Rotation,
+            matrix,
+        }
+    }
 }
 
 impl Mul<Point> for Transformation {

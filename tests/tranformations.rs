@@ -123,3 +123,67 @@ mod rotation {
         assert_eq!(full_quarter * p, e_p2);
     }
 }
+
+mod shearing {
+    use super::*;
+
+    #[test]
+    fn x_moves_in_proportion_to_y() {
+        let transform = Transformation::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let p = Point::new(2.0, 3.0, 4.0);
+
+        let expected = Point::new(5.0, 3.0, 4.0);
+
+        assert_eq!(transform * p, expected);
+    }
+
+    #[test]
+    fn x_moves_in_proportion_to_z() {
+        let transform = Transformation::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+        let p = Point::new(2.0, 3.0, 4.0);
+
+        let expected = Point::new(6.0, 3.0, 4.0);
+
+        assert_eq!(transform * p, expected);
+    }
+
+    #[test]
+    fn y_moves_in_proportion_to_x() {
+        let transform = Transformation::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+        let p = Point::new(2.0, 3.0, 4.0);
+
+        let expected = Point::new(2.0, 5.0, 4.0);
+
+        assert_eq!(transform * p, expected);
+    }
+
+    #[test]
+    fn y_moves_in_proportion_to_z() {
+        let transform = Transformation::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        let p = Point::new(2.0, 3.0, 4.0);
+
+        let expected = Point::new(2.0, 7.0, 4.0);
+
+        assert_eq!(transform * p, expected);
+    }
+
+    #[test]
+    fn z_moves_in_proportion_to_x() {
+        let transform = Transformation::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+        let p = Point::new(2.0, 3.0, 4.0);
+
+        let expected = Point::new(2.0, 3.0, 6.0);
+
+        assert_eq!(transform * p, expected);
+    }
+
+    #[test]
+    fn z_moves_in_proportion_to_y() {
+        let transform = Transformation::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+        let p = Point::new(2.0, 3.0, 4.0);
+
+        let expected = Point::new(2.0, 3.0, 7.0);
+
+        assert_eq!(transform * p, expected);
+    }
+}
