@@ -1,3 +1,4 @@
+use super::vector::Vector;
 use std::ops::{Div, Mul};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -156,6 +157,23 @@ impl Mul<Matrix> for Matrix {
         }
 
         output
+    }
+}
+
+impl Mul<Vector> for Matrix {
+    type Output = Vector;
+
+    /// using `Mul` (`*`) for multiplying `Matrix` * `Vector` for Translations
+    fn mul(self, rhs: Vector) -> Vector {
+        // 0.0 is the 'magic' number, used to distinguish between vectors and points
+        // the point is converted to a matrix to allow multiplication
+        let vector_to_matrix = Matrix::new_from_vec(4, 1, vec![rhs.x, rhs.y, rhs.z, 0.0]);
+        let product = self * vector_to_matrix;
+        Vector {
+            x: product.data[0],
+            y: product.data[1],
+            z: product.data[2],
+        }
     }
 }
 

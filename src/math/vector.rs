@@ -1,7 +1,5 @@
 use std::ops::{Add, Div, Mul, Neg};
 
-use super::matrix::Matrix;
-
 pub const UNIT_X: Vector = Vector {
     x: 1.0,
     y: 0.0,
@@ -88,23 +86,6 @@ impl Mul<f64> for Vector {
             x: self.x * m,
             y: self.y * m,
             z: self.z * m,
-        }
-    }
-}
-
-impl Mul<Matrix> for Vector {
-    /// using `Mul` (`*`) for multiplying `Vectors` with `Matrix` for Translations
-    type Output = Self;
-
-    fn mul(self, m: Matrix) -> Self::Output {
-        // 0.0 is the 'magic' number, used to distinguish between vectors and points
-        // the point is converted to a matrix to allow multiplication
-        let self_matrix = Matrix::new_from_vec(4, 1, vec![self.x, self.y, self.z, 0.0]);
-        let product = m * self_matrix;
-        Self {
-            x: product.data[0],
-            y: product.data[1],
-            z: product.data[2],
         }
     }
 }
