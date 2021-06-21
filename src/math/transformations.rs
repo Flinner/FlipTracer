@@ -11,6 +11,7 @@ use super::{
 pub struct Transformation {
     pub matrix: Matrix,
 }
+
 impl Transformation {
     /// Creates a translation, that only works with `Points` and not `Vectors`
     pub fn translation(x: f64, y: f64, z: f64) -> Transformation {
@@ -23,10 +24,9 @@ impl Transformation {
 
     /// Inverses the Transformation
     pub fn inverse(self) -> Option<Transformation> {
-        match self.matrix.inverse() {
-            Some(matrix) => Some(Transformation { matrix }),
-            None => None,
-        }
+        self.matrix
+            .inverse()
+            .map(|matrix| Transformation { matrix })
     }
 
     /// Return a Scaling Transformation. works for both `Point` and `Vectors`
