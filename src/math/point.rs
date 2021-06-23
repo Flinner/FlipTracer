@@ -1,5 +1,5 @@
 use super::{matrix::Matrix, transformations::Transformation, vector::Vector};
-use std::ops::{Mul, Neg};
+use std::ops::{Add, Mul, Neg};
 
 pub const ORIGIN: Point = Point {
     x: 0.0,
@@ -126,5 +126,13 @@ impl PartialEq for Point {
         (self.x - other.x).abs() < EPSILON
             && (self.y - other.y).abs() < EPSILON
             && (self.z - other.z).abs() < EPSILON
+    }
+}
+
+impl Add<Vector> for Point {
+    type Output = Self;
+
+    fn add(self, rhs: Vector) -> Self::Output {
+        self.displacment(&rhs)
     }
 }
