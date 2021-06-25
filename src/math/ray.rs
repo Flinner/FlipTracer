@@ -1,4 +1,4 @@
-use super::{point::Point, vector::Vector};
+use super::{point::Point, transformations::Transformation, vector::Vector};
 
 #[derive(Debug, Clone)]
 pub struct Ray {
@@ -15,5 +15,12 @@ impl Ray {
     /// Returns the `Point` in  `distance` from the `origin: Point` in `direction: Vector`
     pub fn position(&self, distance: f64) -> Point {
         self.origin + self.direction * distance
+    }
+
+    pub fn transform(&self, transformation: Transformation) -> Self {
+        Ray {
+            origin: transformation.clone() * self.origin,
+            direction: transformation * self.direction,
+        }
     }
 }
