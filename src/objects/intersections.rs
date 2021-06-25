@@ -1,6 +1,6 @@
 use super::sphere::Sphere;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// Returns list of intersections, and the id of object that the ray intersected with
 pub struct Intersection {
     pub intersects_at: f64,
@@ -46,6 +46,17 @@ impl Intersections {
             None => None,
             Some(intersection) => Some(intersection.object),
         }
+    }
+    pub fn hit(&self) -> Option<&Intersection> {
+        self.list.iter().find(|&&x| x.intersects_at >= 0.0)
+    }
+
+    /// Used to Chain `.agregate` calls
+    pub fn agregate(mut self, rhs: Intersection) -> Intersections {
+        self.list.push(rhs);
+        self.list// keep it sorted
+            .sort_unstable_by(|a, b| a.intersects_at.partial_cmp(&b.intersects_at).unwrap());
+        self
     }
 }
 
