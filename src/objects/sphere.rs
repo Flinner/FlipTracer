@@ -4,6 +4,7 @@ use crate::math::{point, ray::Ray};
 
 use super::intersection::Intersection;
 
+#[derive(Clone, PartialEq, Debug, Copy)]
 pub struct Sphere {
     pub uid: u128,
 }
@@ -29,8 +30,11 @@ impl Sphere {
             let t1: f64 = (-b - discriminant.sqrt()) / (2.0_f64 * a);
             let t2: f64 = (-b + discriminant.sqrt()) / (2.0_f64 * a);
             let list = vec![t1, t2];
-            let object = self.uid;
-            return Some(Intersection { list, object });
+            let object = self;
+            return Some(Intersection {
+                list,
+                object: *object,
+            });
         }
     }
 }

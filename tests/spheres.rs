@@ -82,5 +82,5 @@ fn intersection_encapsulate_object_id() {
 
     let s = Sphere::new();
     let xs = s.intersects(ray).unwrap();
-    assert_eq!(xs.object, s.uid);
+    assert_eq!(xs.object, s);
 }
