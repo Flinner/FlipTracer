@@ -1,5 +1,5 @@
 use super::{matrix::Matrix, transformations::Transformation, vector::Vector};
-use std::ops::{Add, Mul, Neg};
+use std::ops::{Add, Mul, Neg, Sub};
 
 pub const ORIGIN: Point = Point {
     x: 0.0,
@@ -134,5 +134,13 @@ impl Add<Vector> for Point {
 
     fn add(self, rhs: Vector) -> Self::Output {
         self.displacment(&rhs)
+    }
+}
+
+impl Sub for Point {
+    type Output = Vector;
+
+    fn sub(self, rhs: Self) -> Vector {
+        self.subtract(&rhs)
     }
 }
