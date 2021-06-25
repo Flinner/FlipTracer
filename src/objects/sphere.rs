@@ -29,7 +29,8 @@ impl Sphere {
             let t1: f64 = (-b - discriminant.sqrt()) / (2.0_f64 * a);
             let t2: f64 = (-b + discriminant.sqrt()) / (2.0_f64 * a);
             let list = vec![t1, t2];
-            return Some(Intersection { list });
+            let object = self.uid;
+            return Some(Intersection { list, object });
         }
     }
 }

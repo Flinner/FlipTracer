@@ -72,3 +72,15 @@ fn sphere_behind_ray() {
     assert_eq!(xs.get(0).unwrap(), -6.0);
     assert_eq!(xs.get(1).unwrap(), -4.0);
 }
+
+#[test]
+fn intersection_encapsulate_object_id() {
+    let origin = Point::new(0.0, 0.0, 5.0);
+    let direction = Vector::new(0.0, 0.0, 1.0);
+
+    let ray = Ray::new(origin, direction);
+
+    let s = Sphere::new();
+    let xs = s.intersects(ray).unwrap();
+    assert_eq!(xs.object, s.uid);
+}

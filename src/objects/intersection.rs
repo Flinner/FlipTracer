@@ -1,6 +1,8 @@
 #[derive(Debug)]
+/// Returns list of intersections, and the id of object that the ray intersected with
 pub struct Intersection {
     pub list: Vec<f64>,
+    pub object: u128,
 }
 
 impl Intersection {
