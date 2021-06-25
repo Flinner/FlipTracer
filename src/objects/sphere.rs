@@ -2,7 +2,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::math::{point, ray::Ray};
 
-use super::intersection::Intersection;
+use super::intersections::{Intersection, Intersections};
 
 #[derive(Clone, PartialEq, Debug, Copy)]
 pub struct Sphere {
@@ -15,7 +15,7 @@ impl Sphere {
         Self { uid: time_now() }
     }
 
-    pub fn intersects(&self, ray: Ray) -> Option<Intersection> {
+    pub fn intersects(&self, ray: Ray) -> Option<Intersections> {
         let sphere_to_ray = ray.origin - point::ORIGIN;
 
         let a = ray.direction.dot_product(&ray.direction);
@@ -29,12 +29,12 @@ impl Sphere {
         } else {
             let t1: f64 = (-b - discriminant.sqrt()) / (2.0_f64 * a);
             let t2: f64 = (-b + discriminant.sqrt()) / (2.0_f64 * a);
-            let list = vec![t1, t2];
             let object = self;
-            return Some(Intersection {
-                list,
-                object: *object,
-            });
+
+            let i1 = Intersection::new(t1, *object);
+            let i2 = Intersection::new(t2, *object);
+
+            return Some(i1.agregate(i2));
         }
     }
 }

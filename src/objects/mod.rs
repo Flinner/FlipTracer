@@ -1,2 +1,2 @@
-pub mod intersection;
+pub mod intersections;
 pub mod sphere;

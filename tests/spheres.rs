@@ -13,9 +13,9 @@ fn intersect_two_points() {
     let s = Sphere::new();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
-    assert_eq!(xs.get(0).unwrap(), 4.0);
-    assert_eq!(xs.get(1).unwrap(), 6.0);
-    assert_eq!(xs.get(3), None);
+    assert_eq!(xs.get_intersection(0).unwrap(), 4.0);
+    assert_eq!(xs.get_intersection(1).unwrap(), 6.0);
+    assert_eq!(xs.get_intersection(3), None);
 }
 
 #[test]
@@ -28,9 +28,9 @@ fn intersecets_at_tanget() {
     let s = Sphere::new();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
-    assert_eq!(xs.get(0).unwrap(), 5.0);
-    assert_eq!(xs.get(1).unwrap(), 5.0);
-    assert_eq!(xs.get(3), None);
+    assert_eq!(xs.get_intersection(0).unwrap(), 5.0);
+    assert_eq!(xs.get_intersection(1).unwrap(), 5.0);
+    assert_eq!(xs.get_intersection(3), None);
 }
 
 #[test]
@@ -55,8 +55,8 @@ fn ray_originates_in_sphere() {
     let s = Sphere::new();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
-    assert_eq!(xs.get(0).unwrap(), -1.0);
-    assert_eq!(xs.get(1).unwrap(), 1.0);
+    assert_eq!(xs.get_intersection(0).unwrap(), -1.0);
+    assert_eq!(xs.get_intersection(1).unwrap(), 1.0);
 }
 
 #[test]
@@ -69,18 +69,6 @@ fn sphere_behind_ray() {
     let s = Sphere::new();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
-    assert_eq!(xs.get(0).unwrap(), -6.0);
-    assert_eq!(xs.get(1).unwrap(), -4.0);
-}
-
-#[test]
-fn intersection_encapsulate_object_id() {
-    let origin = Point::new(0.0, 0.0, 5.0);
-    let direction = Vector::new(0.0, 0.0, 1.0);
-
-    let ray = Ray::new(origin, direction);
-
-    let s = Sphere::new();
-    let xs = s.intersects(ray).unwrap();
-    assert_eq!(xs.object, s);
+    assert_eq!(xs.get_intersection(0).unwrap(), -6.0);
+    assert_eq!(xs.get_intersection(1).unwrap(), -4.0);
 }
