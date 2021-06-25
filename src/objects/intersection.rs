@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Intersection {
     pub list: Vec<f64>,
 }
