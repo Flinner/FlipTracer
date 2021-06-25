@@ -1,6 +1,6 @@
 use super::sphere::Sphere;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 /// Returns list of intersections, and the id of object that the ray intersected with
 pub struct Intersection {
     pub intersects_at: f64,
@@ -58,7 +58,9 @@ impl Intersection {
     }
 
     /// Returns `Intersections`
-    pub fn agregate(&self, _rhs: Self) -> Intersections {
-        todo!()
+    pub fn agregate(&self, rhs: Self) -> Intersections {
+        Intersections {
+            list: vec![*self, rhs],
+        }
     }
 }
