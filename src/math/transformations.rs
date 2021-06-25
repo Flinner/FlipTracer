@@ -13,6 +13,12 @@ pub struct Transformation {
 }
 
 impl Transformation {
+    /// Identity Matrix `4x4`
+    pub fn identity() -> Transformation {
+        let matrix = matrix::identity::four();
+        Transformation { matrix }
+    }
+
     /// Creates a translation, that only works with `Points` and not `Vectors`
     pub fn translation(x: f64, y: f64, z: f64) -> Transformation {
         let mut matrix = matrix::identity::four();
