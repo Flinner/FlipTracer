@@ -25,7 +25,7 @@ impl Sphere {
         let discriminant = b.powf(2.0) - 4.0 * a * c;
 
         if discriminant < 0.0 {
-            return None;
+            None
         } else {
             let t1: f64 = (-b - discriminant.sqrt()) / (2.0_f64 * a);
             let t2: f64 = (-b + discriminant.sqrt()) / (2.0_f64 * a);
@@ -34,7 +34,7 @@ impl Sphere {
             let i1 = Intersection::new(t1, *object);
             let i2 = Intersection::new(t2, *object);
 
-            return Some(i1.agregate(i2));
+            Some(i1.agregate(i2))
         }
     }
 }
