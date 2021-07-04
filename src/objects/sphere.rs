@@ -19,7 +19,21 @@ impl Sphere {
         }
     }
 
+    /// Creates a new `Sphere` with `Transformation`.
+    pub fn new_with_transformation(transformation: Transformation) -> Self {
+        Self {
+            uid: time_now(),
+            transformation,
+        }
+    }
+
     pub fn intersects(&self, ray: Ray) -> Option<Intersections> {
+        let transformation = match self.transformation.clone().inverse() {
+            None => return None,
+            Some(t) => t,
+        };
+        let ray = ray.transform(transformation);
+
         let sphere_to_ray = ray.origin - point::ORIGIN;
 
         let a = ray.direction.dot_product(&ray.direction);

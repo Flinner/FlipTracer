@@ -1,5 +1,5 @@
 use raytracer::{
-    math::{point::Point, ray::Ray, vector::Vector},
+    math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
     objects::sphere::Sphere,
 };
 
@@ -71,4 +71,44 @@ fn sphere_behind_ray() {
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -6.0);
     assert_eq!(xs.get_intersection(1).unwrap(), -4.0);
+}
+
+#[test]
+fn sphere_default_transformation() {
+    let transformation = Transformation::identity();
+
+    let s = Sphere::new();
+    assert_eq!(s.transformation, transformation)
+}
+
+#[test]
+fn intersecting_scaled_sphere() {
+    let origin = Point::new(0.0, 0.0, -5.0);
+    let direction = Vector::new(0.0, 0.0, 1.0);
+
+    let ray = Ray::new(origin, direction);
+
+    let transformation = Transformation::scaling(2.0, 2.0, 2.0);
+    let s = Sphere::new_with_transformation(transformation);
+
+    let xs = s.intersects(ray).unwrap();
+
+    assert_eq!(xs.count(), 2);
+    println!("{:#?}", xs);
+    assert_eq!(xs.get_intersection(0).unwrap(), 3.0);
+    assert_eq!(xs.get_intersection(1).unwrap(), 7.0);
+}
+
+#[test]
+#[should_panic]
+fn intersecting_translated_sphere() {
+    let origin = Point::new(0.0, 0.0, -5.0);
+    let direction = Vector::new(0.0, 0.0, 1.0);
+
+    let ray = Ray::new(origin, direction);
+
+    let transformation = Transformation::scaling(5.0, 0.0, 0.0);
+    let s = Sphere::new_with_transformation(transformation);
+
+    let _xs = s.intersects(ray).unwrap();
 }
