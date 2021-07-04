@@ -7,7 +7,7 @@ use super::{
 };
 
 /// Wrapper around `Matrix`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Transformation {
     pub matrix: Matrix,
 }

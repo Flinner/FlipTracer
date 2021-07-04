@@ -1,13 +1,13 @@
 use super::sphere::Sphere;
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
 pub struct Intersection {
     pub intersects_at: f64,
     pub object: Sphere,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
 pub struct Intersections {
     list: Vec<Intersection>,
@@ -24,10 +24,10 @@ impl Intersections {
             None
         } else {
             let intersects_at = self.list[index].intersects_at;
-            let object = self.list[index].object;
+            let object = &self.list[index].object;
             let intersection = Intersection {
                 intersects_at,
-                object,
+                object: object.clone(),
             };
             Some(intersection)
         }
@@ -48,12 +48,12 @@ impl Intersections {
         }
     }
     pub fn hit(&self) -> Option<&Intersection> {
-        self.list.iter().find(|&&x| x.intersects_at >= 0.0)
+        self.list.iter().find(|&x| x.intersects_at >= 0.0)
     }
 
     /// Used to Chain `.agregate` calls
-    pub fn agregate(mut self, rhs: Intersection) -> Intersections {
-        self.list.push(rhs);
+    pub fn agregate(mut self, rhs: &Intersection) -> Intersections {
+        self.list.push(rhs.clone());
         self.list// keep it sorted
             .sort_unstable_by(|a, b| a.intersects_at.partial_cmp(&b.intersects_at).unwrap());
         self
@@ -61,17 +61,17 @@ impl Intersections {
 }
 
 impl Intersection {
-    pub fn new(intersects_at: f64, object: Sphere) -> Self {
+    pub fn new(intersects_at: f64, object: &Sphere) -> Self {
         Intersection {
             intersects_at,
-            object,
+            object: object.clone(),
         }
     }
 
     /// Returns `Intersections`
-    pub fn agregate(&self, rhs: Self) -> Intersections {
+    pub fn agregate(&self, rhs: &Self) -> Intersections {
         Intersections {
-            list: vec![*self, rhs],
+            list: vec![self.clone(), rhs.clone()],
         }
     }
 }
