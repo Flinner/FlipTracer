@@ -34,6 +34,12 @@ impl Transformation {
             .inverse()
             .map(|matrix| Transformation { matrix })
     }
+    /// Transpose the Transformation
+    pub fn transpose(self) -> Option<Transformation> {
+        self.matrix
+            .transpose()
+            .map(|matrix| Transformation { matrix })
+    }
 
     /// Return a Scaling Transformation. works for both `Point` and `Vectors`
     pub fn scaling(x: f64, y: f64, z: f64) -> Transformation {
