@@ -1,7 +1,6 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::math::{
-    matrix::submatrix,
     point::{self, Point},
     ray::Ray,
     transformations::Transformation,

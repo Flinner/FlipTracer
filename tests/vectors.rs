@@ -137,3 +137,34 @@ fn cross_product() {
     let expected_vector_reverse = Vector::new(1.0, -2.0, 1.0);
     assert_eq!(cross_product_reverse, expected_vector_reverse);
 }
+
+#[test]
+fn reflecting_ray() {
+    let sqrt2_by2 = f64::sqrt(2.0) / 2.0;
+
+    let ray1 = Vector::new(1.0, -1.0, 0.0);
+    let normal1 = Vector::new(0.0, -1.0, 0.0);
+    let reflect1 = Vector::new(1.0, 1.0, 0.0);
+
+    // slanted surface
+    let ray2 = Vector::new(0.0, -1.0, 0.0);
+    let normal2 = Vector::new(sqrt2_by2, sqrt2_by2, 0.0);
+    let reflect2 = Vector::new(1.0, 0.0, 0.0);
+
+    assert_nearly_eq(ray1.reflect(normal1), reflect1);
+    assert_nearly_eq(ray2.reflect(normal2), reflect2);
+}
+
+fn assert_nearly_eq(a: Vector, b: Vector) {
+    let assertion = (a.x - b.x).abs();
+    println!("{},{},{}", a.x, b.x, assertion);
+    assert!(assertion < 0.00001);
+
+    let assertion = (a.y - b.y).abs();
+    println!("{},{},{}", a.y, b.y, assertion);
+    assert!(assertion < 0.00001);
+
+    let assertion = (a.z - b.z).abs();
+    println!("{},{},{}", a.z, b.z, assertion);
+    assert!(assertion < 0.00001);
+}

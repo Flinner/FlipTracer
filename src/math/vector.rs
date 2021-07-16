@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 pub const UNIT_X: Vector = Vector {
     x: 1.0,
@@ -63,6 +63,11 @@ impl Vector {
             z: self.x * vector2.y - self.y * vector2.x,
         }
     }
+
+    /// Reflection on `normal: Vector`
+    pub fn reflect(&self, normal: Vector) -> Self {
+        *self - normal * 2.0 * self.dot_product(&normal)
+    }
 }
 
 impl Neg for Vector {
@@ -111,6 +116,18 @@ impl Add<Vector> for Vector {
             x: self.x + other.x,
             y: self.y + other.y,
             z: self.z + other.z,
+        }
+    }
+}
+impl Sub<Vector> for Vector {
+    type Output = Self;
+
+    /// using `Sub` (`/`) for Subtracting `Vectors` and `Vectors`: `Vector` - `Vector`
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
         }
     }
 }
