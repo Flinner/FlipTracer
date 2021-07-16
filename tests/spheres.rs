@@ -1,6 +1,7 @@
 use std::f64::consts;
 
 use raytracer::{
+    graphics::materials::Material,
     math::{
         point::Point,
         ray::Ray,
@@ -183,7 +184,16 @@ fn normal_of_translated_sphere() {
 
 #[test]
 fn sphere_default_material() {
-    // Sphere::new()
+    assert_eq!(Sphere::default().material, Material::default())
+}
+
+#[test]
+fn sphere_given_material() {
+    let mut s = Sphere::default();
+    let mut m = Material::default();
+    m.ambient = 1.0;
+    s.material = m;
+    assert_eq!(s.material, m)
 }
 
 fn assert_nearly_eq(a: f64, b: f64) {
