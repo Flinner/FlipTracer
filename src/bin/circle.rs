@@ -14,7 +14,7 @@ pub fn main() {
     let transformation = Transformation::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         * Transformation::scaling(1.0, 0.5, 0.3);
 
-    let sphere = Sphere::new_with_transformation(transformation);
+    let sphere = Sphere::new(transformation);
 
     let wall_z = 10.0;
     let wall_size = 7.0;

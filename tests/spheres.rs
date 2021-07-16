@@ -17,7 +17,7 @@ fn intersect_two_points() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::new();
+    let s = Sphere::default();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 4.0);
@@ -32,7 +32,7 @@ fn intersecets_at_tanget() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::new();
+    let s = Sphere::default();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 5.0);
@@ -48,7 +48,7 @@ fn ray_misses() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::new();
+    let s = Sphere::default();
     let _xs = s.intersects(ray).unwrap();
 }
 
@@ -59,7 +59,7 @@ fn ray_originates_in_sphere() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::new();
+    let s = Sphere::default();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -1.0);
@@ -73,7 +73,7 @@ fn sphere_behind_ray() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::new();
+    let s = Sphere::default();
     let xs = s.intersects(ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -6.0);
@@ -84,7 +84,7 @@ fn sphere_behind_ray() {
 fn sphere_default_transformation() {
     let transformation = Transformation::identity();
 
-    let s = Sphere::new();
+    let s = Sphere::default();
     assert_eq!(s.transformation, transformation)
 }
 
@@ -96,7 +96,7 @@ fn intersecting_scaled_sphere() {
     let ray = Ray::new(origin, direction);
 
     let transformation = Transformation::scaling(2.0, 2.0, 2.0);
-    let s = Sphere::new_with_transformation(transformation);
+    let s = Sphere::new(transformation);
 
     let xs = s.intersects(ray).unwrap();
 
@@ -115,7 +115,7 @@ fn intersecting_translated_sphere() {
     let ray = Ray::new(origin, direction);
 
     let transformation = Transformation::scaling(5.0, 0.0, 0.0);
-    let s = Sphere::new_with_transformation(transformation);
+    let s = Sphere::new(transformation);
 
     let _xs = s.intersects(ray).unwrap();
 }
@@ -125,19 +125,19 @@ fn normal_of_sphere() {
     let sqrt3_by3 = 3.0_f64.sqrt() / 3.0;
     let tests = vec![
         (
-            Sphere::new().normal_at(Point::new(1.0, 0.0, 0.0)),
+            Sphere::default().normal_at(Point::new(1.0, 0.0, 0.0)),
             vector::UNIT_X,
         ),
         (
-            Sphere::new().normal_at(Point::new(0.0, 1.0, 0.0)),
+            Sphere::default().normal_at(Point::new(0.0, 1.0, 0.0)),
             vector::UNIT_Y,
         ),
         (
-            Sphere::new().normal_at(Point::new(0.0, 0.0, 1.0)),
+            Sphere::default().normal_at(Point::new(0.0, 0.0, 1.0)),
             vector::UNIT_Z,
         ),
         (
-            Sphere::new().normal_at(Point::new(sqrt3_by3, sqrt3_by3, sqrt3_by3)),
+            Sphere::default().normal_at(Point::new(sqrt3_by3, sqrt3_by3, sqrt3_by3)),
             Vector::new(sqrt3_by3, sqrt3_by3, sqrt3_by3),
         ),
     ];
@@ -159,7 +159,7 @@ fn normal_of_translated_sphere() {
 
     let tests = vec![
         (
-            Sphere::new_with_transformation(translation).normal_at(Point::new(
+            Sphere::new(translation).normal_at(Point::new(
                 0.0,
                 1.70711,
                 -consts::FRAC_1_SQRT_2, // -0.7011
@@ -167,8 +167,7 @@ fn normal_of_translated_sphere() {
             Vector::new(0.0, consts::FRAC_1_SQRT_2, -consts::FRAC_1_SQRT_2),
         ),
         (
-            Sphere::new_with_transformation(scaled_rotated)
-                .normal_at(Point::new(0.0, sqrt2_by2, -sqrt2_by2)),
+            Sphere::new(scaled_rotated).normal_at(Point::new(0.0, sqrt2_by2, -sqrt2_by2)),
             Vector::new(0.0, 0.97014, -0.24254),
         ),
     ];
@@ -180,6 +179,11 @@ fn normal_of_translated_sphere() {
         assert_nearly_eq(test0.y, test1.y);
         assert_nearly_eq(test0.z, test1.z);
     }
+}
+
+#[test]
+fn sphere_default_material() {
+    // Sphere::new()
 }
 
 fn assert_nearly_eq(a: f64, b: f64) {

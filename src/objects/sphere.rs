@@ -1,10 +1,13 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::math::{
-    point::{self, Point},
-    ray::Ray,
-    transformations::Transformation,
-    vector::Vector,
+use crate::{
+    graphics::materials::Material,
+    math::{
+        point::{self, Point},
+        ray::Ray,
+        transformations::Transformation,
+        vector::Vector,
+    },
 };
 
 use super::intersections::{Intersection, Intersections};
@@ -13,22 +16,25 @@ use super::intersections::{Intersection, Intersections};
 pub struct Sphere {
     pub uid: u128,
     pub transformation: Transformation,
+    pub material: Material,
 }
 
 impl Sphere {
     /// Creates a new `Sphere`.
-    pub fn new() -> Self {
+    pub fn default() -> Self {
         Self {
             uid: time_now(),
             transformation: Transformation::identity(),
+            material: Material::default(),
         }
     }
 
     /// Creates a new `Sphere` with `Transformation`.
-    pub fn new_with_transformation(transformation: Transformation) -> Self {
+    pub fn new(transformation: Transformation) -> Self {
         Self {
             uid: time_now(),
             transformation,
+            material: Material::default(),
         }
     }
 
