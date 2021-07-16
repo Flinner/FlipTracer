@@ -191,7 +191,7 @@ impl Div<f64> for Matrix {
 
 /// Removes `row_to_remove` and `column_to_remove`. returns a matrix that
 /// is 1 row and 1 column smaller
-fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize) -> Matrix {
+pub fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize) -> Matrix {
     Matrix {
         rows: matrix.rows - 1,
         columns: matrix.columns - 1,

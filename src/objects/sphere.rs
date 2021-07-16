@@ -1,6 +1,12 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::math::{point, ray::Ray, transformations::Transformation};
+use crate::math::{
+    matrix::submatrix,
+    point::{self, Point},
+    ray::Ray,
+    transformations::Transformation,
+    vector::Vector,
+};
 
 use super::intersections::{Intersection, Intersections};
 
@@ -27,6 +33,7 @@ impl Sphere {
         }
     }
 
+    /// Intersections with a Ray
     pub fn intersects(&self, ray: Ray) -> Option<Intersections> {
         let transformation = match self.transformation.clone().inverse() {
             None => return None,
@@ -54,6 +61,16 @@ impl Sphere {
 
             Some(i1.agregate(&i2))
         }
+    }
+
+    /// Returns normal (perpendicular to surface) at `point`
+    pub fn normal_at(&self, world_point: Point) -> Option<Vector> {
+        // converting from world space to object space
+        let object_point = self.transformation.clone().inverse()? * world_point;
+        let object_normal = object_point - point::ORIGIN;
+
+        let world_normal = (self.transformation.clone().inverse()?.transpose()) * object_normal;
+        Some(world_normal.normalize())
     }
 }
 

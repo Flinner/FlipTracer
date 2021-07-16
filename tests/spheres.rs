@@ -1,5 +1,12 @@
+use std::f64::consts;
+
 use raytracer::{
-    math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
+    math::{
+        point::Point,
+        ray::Ray,
+        transformations::Transformation,
+        vector::{self, Vector},
+    },
     objects::sphere::Sphere,
 };
 
@@ -111,4 +118,72 @@ fn intersecting_translated_sphere() {
     let s = Sphere::new_with_transformation(transformation);
 
     let _xs = s.intersects(ray).unwrap();
+}
+
+#[test]
+fn normal_of_sphere() {
+    let sqrt3_by3 = 3.0_f64.sqrt() / 3.0;
+    let tests = vec![
+        (
+            Sphere::new().normal_at(Point::new(1.0, 0.0, 0.0)),
+            vector::UNIT_X,
+        ),
+        (
+            Sphere::new().normal_at(Point::new(0.0, 1.0, 0.0)),
+            vector::UNIT_Y,
+        ),
+        (
+            Sphere::new().normal_at(Point::new(0.0, 0.0, 1.0)),
+            vector::UNIT_Z,
+        ),
+        (
+            Sphere::new().normal_at(Point::new(sqrt3_by3, sqrt3_by3, sqrt3_by3)),
+            Vector::new(sqrt3_by3, sqrt3_by3, sqrt3_by3),
+        ),
+    ];
+
+    for test in tests {
+        assert_eq!(test.0.unwrap(), test.1);
+
+        // normals are normalized
+        assert_eq!(test.1, test.1.normalize())
+    }
+}
+
+#[test]
+fn normal_of_translated_sphere() {
+    let sqrt2_by2 = 2.0_f64.sqrt() / 2.0;
+    let translation = Transformation::translation(0.0, 1.0, 0.0);
+    let scaled_rotated =
+        Transformation::scaling(1.0, 0.5, 1.0) * Transformation::rotate_z(consts::PI / 5.0);
+
+    let tests = vec![
+        (
+            Sphere::new_with_transformation(translation).normal_at(Point::new(
+                0.0,
+                1.70711,
+                -consts::FRAC_1_SQRT_2, // -0.7011
+            )),
+            Vector::new(0.0, consts::FRAC_1_SQRT_2, -consts::FRAC_1_SQRT_2),
+        ),
+        (
+            Sphere::new_with_transformation(scaled_rotated)
+                .normal_at(Point::new(0.0, sqrt2_by2, -sqrt2_by2)),
+            Vector::new(0.0, 0.97014, -0.24254),
+        ),
+    ];
+
+    for test in tests {
+        let test0 = test.0.unwrap();
+        let test1 = test.1;
+        assert_nearly_eq(test0.x, test1.x);
+        assert_nearly_eq(test0.y, test1.y);
+        assert_nearly_eq(test0.z, test1.z);
+    }
+}
+
+fn assert_nearly_eq(a: f64, b: f64) {
+    let assertion = (a - b).abs();
+    println!("{},{},{}", a, b, assertion);
+    assert!(assertion < 0.00001)
 }

@@ -35,10 +35,10 @@ impl Transformation {
             .map(|matrix| Transformation { matrix })
     }
     /// Transpose the Transformation
-    pub fn transpose(self) -> Option<Transformation> {
-        self.matrix
-            .transpose()
-            .map(|matrix| Transformation { matrix })
+    pub fn transpose(self) -> Transformation {
+        Transformation {
+            matrix: self.matrix.transpose(),
+        }
     }
 
     /// Return a Scaling Transformation. works for both `Point` and `Vectors`
