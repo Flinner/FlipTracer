@@ -1,5 +1,7 @@
 use raytracer::graphics::canvas::Canvas;
 use raytracer::graphics::color;
+use raytracer::graphics::color::Color;
+use raytracer::graphics::lights::PointLight;
 use raytracer::graphics::ppm;
 use raytracer::math::point::Point;
 use raytracer::math::ray::Ray;
@@ -10,11 +12,11 @@ pub fn main() {
     let mut canvas = Canvas::new_color(100, 100, color::BLACK);
 
     let origin = Point::new(0.0, 0.0, -5.0);
-    let color = color::RED;
-    let transformation = Transformation::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-        * Transformation::scaling(1.0, 0.5, 0.3);
 
-    let sphere = Sphere::new(transformation);
+    let mut sphere = Sphere::default();
+    sphere.material.color = Color::new(1.0, 0.2, 1.0); //purple
+
+    let light = PointLight::new(Point::new(-10.0, -10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
     let wall_z = 10.0;
     let wall_size = 7.0;
@@ -30,18 +32,23 @@ pub fn main() {
             let position = Point::new(world_x, world_y, wall_z);
 
             let ray = Ray::new(origin, (position - origin).normalize());
-            let i_wrapped = sphere.intersects(ray);
+            let i_wrapped = sphere.intersects(ray.clone());
 
             let i = match i_wrapped {
                 Some(intersections) => intersections,
                 None => continue,
             };
 
-            match i.hit() {
+            let intersection = match i.hit() {
                 Some(intersection) => intersection,
                 None => continue,
             };
 
+            let hit_point = ray.position(intersection.intersects_at);
+            let normal = intersection.object.normal_at(hit_point).unwrap();
+            let eye = ray.direction;
+
+            let color = sphere.material.lighting(light, hit_point, eye, normal);
             canvas.write(x, y, color);
         }
     }
