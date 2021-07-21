@@ -35,13 +35,16 @@ impl World {
             light: None,
         }
     }
-
+    /// intersects every object in the world with the ray, returns sorted Intersections.
     pub fn intersect(&self, ray: Ray) -> Intersections {
         let mut intersections = Intersections { list: vec![] };
 
         for object in &self.objects {
-            let mut a = object.intersects(&ray).unwrap();
-            intersections.list.append(&mut a.list);
+            let mut i = object
+                .intersects(&ray)
+                // empty
+                .unwrap_or(Intersections { list: vec![] });
+            intersections.list.append(&mut i.list);
         }
         println!("{:#?}", intersections.list.len());
         intersections

@@ -72,3 +72,32 @@ fn hit_is_lowest_non_negative() {
     let xs = i1.agregate(&i2).agregate(&i3).agregate(&i4);
     assert_eq!(xs.hit(), Some(&i4));
 }
+
+#[test]
+fn hit_when_intersection_is_outside() {
+    let origin = Point::new(0.0, 0.0, -5.0);
+    let direction = Vector::new(0.0, 0.0, 1.0);
+
+    let ray = Ray::new(origin, direction);
+    let s = Sphere::default();
+    let i = Intersection::new(4.0, &s);
+
+    let comps = i.prepare_computations(ray).unwrap();
+    assert!(!comps.inside);
+}
+
+#[test]
+fn hit_when_intersection_is_inside() {
+    let origin = Point::new(0.0, 0.0, 0.0);
+    let direction = Vector::new(0.0, 0.0, 1.0);
+
+    let ray = Ray::new(origin, direction);
+    let s = Sphere::default();
+    let i = Intersection::new(1.0, &s);
+
+    let comps = i.prepare_computations(ray).unwrap();
+    assert!(comps.inside);
+    assert_eq!(comps.point, Point::new(0.0, 0.0, 1.0));
+    assert_eq!(comps.eyev, Vector::new(0.0, 0.0, -1.0));
+    assert_eq!(comps.normalv, Vector::new(0.0, 0.0, -1.0)); // inverted
+}

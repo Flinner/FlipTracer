@@ -19,6 +19,7 @@ pub struct Intersections {
 pub struct PreComputed {
     pub intersects_at: f64,
     pub object: Sphere,
+    pub inside: bool,
     pub point: Point,
     pub eyev: Vector,
     pub normalv: Vector,
@@ -89,12 +90,27 @@ impl Intersection {
     /// Precomputes the point in world space where the intersection occurred
     pub fn prepare_computations(&self, ray: Ray) -> Option<PreComputed> {
         let point = ray.position(self.intersects_at);
+        let intersects_at = self.intersects_at;
+        let object = self.object.clone();
+        let eyev = -ray.direction;
+        let mut normalv = self.object.normal_at(point)?;
+        let inside: bool;
+
+        // when the intersection is inside the object, invert the normal
+        if normalv.dot_product(&eyev) < 0.0 {
+            inside = true;
+            normalv = -normalv
+        } else {
+            inside = false
+        }
+
         Some(PreComputed {
-            intersects_at: self.intersects_at,
-            object: self.object.clone(),
+            intersects_at,
+            object,
+            inside,
             point,
-            eyev: -ray.direction,
-            normalv: self.object.normal_at(point)?,
+            eyev,
+            normalv,
         })
     }
 }
