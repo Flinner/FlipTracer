@@ -39,7 +39,7 @@ impl Sphere {
     }
 
     /// Intersections with a Ray
-    pub fn intersects(&self, ray: Ray) -> Option<Intersections> {
+    pub fn intersects(&self, ray: &Ray) -> Option<Intersections> {
         let transformation = match self.transformation.clone().inverse() {
             None => return None,
             Some(t) => t,

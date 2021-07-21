@@ -11,7 +11,7 @@ fn intersection_encapsulate_object() {
     let ray = Ray::new(origin, direction);
 
     let s = Sphere::default();
-    let xs = s.intersects(ray).unwrap();
+    let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.get_object(0), Some(s));
 }
 

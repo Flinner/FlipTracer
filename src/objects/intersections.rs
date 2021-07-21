@@ -1,3 +1,5 @@
+use crate::math::{point::Point, ray::Ray, vector::Vector};
+
 use super::sphere::Sphere;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -10,7 +12,16 @@ pub struct Intersection {
 #[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
 pub struct Intersections {
-    list: Vec<Intersection>,
+    pub list: Vec<Intersection>,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct PreComputed {
+    pub intersects_at: f64,
+    pub object: Sphere,
+    pub point: Point,
+    pub eyev: Vector,
+    pub normalv: Vector,
 }
 
 impl Intersections {
@@ -20,7 +31,7 @@ impl Intersections {
     }
     /// Returns Intersection
     pub fn get(&self, index: usize) -> Option<Intersection> {
-        if index > self.list.len() {
+        if index >= self.list.len() {
             None
         } else {
             let intersects_at = self.list[index].intersects_at;
@@ -73,5 +84,17 @@ impl Intersection {
         Intersections {
             list: vec![self.clone(), rhs.clone()],
         }
+    }
+
+    /// Precomputes the point in world space where the intersection occurred
+    pub fn prepare_computations(&self, ray: Ray) -> Option<PreComputed> {
+        let point = ray.position(self.intersects_at);
+        Some(PreComputed {
+            intersects_at: self.intersects_at,
+            object: self.object.clone(),
+            point,
+            eyev: -ray.direction,
+            normalv: self.object.normal_at(point)?,
+        })
     }
 }

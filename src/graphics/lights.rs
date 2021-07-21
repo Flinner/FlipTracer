@@ -3,7 +3,7 @@ use crate::math::point::Point;
 
 /// Point of light in 3d space, with no size,
 /// intensisty is defined by `Color`
-#[derive(Clone, Copy, Debug)]
+#[derive(PartialEq, Clone, Copy, Debug)]
 pub struct PointLight {
     pub position: Point,
     /// color is also intensisty

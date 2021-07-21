@@ -19,7 +19,7 @@ fn intersect_two_points() {
     let ray = Ray::new(origin, direction);
 
     let s = Sphere::default();
-    let xs = s.intersects(ray).unwrap();
+    let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 4.0);
     assert_eq!(xs.get_intersection(1).unwrap(), 6.0);
@@ -34,7 +34,7 @@ fn intersecets_at_tanget() {
     let ray = Ray::new(origin, direction);
 
     let s = Sphere::default();
-    let xs = s.intersects(ray).unwrap();
+    let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 5.0);
     assert_eq!(xs.get_intersection(1).unwrap(), 5.0);
@@ -50,7 +50,7 @@ fn ray_misses() {
     let ray = Ray::new(origin, direction);
 
     let s = Sphere::default();
-    let _xs = s.intersects(ray).unwrap();
+    let _xs = s.intersects(&ray).unwrap();
 }
 
 #[test]
@@ -61,7 +61,7 @@ fn ray_originates_in_sphere() {
     let ray = Ray::new(origin, direction);
 
     let s = Sphere::default();
-    let xs = s.intersects(ray).unwrap();
+    let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -1.0);
     assert_eq!(xs.get_intersection(1).unwrap(), 1.0);
@@ -75,7 +75,7 @@ fn sphere_behind_ray() {
     let ray = Ray::new(origin, direction);
 
     let s = Sphere::default();
-    let xs = s.intersects(ray).unwrap();
+    let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -6.0);
     assert_eq!(xs.get_intersection(1).unwrap(), -4.0);
@@ -99,7 +99,7 @@ fn intersecting_scaled_sphere() {
     let transformation = Transformation::scaling(2.0, 2.0, 2.0);
     let s = Sphere::new(transformation);
 
-    let xs = s.intersects(ray).unwrap();
+    let xs = s.intersects(&ray).unwrap();
 
     assert_eq!(xs.count(), 2);
     println!("{:#?}", xs);
@@ -118,7 +118,7 @@ fn intersecting_translated_sphere() {
     let transformation = Transformation::scaling(5.0, 0.0, 0.0);
     let s = Sphere::new(transformation);
 
-    let _xs = s.intersects(ray).unwrap();
+    let _xs = s.intersects(&ray).unwrap();
 }
 
 #[test]
