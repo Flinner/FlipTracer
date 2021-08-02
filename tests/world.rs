@@ -56,3 +56,50 @@ fn preparing_computations() {
     assert_eq!(comps.eyev, Vector::new(0.0, 0.0, -1.0));
     assert_eq!(comps.normalv, Vector::new(0.0, 0.0, -1.0));
 }
+
+#[test]
+fn shading_an_intersection() {
+    let w = World::default();
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let shape = &w.objects[0];
+    let i = Intersection::new(4.0, shape);
+
+    let comps = i.prepare_computations(r).unwrap();
+    let c = w.shade_hit(comps);
+
+    assert_nearly_eq(c, Color::new(0.38066, 0.47583, 0.2855))
+}
+
+#[test]
+fn shading_an_intersection_from_inside() {
+    let mut w = World {
+        light: Some(PointLight::new(
+            Point::new(0.0, 0.25, 0.0),
+            Color::new(1.0, 1.0, 1.0),
+        )),
+        ..Default::default()
+    };
+
+    let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
+    let shape = &w.objects[1];
+    let i = Intersection::new(0.5, shape);
+
+    let comps = i.prepare_computations(r).unwrap();
+    let c = w.shade_hit(comps);
+
+    assert_nearly_eq(c, Color::new(0.90498, 0.90498, 0.90498))
+}
+
+fn assert_nearly_eq(a: Color, b: Color) {
+    let assertion = (a.red - b.red).abs();
+    println!("{},{},{}", a.red, b.red, assertion);
+    assert!(assertion < 0.00001);
+
+    let assertion = (a.blue - b.blue).abs();
+    println!("{},{},{}", a.blue, b.blue, assertion);
+    assert!(assertion < 0.00001);
+
+    let assertion = (a.green - b.green).abs();
+    println!("{},{},{}", a.green, b.green, assertion);
+    assert!(assertion < 0.00001);
+}
