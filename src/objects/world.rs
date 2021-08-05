@@ -1,12 +1,12 @@
 use crate::{
-    graphics::{color::Color, lights::PointLight},
+    graphics::{
+        color::{self, Color},
+        lights::PointLight,
+    },
     math::{point::Point, ray::Ray, transformations::Transformation},
 };
 
-use super::{
-    intersections::{Intersections, PreComputed},
-    sphere::Sphere,
-};
+use super::{intersections::Intersections, sphere::Sphere};
 
 /// A world of `objects` (now only `Spheres`!) and `Pointlight`
 #[derive(PartialEq, Debug, Clone)]
@@ -55,10 +55,15 @@ impl World {
             .sort_by(|a, b| a.intersects_at.partial_cmp(&b.intersects_at).unwrap());
         intersections
     }
-    pub fn shade_hit(&self, comps: PreComputed) -> Color {
-        comps
-            .object
-            .material
-            .lighting(self.light.unwrap(), comps.point, comps.eyev, comps.normalv)
+
+    /// intersects with the world given the ray and then return color at resulting intersection
+    pub fn color_at(&self, ray: Ray) -> Color {
+        let is = self.intersect(ray.clone());
+        if let Some(hit) = is.hit() {
+            let comp = hit.prepare_computations(ray).unwrap();
+            comp.shade_hit(self)
+        } else {
+            color::BLACK
+        }
     }
 }

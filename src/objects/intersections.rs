@@ -1,6 +1,9 @@
-use crate::math::{point::Point, ray::Ray, vector::Vector};
+use crate::{
+    graphics::color::Color,
+    math::{point::Point, ray::Ray, vector::Vector},
+};
 
-use super::sphere::Sphere;
+use super::{sphere::Sphere, world::World};
 
 #[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
@@ -112,5 +115,13 @@ impl Intersection {
             eyev,
             normalv,
         })
+    }
+}
+
+impl PreComputed {
+    pub fn shade_hit(&self, w: &World) -> Color {
+        self.object
+            .material
+            .lighting(w.light.unwrap(), self.point, self.eyev, self.normalv)
     }
 }

@@ -5,18 +5,21 @@ use raytracer::graphics::lights::PointLight;
 use raytracer::graphics::ppm;
 use raytracer::math::point::Point;
 use raytracer::math::ray::Ray;
-use raytracer::math::transformations::Transformation;
+//use raytracer::math::transformations::Transformation;
 use raytracer::objects::sphere::Sphere;
 
 pub fn main() {
-    let mut canvas = Canvas::new_color(100, 100, color::BLACK);
+    let mut canvas = Canvas::new_color(500, 500, color::BLACK);
 
     let origin = Point::new(0.0, 0.0, -5.0);
 
     let mut sphere = Sphere::default();
-    sphere.material.color = Color::new(1.0, 0.2, 1.0); //purple
+    sphere.material.color = Color::new(1.0, 0.2, 1.0); // purple
+    sphere.material.shininess = 900.0;
+    sphere.material.ambient = 0.2;
+    sphere.material.diffuse = 1.0;
 
-    let light = PointLight::new(Point::new(-10.0, -10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+    let light = PointLight::new(Point::new(-5.0, 10.0, -15.0), Color::new(1.0, 1.0, 1.0));
 
     let wall_z = 10.0;
     let wall_size = 7.0;
@@ -32,7 +35,7 @@ pub fn main() {
             let position = Point::new(world_x, world_y, wall_z);
 
             let ray = Ray::new(origin, (position - origin).normalize());
-            let i_wrapped = sphere.intersects(ray.clone());
+            let i_wrapped = sphere.intersects(&ray);
 
             let i = match i_wrapped {
                 Some(intersections) => intersections,

@@ -1,5 +1,8 @@
 use raytracer::{
-    graphics::{color::Color, lights::PointLight},
+    graphics::{
+        color::{self, Color},
+        lights::PointLight,
+    },
     math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
     objects::{
         intersections::{Intersection, Intersections},
@@ -65,14 +68,14 @@ fn shading_an_intersection() {
     let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(r).unwrap();
-    let c = w.shade_hit(comps);
+    let c = comps.shade_hit(&w);
 
     assert_nearly_eq(c, Color::new(0.38066, 0.47583, 0.2855))
 }
 
 #[test]
 fn shading_an_intersection_from_inside() {
-    let mut w = World {
+    let w = World {
         light: Some(PointLight::new(
             Point::new(0.0, 0.25, 0.0),
             Color::new(1.0, 1.0, 1.0),
@@ -85,9 +88,38 @@ fn shading_an_intersection_from_inside() {
     let i = Intersection::new(0.5, shape);
 
     let comps = i.prepare_computations(r).unwrap();
-    let c = w.shade_hit(comps);
+    let c = comps.shade_hit(&w);
 
     assert_nearly_eq(c, Color::new(0.90498, 0.90498, 0.90498))
+}
+
+#[test]
+fn color_when_ray_misses() {
+    let w = World::default();
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 1.0, 0.0));
+
+    assert_eq!(w.color_at(r), color::BLACK)
+}
+
+#[test]
+fn color_when_ray_hits() {
+    let w = World::default();
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+
+    assert_nearly_eq(w.color_at(r), Color::new(0.38066, 0.47583, 0.2855))
+}
+
+#[test]
+fn color_when_intersection_behind_ray() {
+    let mut w = World::default();
+    let outer = &mut w.objects[0];
+    outer.material.ambient = 1.0;
+    let inner = &mut w.objects[1];
+    inner.material.ambient = 1.0;
+    let r = Ray::new(Point::new(0.0, 0.0, 0.75), Vector::new(0.0, 0.0, -1.0));
+
+    let inner = &w.objects[1];
+    assert_eq!(w.color_at(r), inner.material.color)
 }
 
 fn assert_nearly_eq(a: Color, b: Color) {
