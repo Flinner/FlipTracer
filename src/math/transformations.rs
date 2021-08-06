@@ -119,6 +119,27 @@ impl Transformation {
         let matrix = Matrix::new_from_vec(4, 4, vec);
         Transformation { matrix }
     }
+
+    /// Moves/Transforms the `World`, aka moving the eye/camera
+    pub fn view(from: Point, to: Point, up: Vector) -> Transformation {
+        let forward = (to - from).normalize();
+        let left = forward.cross_product(&up.normalize());
+        // true up, allows `up` to be an approximation
+        let true_up = left.cross_product(&forward);
+
+        let vec = vec![
+            left.x, left.y, left.z, 0.0, //
+            true_up.x, true_up.y, true_up.z, 0.0, //
+            -forward.x, -forward.y, -forward.z, 0.0, //
+            0.0, 0.0, 0.0, 1.0,
+        ];
+        let orientation = Matrix::new_from_vec(4, 4, vec);
+
+        Transformation {
+            matrix: orientation,
+        } * // moveing scene to place
+	    Transformation::translation(-from.x, -from.y, -from.z)
+    }
 }
 
 impl Mul<Point> for Transformation {

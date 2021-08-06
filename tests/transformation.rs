@@ -229,3 +229,39 @@ mod chainining {
         assert_eq!(transformation * p, Point::new(15.0, 0.0, 7.0));
     }
 }
+
+mod orientation {
+    use super::*;
+    #[test]
+    fn transformation_matrix_for_default_orientation() {
+        let from = Point::new(0.0, 0.0, 0.0);
+        let to = Point::new(0.0, 0.0, -1.0);
+        let up = Vector::new(0.0, 1.0, 0.0);
+        assert_eq!(
+            Transformation::view(from, to, up),
+            Transformation::identity()
+        )
+    }
+
+    #[test]
+    fn transformation_matrix_looking_in_positive_z_direction() {
+        let from = Point::new(0.0, 0.0, 0.0);
+        let to = Point::new(0.0, 0.0, 1.0);
+        let up = Vector::new(0.0, 1.0, 0.0);
+        assert_eq!(
+            Transformation::view(from, to, up),
+            Transformation::scaling(-1.0, 1.0, -1.0)
+        )
+    }
+
+    #[test]
+    fn transformation_moves_world() {
+        let from = Point::new(0.0, 0.0, 8.0);
+        let to = Point::new(0.0, 0.0, 0.0);
+        let up = Vector::new(0.0, 1.0, 0.0);
+        assert_eq!(
+            Transformation::view(from, to, up),
+            Transformation::translation(0.0, 0.0, -8.0)
+        )
+    }
+}
