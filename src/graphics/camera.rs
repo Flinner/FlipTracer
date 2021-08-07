@@ -1,12 +1,17 @@
-use crate::math::{point::Point, ray::Ray, transformations::Transformation};
+use crate::{
+    math::{point::Point, ray::Ray, transformations::Transformation},
+    objects::world::World,
+};
+
+use super::canvas::Canvas;
 
 #[derive(Debug, Clone, PartialEq)]
 /// Camera has the canvas always one unit away.
 pub struct Camera {
     /// horizontal
-    pub hsize: f64,
+    pub hsize: usize,
     /// vertical
-    pub vsize: f64,
+    pub vsize: usize,
     /// field of view, (angle in Radians)
     pub fov: f64,
     /// defaults to identity
@@ -20,10 +25,10 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(hsize: f64, vsize: f64, fov: f64) -> Self {
+    pub fn new(hsize: usize, vsize: usize, fov: f64) -> Self {
         let transform = Transformation::identity();
         let (pixel_size, half_width, half_height) =
-            Camera::pixel_size_width_and_height(hsize, vsize, fov);
+            Camera::pixel_size_width_and_height(hsize as f64, vsize as f64, fov);
 
         Self {
             hsize,
@@ -82,6 +87,18 @@ impl Camera {
 
         Ray::new(origin, direction)
     }
+
+    pub fn render(&self, world: World) -> Canvas {
+        let mut image = Canvas::new(self.hsize as usize, self.vsize as usize);
+        for y in 0..(self.vsize as usize) {
+            for x in 0..(self.hsize as usize) {
+                let ray = self.ray_for_pixel(x, y);
+                let color = world.color_at(ray);
+                image.write(x, y, color);
+            }
+        }
+        image
+    }
 }
 
 // ================================= TESTS =======================================
@@ -96,7 +113,7 @@ mod tests {
 
     #[test]
     fn ray_through_center_of_canvas() {
-        let camera = Camera::new(201.0, 101.0, FRAC_PI_2);
+        let camera = Camera::new(201, 101, FRAC_PI_2);
         let ray = camera.ray_for_pixel(100, 50);
 
         assert_eq!(ray.origin, Point::new(0.0, 0.0, 0.0));
@@ -105,7 +122,7 @@ mod tests {
 
     #[test]
     fn ray_through_corner_of_canvas() {
-        let camera = Camera::new(201.0, 101.0, FRAC_PI_2);
+        let camera = Camera::new(201, 101, FRAC_PI_2);
         let ray = camera.ray_for_pixel(0, 0);
 
         assert_eq!(ray.origin, Point::new(0.0, 0.0, 0.0));
@@ -114,7 +131,7 @@ mod tests {
 
     #[test]
     fn ray_when_camera_is_transformed() {
-        let mut camera = Camera::new(201.0, 101.0, FRAC_PI_2);
+        let mut camera = Camera::new(201, 101, FRAC_PI_2);
         camera.transform =
             Transformation::rotate_y(FRAC_PI_4) * Transformation::translation(0.0, -2.0, 5.0);
         let ray = camera.ray_for_pixel(100, 50);
