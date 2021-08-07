@@ -49,7 +49,6 @@ impl World {
                 .unwrap_or(Intersections { list: vec![] });
             intersections.list.append(&mut i.list);
         }
-        println!("{:#?}", intersections.list.len());
         intersections
             .list
             .sort_by(|a, b| a.intersects_at.partial_cmp(&b.intersects_at).unwrap());
