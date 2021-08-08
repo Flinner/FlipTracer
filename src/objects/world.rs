@@ -17,7 +17,7 @@ pub struct World {
 
 impl Default for World {
     fn default() -> Self {
-        let light = PointLight::new(Point::new(-10.0, -10.0, -10.0), Color::new(1.0, 1.0, 1.0));
+        let light = PointLight::new(Point::new(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
         let mut s1 = Sphere::default();
         s1.material.color = Color::new(0.8, 1.0, 0.6);
         s1.material.diffuse = 0.7;
@@ -63,6 +63,23 @@ impl World {
             comp.shade_hit(self)
         } else {
             color::BLACK
+        }
+    }
+
+    pub fn is_shadowed(&self, point: Point) -> bool {
+        if let Some(light) = self.light {
+            let v = light.position - point;
+            let distance = v.magnitude();
+            let direction = v.normalize();
+
+            let ray = Ray::new(point, direction);
+            let intersections = self.intersect(ray);
+            match intersections.hit() {
+                Some(hit) => hit.intersects_at < distance,
+                None => false,
+            }
+        } else {
+            false // no light = no shadow
         }
     }
 }

@@ -1,5 +1,7 @@
+use std::f64::EPSILON;
+
 use raytracer::{
-    math::{point::Point, ray::Ray, vector::Vector},
+    math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
     objects::{intersections::Intersection, sphere::Sphere},
 };
 
@@ -100,4 +102,17 @@ fn hit_when_intersection_is_inside() {
     assert_eq!(comps.point, Point::new(0.0, 0.0, 1.0));
     assert_eq!(comps.eyev, Vector::new(0.0, 0.0, -1.0));
     assert_eq!(comps.normalv, Vector::new(0.0, 0.0, -1.0)); // inverted
+}
+#[test]
+fn hit_should_offset_the_point() {
+    let origin = Point::new(0.0, 0.0, -5.0);
+    let direction = Vector::new(0.0, 0.0, 1.0);
+
+    let ray = Ray::new(origin, direction);
+    let s = Sphere::new(Transformation::translation(0.0, 0.0, 1.0));
+    let i = Intersection::new(5.0, &s);
+
+    let comps = i.prepare_computations(ray).unwrap();
+    assert!(comps.over_point.z < -EPSILON / 2.0);
+    assert!(comps.point.z > comps.over_point.z)
 }

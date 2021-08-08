@@ -9,6 +9,7 @@ use raytracer::{
         vector::{self, Vector},
     },
     objects::sphere::Sphere,
+    testing::Testing,
 };
 
 #[test]
@@ -176,9 +177,7 @@ fn normal_of_translated_sphere() {
     for test in tests {
         let test0 = test.0.unwrap();
         let test1 = test.1;
-        assert_nearly_eq(test0.x, test1.x);
-        assert_nearly_eq(test0.y, test1.y);
-        assert_nearly_eq(test0.z, test1.z);
+        Testing::assert_nearly_eq(test0, test1);
     }
 }
 
@@ -194,10 +193,4 @@ fn sphere_given_material() {
     m.ambient = 1.0;
     s.material = m;
     assert_eq!(s.material, m)
-}
-
-fn assert_nearly_eq(a: f64, b: f64) {
-    let assertion = (a - b).abs();
-    println!("{},{},{}", a, b, assertion);
-    assert!(assertion < 0.00001)
 }

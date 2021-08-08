@@ -1,6 +1,7 @@
 use raytracer::math::point::Point;
 use raytracer::math::vector;
 use raytracer::math::vector::Vector;
+use raytracer::testing::Testing;
 use std::any::Any;
 use std::any::TypeId;
 
@@ -151,20 +152,6 @@ fn reflecting_ray() {
     let normal2 = Vector::new(sqrt2_by2, sqrt2_by2, 0.0);
     let reflect2 = Vector::new(1.0, 0.0, 0.0);
 
-    assert_nearly_eq(ray1.reflect(normal1), reflect1);
-    assert_nearly_eq(ray2.reflect(normal2), reflect2);
-}
-
-fn assert_nearly_eq(a: Vector, b: Vector) {
-    let assertion = (a.x - b.x).abs();
-    println!("{},{},{}", a.x, b.x, assertion);
-    assert!(assertion < 0.00001);
-
-    let assertion = (a.y - b.y).abs();
-    println!("{},{},{}", a.y, b.y, assertion);
-    assert!(assertion < 0.00001);
-
-    let assertion = (a.z - b.z).abs();
-    println!("{},{},{}", a.z, b.z, assertion);
-    assert!(assertion < 0.00001);
+    Testing::assert_nearly_eq(ray1.reflect(normal1), reflect1);
+    Testing::assert_nearly_eq(ray2.reflect(normal2), reflect2);
 }

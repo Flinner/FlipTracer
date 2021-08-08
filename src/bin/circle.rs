@@ -51,7 +51,9 @@ pub fn main() {
             let normal = intersection.object.normal_at(hit_point).unwrap();
             let eye = ray.direction;
 
-            let color = sphere.material.lighting(light, hit_point, eye, normal);
+            let color = sphere
+                .material
+                .lighting(light, hit_point, eye, normal, false);
             canvas.write(x, y, color);
         }
     }

@@ -45,6 +45,7 @@ impl Material {
         position: Point,
         eye: Vector,
         normal: Vector,
+        in_shadow: bool,
     ) -> Color {
         let diffuse;
         let specular;
@@ -63,7 +64,7 @@ impl Material {
         // that the light is on the other side of the surface
         let light_dot_normal = lightv.dot_product(&normal);
 
-        if light_dot_normal < 0.0 {
+        if in_shadow || light_dot_normal < 0.0 {
             diffuse = color::BLACK;
             specular = color::BLACK;
         } else {

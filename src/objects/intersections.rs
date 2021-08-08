@@ -26,6 +26,8 @@ pub struct PreComputed {
     pub point: Point,
     pub eyev: Vector,
     pub normalv: Vector,
+    /// Offsets towards the normal, prevents shadow 'acne'
+    pub over_point: Point,
 }
 
 impl Intersections {
@@ -106,6 +108,7 @@ impl Intersection {
         } else {
             inside = false
         }
+        let over_point = point + normalv * 0.0000001; // EPSILON
 
         Some(PreComputed {
             intersects_at,
@@ -114,14 +117,20 @@ impl Intersection {
             point,
             eyev,
             normalv,
+            over_point,
         })
     }
 }
 
 impl PreComputed {
     pub fn shade_hit(&self, w: &World) -> Color {
-        self.object
-            .material
-            .lighting(w.light.unwrap(), self.point, self.eyev, self.normalv)
+        let shadowed = w.is_shadowed(self.over_point);
+        self.object.material.lighting(
+            w.light.unwrap(),
+            self.over_point,
+            self.eyev,
+            self.normalv,
+            shadowed,
+        )
     }
 }

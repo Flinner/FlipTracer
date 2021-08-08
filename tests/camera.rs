@@ -4,6 +4,7 @@ use raytracer::{
     graphics::{camera::Camera, color::Color},
     math::{point::Point, transformations::Transformation, vector::Vector},
     objects::world::World,
+    testing::Testing,
 };
 
 #[test]
@@ -23,12 +24,12 @@ fn constructing_a_camera() {
 #[test]
 fn pixel_size_of_horizontal_canvas() {
     let c = Camera::new(200, 125, consts::FRAC_PI_2);
-    assert_nearly_eq_f64(c.pixel_size, 0.01)
+    Testing::assert_nearly_eq(c.pixel_size, 0.01)
 }
 #[test]
 fn pixel_size_of_vertical_canvas() {
     let c = Camera::new(125, 200, consts::FRAC_PI_2);
-    assert_nearly_eq_f64(c.pixel_size, 0.01)
+    Testing::assert_nearly_eq(c.pixel_size, 0.01)
 }
 
 #[test]
@@ -44,20 +45,5 @@ fn rendering_a_world() {
 
     let image = c.render(w);
 
-    assert_nearly_eq_color(image.get(5, 5), Color::new(0.38066, 0.47583, 0.2855))
-}
-
-// === HELPER ===
-// TODO: refactor test helper function
-
-fn assert_nearly_eq_f64(a: f64, b: f64) {
-    let assertion = (a - b).abs();
-    println!("{},{},{}", a, b, assertion);
-    assert!(assertion < 0.00001)
-}
-
-fn assert_nearly_eq_color(a: Color, b: Color) {
-    assert_nearly_eq_f64(a.red, b.red);
-    assert_nearly_eq_f64(a.blue, b.blue);
-    assert_nearly_eq_f64(a.green, b.green);
+    Testing::assert_nearly_eq(image.get(5, 5), Color::new(0.38066, 0.47583, 0.2855))
 }

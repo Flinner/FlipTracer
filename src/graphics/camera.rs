@@ -107,7 +107,10 @@ impl Camera {
 mod tests {
     use std::f64::consts::{FRAC_PI_2, FRAC_PI_4, SQRT_2};
 
-    use crate::math::{point::Point, vector::Vector};
+    use crate::{
+        math::{point::Point, vector::Vector},
+        testing::Testing,
+    };
 
     use super::*;
 
@@ -126,7 +129,7 @@ mod tests {
         let ray = camera.ray_for_pixel(0, 0);
 
         assert_eq!(ray.origin, Point::new(0.0, 0.0, 0.0));
-        assert_nearly_eq(ray.direction, Vector::new(0.66519, 0.33259, -0.66851))
+        Testing::assert_nearly_eq(ray.direction, Vector::new(0.66519, 0.33259, -0.66851))
     }
 
     #[test]
@@ -137,20 +140,6 @@ mod tests {
         let ray = camera.ray_for_pixel(100, 50);
 
         assert_eq!(ray.origin, Point::new(0.0, 2.0, -5.0));
-        assert_nearly_eq(ray.direction, Vector::new(SQRT_2 / 2.0, 0.0, -SQRT_2 / 2.0))
-    }
-    // TODO: refactor into a testing helpers module!
-    fn assert_nearly_eq(a: Vector, b: Vector) {
-        let assertion = (a.x - b.x).abs();
-        println!("x | {},{},{}", a.x, b.x, assertion);
-        assert!(assertion < 0.00001);
-
-        let assertion = (a.y - b.y).abs();
-        println!("y | {},{},{}", a.y, b.y, assertion);
-        assert!(assertion < 0.00001);
-
-        let assertion = (a.z - b.z).abs();
-        println!("z | {},{},{}", a.z, b.z, assertion);
-        assert!(assertion < 0.00001);
+        Testing::assert_nearly_eq(ray.direction, Vector::new(SQRT_2 / 2.0, 0.0, -SQRT_2 / 2.0))
     }
 }

@@ -15,15 +15,15 @@ fn main() {
 
     let mut left_wall = Sphere::default();
     left_wall.transformation = Transformation::translation(0.0, 0.0, 5.0)
-        * Transformation::rotate_x(FRAC_PI_2)
         * Transformation::rotate_y(-FRAC_PI_4)
+        * Transformation::rotate_x(FRAC_PI_2)
         * Transformation::scaling(10.0, 0.01, 10.0);
     left_wall.material = floor.material;
 
     let mut right_wall = Sphere::default();
     right_wall.transformation = Transformation::translation(0.0, 0.0, 5.0)
-        * Transformation::rotate_x(FRAC_PI_2)
         * Transformation::rotate_y(FRAC_PI_4)
+        * Transformation::rotate_x(FRAC_PI_2)
         * Transformation::scaling(10.0, 0.01, 10.0);
     right_wall.material = floor.material;
 
@@ -54,7 +54,7 @@ fn main() {
     ));
     world.objects = vec![floor, left_wall, right_wall, middle, right, left];
 
-    let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
+    let mut camera = Camera::new(1080, 1920, FRAC_PI_3);
     camera.transform = Transformation::view(
         Point::new(0.0, 1.5, -5.0),
         Point::new(0.0, 1.0, 0.0),
