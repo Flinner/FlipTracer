@@ -50,7 +50,7 @@ fn intersect_world_with_ray() {
 fn preparing_computations() {
     let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = Sphere::default();
-    let i = Intersection::new(4.0, &shape);
+    let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(ray).unwrap();
 
@@ -65,7 +65,7 @@ fn preparing_computations() {
 fn shading_an_intersection() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = &w.objects[0];
+    let shape = w.objects[0];
     let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(r).unwrap();
@@ -85,7 +85,7 @@ fn shading_an_intersection_from_inside() {
     };
 
     let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = &w.objects[1];
+    let shape = w.objects[1];
     let i = Intersection::new(0.5, shape);
 
     let comps = i.prepare_computations(r).unwrap();

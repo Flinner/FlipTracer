@@ -40,7 +40,6 @@ fn split_long_lines() {
     let canvas = Canvas::new_color(10, 2, color);
 
     let ppm = ppm::new(canvas);
-    for line in ppm.lines() {
-        assert!(line.chars().count() <= 70)
-    }
+    ppm.lines()
+        .for_each(|line| assert!(line.chars().count() <= 70));
 }

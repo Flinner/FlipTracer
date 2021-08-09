@@ -12,7 +12,7 @@ use crate::{
 
 use super::intersections::{Intersection, Intersections};
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Sphere {
     pub uid: u128,
     pub transformation: Transformation,
@@ -61,8 +61,8 @@ impl Sphere {
             let t2: f64 = (-b + discriminant.sqrt()) / (2.0_f64 * a);
             let object = self;
 
-            let i1 = Intersection::new(t1, object);
-            let i2 = Intersection::new(t2, object);
+            let i1 = Intersection::new(t1, *object);
+            let i2 = Intersection::new(t2, *object);
 
             Some(i1.agregate(&i2))
         }

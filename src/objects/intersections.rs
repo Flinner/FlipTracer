@@ -18,7 +18,7 @@ pub struct Intersections {
     pub list: Vec<Intersection>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PreComputed {
     pub intersects_at: f64,
     pub object: Sphere,
@@ -41,28 +41,22 @@ impl Intersections {
             None
         } else {
             let intersects_at = self.list[index].intersects_at;
-            let object = &self.list[index].object;
             let intersection = Intersection {
                 intersects_at,
-                object: object.clone(),
+                object: self.list[index].object,
             };
             Some(intersection)
         }
     }
     /// Returns `intersection_at: f64`
     pub fn get_intersection(&self, index: usize) -> Option<f64> {
-        match self.get(index) {
-            None => None,
-            Some(intersection) => Some(intersection.intersects_at),
-        }
+        self.get(index)
+            .map(|intersection| intersection.intersects_at)
     }
 
     /// Returns `intersection_at: f64`
     pub fn get_object(&self, index: usize) -> Option<Sphere> {
-        match self.get(index) {
-            None => None,
-            Some(intersection) => Some(intersection.object),
-        }
+        self.get(index).map(|intersection| intersection.object)
     }
     pub fn hit(&self) -> Option<&Intersection> {
         self.list.iter().find(|&x| x.intersects_at >= 0.0)
@@ -78,10 +72,10 @@ impl Intersections {
 }
 
 impl Intersection {
-    pub fn new(intersects_at: f64, object: &Sphere) -> Self {
+    pub fn new(intersects_at: f64, object: Sphere) -> Self {
         Intersection {
             intersects_at,
-            object: object.clone(),
+            object,
         }
     }
 
@@ -96,7 +90,7 @@ impl Intersection {
     pub fn prepare_computations(&self, ray: Ray) -> Option<PreComputed> {
         let point = ray.position(self.intersects_at);
         let intersects_at = self.intersects_at;
-        let object = self.object.clone();
+        let object = self.object;
         let eyev = -ray.direction;
         let mut normalv = self.object.normal_at(point)?;
         let inside: bool;

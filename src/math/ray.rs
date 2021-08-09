@@ -1,6 +1,6 @@
 use super::{point::Point, transformations::Transformation, vector::Vector};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct Ray {
     pub origin: Point,
     pub direction: Vector,

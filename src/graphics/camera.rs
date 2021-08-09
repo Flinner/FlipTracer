@@ -5,7 +5,7 @@ use crate::{
 
 use super::canvas::Canvas;
 
-#[derive(Debug,  Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 /// Camera has the canvas always one unit away.
 pub struct Camera {
     /// horizontal
@@ -89,13 +89,16 @@ impl Camera {
 
     pub fn render(&self, world: World) -> Canvas {
         let mut image = Canvas::new(self.hsize as usize, self.vsize as usize);
-        for y in 0..(self.vsize as usize) {
-            for x in 0..(self.hsize as usize) {
+        let vsize = self.vsize as usize;
+        let hsize = self.hsize as usize;
+
+        (0..vsize).for_each(|y| {
+            (0..hsize).for_each(|x| {
                 let ray = self.ray_for_pixel(x, y);
                 let color = world.color_at(ray);
                 image.write(x, y, color);
-            }
-        }
+            });
+        });
         image
     }
 }

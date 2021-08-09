@@ -42,13 +42,13 @@ impl World {
     pub fn intersect(&self, ray: Ray) -> Intersections {
         let mut intersections = Intersections { list: vec![] };
 
-        for object in &self.objects {
+        self.objects.iter().for_each(|object| {
             let mut i = object
                 .intersects(&ray)
                 // empty
                 .unwrap_or(Intersections { list: vec![] });
             intersections.list.append(&mut i.list);
-        }
+        });
         intersections
             .list
             .sort_by(|a, b| a.intersects_at.partial_cmp(&b.intersects_at).unwrap());
@@ -57,7 +57,7 @@ impl World {
 
     /// intersects with the world given the ray and then return color at resulting intersection
     pub fn color_at(&self, ray: Ray) -> Color {
-        let is = self.intersect(ray.clone());
+        let is = self.intersect(ray);
         if let Some(hit) = is.hit() {
             let comp = hit.prepare_computations(ray).unwrap();
             comp.shade_hit(self)

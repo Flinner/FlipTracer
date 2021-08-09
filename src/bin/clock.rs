@@ -12,7 +12,7 @@ pub fn main() {
     let radius = 25.0;
     let center = canvas.height as f64 / 2.0;
 
-    for i in 0..12 {
+    (0..12).for_each(|i| {
         // println!(
         //     "POINT: z:{}, x:{}, angle:{}",
         //     (point.rotate_y(angle * i as f64).z * 10.0 + 50.0) as usize,
@@ -24,7 +24,7 @@ pub fn main() {
             (point.rotate_y(angle * i as f64).x * radius + center) as usize,
             color,
         );
-    }
+    });
 
     let ppm = ppm::new(canvas);
     println!("{}", ppm);

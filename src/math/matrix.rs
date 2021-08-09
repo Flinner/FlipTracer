@@ -258,30 +258,3 @@ pub fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize)
     }
     a
 }
-
-// /// Removes `row` and `column`. and finds determinant of the matrix.
-// fn matrix_minor(matrix: &Matrix, row: usize, column: usize) -> f64 {
-//     let sub = submatrix(matrix, row, column);
-//     let e11 = sub[0];
-//     let e12 = sub[1];
-//     let e13 = sub[2];
-//     let e21 = sub[3];
-//     let e22 = sub[4];
-//     let e23 = sub[5];
-//     let e31 = sub[6];
-//     let e32 = sub[7];
-//     let e33 = sub[8];
-
-//     0.0 //.
-// 	+ e11 * e22 * e33 //.
-// 	+ e12 * e23 * e31 //.
-// 	+ e13 * e21 * e32 //.
-// 	- e11 * e23 * e32 //.
-// 	- e12 * e21 * e33 //.
-// 	- e13 * e22 * e31 //.
-// }
-
-// /// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
-// fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
-//     matrix_minor(matrix, row, column) * (if (row + column) % 2 != 0 { -1.0 } else { 1.0 })
-// }
