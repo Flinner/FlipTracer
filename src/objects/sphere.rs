@@ -40,7 +40,7 @@ impl Sphere {
 
     /// Intersections with a Ray
     pub fn intersects(&self, ray: &Ray) -> Option<Intersections> {
-        let transformation = match self.transformation.clone().inverse() {
+        let transformation = match self.transformation.inverse() {
             None => return None,
             Some(t) => t,
         };
@@ -71,10 +71,10 @@ impl Sphere {
     /// Returns normal (perpendicular to surface) at `point`
     pub fn normal_at(&self, world_point: Point) -> Option<Vector> {
         // converting from world space to object space
-        let object_point = self.transformation.clone().inverse()? * world_point;
+        let object_point = self.transformation.inverse()? * world_point;
         let object_normal = object_point - point::ORIGIN;
 
-        let world_normal = (self.transformation.clone().inverse()?.transpose()) * object_normal;
+        let world_normal = (self.transformation.inverse()?.transpose()) * object_normal;
         Some(world_normal.normalize())
     }
 }

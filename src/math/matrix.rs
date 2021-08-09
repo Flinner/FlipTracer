@@ -94,6 +94,12 @@ impl Matrix {
     }
 }
 
+impl Default for Matrix {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Mul<Matrix> for Matrix {
     type Output = Self;
 

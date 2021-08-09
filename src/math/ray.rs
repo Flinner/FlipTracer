@@ -19,7 +19,7 @@ impl Ray {
 
     pub fn transform(&self, transformation: Transformation) -> Self {
         Ray {
-            origin: transformation.clone() * self.origin,
+            origin: transformation * self.origin,
             direction: transformation * self.direction,
         }
     }
