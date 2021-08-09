@@ -50,30 +50,39 @@ impl Matrix {
     /// Transposes the `Matrix`. rows are converted to columns and vice versa.
     pub fn transpose(self) -> Self {
         let mut matrix = Matrix::new();
-        for column in 0..4 {
-            for row in 0..4 {
+        (0..4).for_each(|column| {
+            (0..4).for_each(|row| {
                 matrix.write(column, row, self.get(row, column));
-            }
-        }
+            });
+        });
         matrix
     }
 
     /// Find `Matrix` determinant. Might not work with greater than 4x4.
     pub fn determinant(&self) -> f64 {
-        let m11 = matrix_cofactor(self, 0, 0);
-        let m21 = matrix_cofactor(self, 1, 0);
-        let m31 = matrix_cofactor(self, 2, 0);
-        let m41 = matrix_cofactor(self, 3, 0);
+        let m = self.data;
 
-        let e11 = self.get(0, 0);
-        let e21 = self.get(1, 0);
-        let e31 = self.get(2, 0);
-        let e41 = self.get(3, 0);
+        let inv0 = m[5] * m[10] * m[15] - m[5] * m[11] * m[14] - m[9] * m[6] * m[15]
+            + m[9] * m[7] * m[14]
+            + m[13] * m[6] * m[11]
+            - m[13] * m[7] * m[10];
 
-        e11 * m11 //.
-	    + e21 * m21//.
-	    + e31 * m31//.
-	    + e41 * m41
+        let inv1 = -m[4] * m[10] * m[15] + m[4] * m[11] * m[14] + m[8] * m[6] * m[15]
+            - m[8] * m[7] * m[14]
+            - m[12] * m[6] * m[11]
+            + m[12] * m[7] * m[10];
+
+        let inv2 = m[4] * m[9] * m[15] - m[4] * m[11] * m[13] - m[8] * m[5] * m[15]
+            + m[8] * m[7] * m[13]
+            + m[12] * m[5] * m[11]
+            - m[12] * m[7] * m[9];
+
+        let inv3 = -m[4] * m[9] * m[14] + m[4] * m[10] * m[13] + m[8] * m[5] * m[14]
+            - m[8] * m[6] * m[13]
+            - m[12] * m[5] * m[10]
+            + m[12] * m[6] * m[9];
+
+        m[0] * inv0 + m[1] * inv1 + m[2] * inv2 + m[3] * inv3 // determinant
     }
 
     /// Inverses `Matrix`, returns None if can't inverse (`Matrix.determinant ==0 `)
@@ -167,10 +176,9 @@ impl Matrix {
             None
         } else {
             det = 1.0 / det;
-
-            for i in 0..16 {
+            (0..16).for_each(|i| {
                 inv[i] *= det;
-            }
+            });
             Some(Matrix { data: inv })
         }
     }
@@ -190,15 +198,13 @@ impl Mul<Matrix> for Matrix {
         let mut output = Matrix::new();
 
         // if self.columns == rhs.rows {
-        for row in 0..4 {
-            for column in 0..4 {
+        (0..4).for_each(|row| {
+            (0..4).for_each(|column| {
                 let mut val = 0.0;
-                for i in 0..4 {
-                    val += self.get(row, i) * rhs.get(i, column)
-                }
+                (0..4).for_each(|i| val += self.get(row, i) * rhs.get(i, column));
                 output.write(row, column, val);
-            }
-        }
+            });
+        });
         output
     }
 }
@@ -230,9 +236,9 @@ impl Div<f64> for Matrix {
 
     fn div(self, rhs: f64) -> Self {
         let mut f = self.data;
-        for (i, e) in self.data.iter().enumerate() {
+        self.data.iter().enumerate().for_each(|(i, e)| {
             f[i] = e / rhs;
-        }
+        });
         Matrix::new_from_vec(f)
     }
 }
@@ -253,67 +259,29 @@ pub fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize)
     a
 }
 
-/// Removes `row` and `column`. and finds determinant of the matrix.
-fn matrix_minor(matrix: &Matrix, row: usize, column: usize) -> f64 {
-    let sub = submatrix(matrix, row, column);
-    let e11 = sub[0];
-    let e12 = sub[1];
-    let e13 = sub[2];
-    let e21 = sub[3];
-    let e22 = sub[4];
-    let e23 = sub[5];
-    let e31 = sub[6];
-    let e32 = sub[7];
-    let e33 = sub[8];
+// /// Removes `row` and `column`. and finds determinant of the matrix.
+// fn matrix_minor(matrix: &Matrix, row: usize, column: usize) -> f64 {
+//     let sub = submatrix(matrix, row, column);
+//     let e11 = sub[0];
+//     let e12 = sub[1];
+//     let e13 = sub[2];
+//     let e21 = sub[3];
+//     let e22 = sub[4];
+//     let e23 = sub[5];
+//     let e31 = sub[6];
+//     let e32 = sub[7];
+//     let e33 = sub[8];
 
-    0.0 //.
-	+ e11 * e22 * e33 //.
-	+ e12 * e23 * e31 //.
-	+ e13 * e21 * e32 //.
-	- e11 * e23 * e32 //.
-	- e12 * e21 * e33 //.
-	- e13 * e22 * e31 //.
-}
+//     0.0 //.
+// 	+ e11 * e22 * e33 //.
+// 	+ e12 * e23 * e31 //.
+// 	+ e13 * e21 * e32 //.
+// 	- e11 * e23 * e32 //.
+// 	- e12 * e21 * e33 //.
+// 	- e13 * e22 * e31 //.
+// }
 
-/// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
-#[inline]
-fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
-    matrix_minor(matrix, row, column) * (if (row + column) % 2 != 0 { -1.0 } else { 1.0 })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn submatrix_of_4x4_is_3x3() {
-        let vec4 = [
-            9.0, 8.0, 6.0, 7.0, //
-            1.0, 2.0, 3.0, 9.0, //
-            5.5, 6.5, 7.5, 1.8, //
-            9.0, 10.0, 11.0, 99.0, //
-        ];
-        let vec3 = [
-            1.0, 2.0, 3.0, //
-            5.5, 6.5, 7.5, //
-            9.0, 10.0, 11.0, //
-        ];
-
-        let matrix4 = Matrix::new_from_vec(vec4);
-
-        assert_eq!(submatrix(&matrix4, 0, 3), vec3);
-    }
-
-    #[test]
-    fn determinant_of_3x3_matrix() {
-        let vec3 = [
-            1.0, 2.0, 6.0, 0.0, //
-            -5.0, 8.0, -4.0, 0.0, //
-            2.0, 6.0, 4.0, 0.0, //
-            0.0, 0.0, 0.0, 0.0,
-        ];
-        let matrix3 = Matrix::new_from_vec(vec3);
-
-        assert_eq!(matrix_minor(&matrix3, 3, 3), -196.0);
-    }
-}
+// /// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
+// fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
+//     matrix_minor(matrix, row, column) * (if (row + column) % 2 != 0 { -1.0 } else { 1.0 })
+// }
