@@ -4,15 +4,16 @@ fn header(width: usize, height: usize) -> String {
     format!("P3\n{} {}\n255", width, height)
 }
 fn body(canvas: Canvas) -> String {
-    let mut pixels: Vec<String> = vec![];
+    let mut pixels: Vec<String> = vec!["255 255 255".to_string(); canvas.width * canvas.height];
 
     // scale colors to 255 and return it in a single Vec
     // ["255 0 0", "0 1 4", ...]
-    for colors in canvas.grid.iter() {
-        for color in colors.iter() {
+    for (x, colors) in canvas.grid.iter().enumerate() {
+        for (y, color) in colors.iter().enumerate() {
             let scaled = color.scale(0.0, 255.0).round();
 
-            pixels.push(format!("{} {} {}", scaled.red, scaled.green, scaled.blue));
+            pixels[x * canvas.width + y] =
+                format!("{} {} {}", scaled.red, scaled.green, scaled.blue);
         }
     }
 

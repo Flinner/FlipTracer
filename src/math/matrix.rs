@@ -1,42 +1,34 @@
 use super::vector::Vector;
 use std::ops::{Div, Mul};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Matrix {
-    pub rows: usize,
-    pub columns: usize,
-    pub data: Vec<f64>,
+    // pub rows: usize, // always 4
+    // pub columns: usize,
+    pub data: [f64; 16],
 }
 
-pub mod identity {
-    use super::Matrix;
+impl Matrix {
+    /// Create a new `zero Matrix`` of given size.
+    pub fn new() -> Self {
+        Self::new_fill_with(0.0)
+    }
 
-    /// IDENTITY `Matrix` of size 2
-    pub fn two() -> Matrix {
-        Matrix {
-            rows: 2,
-            columns: 2,
-            data: vec![1.0, 0.0, 0.0, 1.0],
-        }
+    /// Create a new Matrix of given size, filled with `value`
+    pub fn new_fill_with(value: f64) -> Self {
+        Matrix::new_from_vec([value; 16])
     }
-    /// IDENTITY `Matrix` of size 3
-    pub fn three() -> Matrix {
-        Matrix {
-            rows: 3,
-            columns: 3,
-            data: vec![
-                1.0, 0.0, 0.0, //
-                0.0, 1.0, 0.0, //
-                0.0, 0.0, 1.0,
-            ],
-        }
+
+    /// Create a new Matrix of given size, filled with `vec`
+    pub fn new_from_vec(vec: [f64; 16]) -> Self {
+        Matrix { data: vec }
     }
-    /// IDENTITY `Matrix` of size 4
-    pub fn four() -> Matrix {
+
+    /// Creates Identity Square Matrix. use only when size greater than 4 is needed.
+    /// other wise is `matrix::identity:TWO...`
+    pub fn identity() -> Self {
         Matrix {
-            rows: 4,
-            columns: 4,
-            data: vec![
+            data: [
                 1.0, 0.0, 0.0, 0.0, //
                 0.0, 1.0, 0.0, 0.0, //
                 0.0, 0.0, 1.0, 0.0, //
@@ -44,56 +36,22 @@ pub mod identity {
             ],
         }
     }
-}
-
-impl Matrix {
-    /// Create a new `zero Matrix`` of given size.
-    pub fn new(rows: usize, columns: usize) -> Self {
-        Self::new_fill_with(rows, columns, 0.0)
-    }
-
-    /// Create a new Matrix of given size, filled with `value`
-    pub fn new_fill_with(rows: usize, columns: usize, value: f64) -> Self {
-        Matrix::new_from_vec(rows, columns, vec![value; columns * rows])
-    }
-
-    /// Create a new Matrix of given size, filled with `vec`
-    pub fn new_from_vec(rows: usize, columns: usize, vec: Vec<f64>) -> Self {
-        if rows * columns != vec.len() {
-            panic!("wrong number of matrix elements")
-        }
-        Matrix {
-            rows,
-            columns,
-            data: vec,
-        }
-    }
-
-    /// Creates Identity Square Matrix. use only when size greater than 4 is needed.
-    /// other wise is `matrix::identity:TWO...`
-    pub fn identity(size: usize) -> Self {
-        let mut val = vec![0.0; size * size];
-        for i in 0..size {
-            val[size * i] = 1.0
-        }
-        Matrix::new_from_vec(size, size, val)
-    }
 
     /// gets at point (x,y), zero indexed
     pub fn get(&self, row: usize, column: usize) -> f64 {
-        self.data[column + row * self.columns]
+        self.data[column + row * 4]
     }
 
     /// writes at point (x,y), zero indexed
     pub fn write(&mut self, row: usize, column: usize, value: f64) {
-        self.data[column + row * self.columns] = value;
+        self.data[column + row * 4] = value;
     }
 
     /// Transposes the `Matrix`. rows are converted to columns and vice versa.
     pub fn transpose(self) -> Self {
-        let mut matrix = Matrix::new(self.rows, self.columns);
-        for column in 0..self.columns {
-            for row in 0..self.rows {
+        let mut matrix = Matrix::new();
+        for column in 0..4 {
+            for row in 0..4 {
                 matrix.write(column, row, self.get(row, column));
             }
         }
@@ -102,32 +60,36 @@ impl Matrix {
 
     /// Find `Matrix` determinant. Might not work with greater than 4x4.
     pub fn determinant(&self) -> f64 {
-        // 2x2
-        if (self.columns == 2) && (self.rows == 2) {
-            self.get(0, 0) * self.get(1, 1) - self.get(1, 0) * self.get(0, 1)
+        let m11 = matrix_cofactor(self, 0, 0);
+        let m21 = matrix_cofactor(self, 1, 0);
+        let m31 = matrix_cofactor(self, 2, 0);
+        let m41 = matrix_cofactor(self, 3, 0);
 
-        // 3x3 and more (recursrion) not sure if works with greater than 4x4!
-        } else {
-            (0..self.columns).fold(0.0, |a, column| {
-                a + self.get(0, column) * matrix_cofactor(self, 0, column)
-            })
-        }
+        let e11 = self.get(0, 0);
+        let e21 = self.get(1, 0);
+        let e31 = self.get(2, 0);
+        let e41 = self.get(3, 0);
+
+        e11 * m11 //.
+	    + e21 * m21//.
+	    + e31 * m31//.
+	    + e41 * m41
     }
 
     /// Inverses `Matrix`, returns None if can't inverse (`Matrix.determinant ==0 `)
     pub fn inverse(&self) -> Option<Self> {
-        let mut cofactors = vec![];
+        let mut cofactors: [f64; 16] = [0.0; 16];
         let determinant = self.determinant();
 
         if determinant == 0.0 {
             None
         } else {
-            for row in 0..self.rows {
-                for column in 0..self.columns {
-                    cofactors.push(matrix_cofactor(self, row, column));
+            for row in 0..4 {
+                for column in 0..4 {
+                    cofactors[column + row * 4] = matrix_cofactor(self, row, column);
                 }
             }
-            Some(Matrix::new_from_vec(self.rows, self.columns, cofactors).transpose() / determinant)
+            Some(Matrix::new_from_vec(cofactors).transpose() / determinant)
         }
     }
 }
@@ -137,25 +99,18 @@ impl Mul<Matrix> for Matrix {
 
     /// Multiply two Matrices together
     fn mul(self, rhs: Self) -> Self::Output {
-        let mut output = Matrix::new(self.rows, rhs.columns);
+        let mut output = Matrix::new();
 
-        if self.columns == rhs.rows {
-            for row in 0..self.rows {
-                for column in 0..rhs.columns {
-                    let mut val = 0.0;
-                    for i in 0..rhs.rows {
-                        val += self.get(row, i) * rhs.get(i, column)
-                    }
-                    output.write(row, column, val);
+        // if self.columns == rhs.rows {
+        for row in 0..4 {
+            for column in 0..4 {
+                let mut val = 0.0;
+                for i in 0..4 {
+                    val += self.get(row, i) * rhs.get(i, column)
                 }
+                output.write(row, column, val);
             }
-        } else {
-            panic!(
-                "Can't multiply Matrix with {} rows to Matrix with {} columns! ",
-                self.rows, rhs.columns
-            )
         }
-
         output
     }
 }
@@ -164,15 +119,20 @@ impl Mul<Vector> for Matrix {
     type Output = Vector;
 
     /// using `Mul` (`*`) for multiplying `Matrix` * `Vector` for Translations
+    ///```text
+    /// [ 1.0,   2.0,  3.0,  4.0,        [x,
+    ///   5.0,   6.0,  7.0,  8.0,   Mul   y
+    ///   9.0,  10.0, 11.0, 12.0,   Mul   z
+    ///   13.0, 14.0, 15.0, 15.0,]        1.0]
+    ///```
     fn mul(self, rhs: Vector) -> Vector {
-        // 0.0 is the 'magic' number, used to distinguish between vectors and points
-        // the point is converted to a matrix to allow multiplication
-        let vector_to_matrix = Matrix::new_from_vec(4, 1, vec![rhs.x, rhs.y, rhs.z, 0.0]);
-        let product = self * vector_to_matrix;
+        let m = self.data;
+        let v = rhs;
+
         Vector {
-            x: product.data[0],
-            y: product.data[1],
-            z: product.data[2],
+            x: m[0] * v.x + m[1] * v.y + m[2] * v.z,
+            y: m[4] * v.x + m[5] * v.y + m[6] * v.z,
+            z: m[8] * v.x + m[9] * v.y + m[10] * v.z,
         }
     }
 }
@@ -181,43 +141,54 @@ impl Div<f64> for Matrix {
     type Output = Self;
 
     fn div(self, rhs: f64) -> Self {
-        Matrix::new_from_vec(
-            self.rows,
-            self.columns,
-            self.data.iter().map(|x| x / rhs).collect(),
-        )
+        let mut f = self.data;
+        for (i, e) in self.data.iter().enumerate() {
+            f[i] = e / rhs;
+        }
+        Matrix::new_from_vec(f)
     }
 }
 
-/// Removes `row_to_remove` and `column_to_remove`. returns a matrix that
-/// is 1 row and 1 column smaller
-pub fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize) -> Matrix {
-    Matrix {
-        rows: matrix.rows - 1,
-        columns: matrix.columns - 1,
-        data: matrix
-            .data
-            .iter()
-            .enumerate()
-            .filter_map(|(i, x)| -> Option<f64> {
-                let (row, column) = (i / matrix.columns, i % matrix.columns);
-                if row == row_to_remove || column == column_to_remove {
-                    None
-                } else {
-                    Some(*x)
-                }
-            })
-            .collect(),
+/// Removes `row_to_remove` and `column_to_remove`. returns an Array that
+/// is 1 row and 1 column smaller, aka 3x3
+pub fn submatrix(matrix: &Matrix, row_to_remove: usize, column_to_remove: usize) -> [f64; 9] {
+    let mut a: [f64; 9] = [0.0; 9];
+    let mut i_ = 0;
+    for (i, _) in matrix.data.iter().enumerate() {
+        let (row, column) = (i / 4, i % 4);
+        if column == column_to_remove || row == row_to_remove {
+            continue;
+        }
+        a[i_] = matrix.data[i];
+        i_ += 1;
     }
+    a
 }
 
 /// Removes `row` and `column`. and finds determinant of the matrix.
 fn matrix_minor(matrix: &Matrix, row: usize, column: usize) -> f64 {
     let sub = submatrix(matrix, row, column);
-    sub.determinant()
+    let e11 = sub[0];
+    let e12 = sub[1];
+    let e13 = sub[2];
+    let e21 = sub[3];
+    let e22 = sub[4];
+    let e23 = sub[5];
+    let e31 = sub[6];
+    let e32 = sub[7];
+    let e33 = sub[8];
+
+    0.0 //.
+	+ e11 * e22 * e33 //.
+	+ e12 * e23 * e31 //.
+	+ e13 * e21 * e32 //.
+	- e11 * e23 * e32 //.
+	- e12 * e21 * e33 //.
+	- e13 * e22 * e31 //.
 }
 
 /// Removes `row` and `column`. and finds determinant of the matrix. with the correct sign
+#[inline]
 fn matrix_cofactor(matrix: &Matrix, row: usize, column: usize) -> f64 {
     matrix_minor(matrix, row, column) * (if (row + column) % 2 != 0 { -1.0 } else { 1.0 })
 }
@@ -227,74 +198,34 @@ mod tests {
     use super::*;
 
     #[test]
-    fn submatrix_of_3x3_is_2x2() {
-        let vec3 = vec![
-            1.0, 2.0, 3.0, //
-            5.5, 6.5, 7.5, //
-            9.0, 10.0, 11.0, //
-        ];
-        let vec2 = vec![
-            1.0, 3.0, //
-            9.0, 11.0, //
-        ];
-
-        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-        let matrix2 = Matrix::new_from_vec(2, 2, vec2);
-
-        assert_eq!(submatrix(&matrix3, 1, 1), matrix2)
-    }
-
-    #[test]
     fn submatrix_of_4x4_is_3x3() {
-        let vec4 = vec![
+        let vec4 = [
             9.0, 8.0, 6.0, 7.0, //
             1.0, 2.0, 3.0, 9.0, //
             5.5, 6.5, 7.5, 1.8, //
             9.0, 10.0, 11.0, 99.0, //
         ];
-        let vec3 = vec![
+        let vec3 = [
             1.0, 2.0, 3.0, //
             5.5, 6.5, 7.5, //
             9.0, 10.0, 11.0, //
         ];
 
-        let matrix4 = Matrix::new_from_vec(4, 4, vec4);
-        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
+        let matrix4 = Matrix::new_from_vec(vec4);
 
-        assert_eq!(submatrix(&matrix4, 0, 3), matrix3)
+        assert_eq!(submatrix(&matrix4, 0, 3), vec3);
     }
 
     #[test]
-    fn determinant_of_2x2_matrix() {
-        let vec = vec![
-            -3.0, 5.0, //
-            1.0, -2.0,
+    fn determinant_of_3x3_matrix() {
+        let vec3 = [
+            1.0, 2.0, 6.0, 0.0, //
+            -5.0, 8.0, -4.0, 0.0, //
+            2.0, 6.0, 4.0, 0.0, //
+            0.0, 0.0, 0.0, 0.0,
         ];
-        let matrix = Matrix::new_from_vec(2, 2, vec);
-        assert_eq!(matrix.determinant(), 1.0);
-    }
+        let matrix3 = Matrix::new_from_vec(vec3);
 
-    #[test]
-    fn minor_of_matrix() {
-        let vec3 = vec![
-            1.0, 2.0, 3.0, //
-            5.5, 6.5, 7.5, //
-            9.0, 10.0, 11.0, //
-        ];
-        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-        let minor = matrix_minor(&matrix3, 1, 0);
-        assert_eq!(-8.0, minor)
-    }
-
-    #[test]
-    fn cofactor_of_matrix() {
-        let vec3 = vec![
-            1.0, 2.0, 3.0, //
-            5.5, 6.5, 7.5, //
-            9.0, 10.0, 11.0, //
-        ];
-        let matrix3 = Matrix::new_from_vec(3, 3, vec3);
-        let cofactor = matrix_cofactor(&matrix3, 1, 0);
-        assert_eq!(8.0, cofactor)
+        assert_eq!(matrix_minor(&matrix3, 3, 3), -196.0);
     }
 }

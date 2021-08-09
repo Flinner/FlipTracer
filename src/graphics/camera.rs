@@ -5,7 +5,7 @@ use crate::{
 
 use super::canvas::Canvas;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug,  Copy, Clone, PartialEq)]
 /// Camera has the canvas always one unit away.
 pub struct Camera {
     /// horizontal
@@ -75,12 +75,11 @@ impl Camera {
 
         let transformation = self
             .transform
-            .clone()
             .inverse()
             .expect("Illegal Camera Transformation!");
 
         // using the camera matrix, transform canvas point and the origin.
-        let pixel = transformation.clone() * Point::new(world_x, world_y, -1.0);
+        let pixel = transformation * Point::new(world_x, world_y, -1.0);
         let origin = transformation * Point::new(0.0, 0.0, 0.0);
 
         let direction = (pixel - origin).normalize();

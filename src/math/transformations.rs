@@ -1,13 +1,9 @@
 use std::ops::Mul;
 
-use super::{
-    matrix::{self, Matrix},
-    point::Point,
-    vector::Vector,
-};
+use super::{matrix::Matrix, point::Point, vector::Vector};
 
 /// Wrapper around `Matrix`
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Transformation {
     pub matrix: Matrix,
 }
@@ -15,13 +11,13 @@ pub struct Transformation {
 impl Transformation {
     /// Identity Matrix `4x4`
     pub fn identity() -> Transformation {
-        let matrix = matrix::identity::four();
+        let matrix = Matrix::identity();
         Transformation { matrix }
     }
 
     /// Creates a translation, that only works with `Points` and not `Vectors`
     pub fn translation(x: f64, y: f64, z: f64) -> Transformation {
-        let mut matrix = matrix::identity::four();
+        let mut matrix = Matrix::identity();
         matrix.write(0, 3, x);
         matrix.write(1, 3, y);
         matrix.write(2, 3, z);
@@ -43,13 +39,13 @@ impl Transformation {
 
     /// Return a Scaling Transformation. works for both `Point` and `Vectors`
     pub fn scaling(x: f64, y: f64, z: f64) -> Transformation {
-        let vec = vec![
+        let vec = [
             x, 0.0, 0.0, 0.0, //
             0.0, y, 0.0, 0.0, //
             0.0, 0.0, z, 0.0, //
             0.0, 0.0, 0.0, 1.0,
         ];
-        let matrix = Matrix::new_from_vec(4, 4, vec);
+        let matrix = Matrix::new_from_vec(vec);
         Transformation { matrix }
     }
 
@@ -59,13 +55,13 @@ impl Transformation {
         let cos = rad.cos();
         let sin = rad.sin();
 
-        let vec = vec![
+        let vec = [
             1.0, 0.0, 0.0, 0.0, //
             0.0, cos, -sin, 0.0, //
             0.0, sin, cos, 0.0, //
             0.0, 0.0, 0.0, 1.0,
         ];
-        let matrix = Matrix::new_from_vec(4, 4, vec);
+        let matrix = Matrix::new_from_vec(vec);
         Transformation { matrix }
     }
 
@@ -75,13 +71,13 @@ impl Transformation {
         let cos = rad.cos();
         let sin = rad.sin();
 
-        let vec = vec![
+        let vec = [
             cos, 0.0, sin, 0.0, //
             0.0, 1.0, 0.0, 0.0, //
             -sin, 0.0, cos, 0.0, //
             0.0, 0.0, 0.0, 1.0,
         ];
-        let matrix = Matrix::new_from_vec(4, 4, vec);
+        let matrix = Matrix::new_from_vec(vec);
         Transformation { matrix }
     }
 
@@ -91,13 +87,13 @@ impl Transformation {
         let cos = rad.cos();
         let sin = rad.sin();
 
-        let vec = vec![
+        let vec = [
             cos, -sin, 0.0, 0.0, //
             sin, cos, 0.0, 0.0, //
             0.0, 0.0, 1.0, 0.0, //
             0.0, 0.0, 0.0, 1.0,
         ];
-        let matrix = Matrix::new_from_vec(4, 4, vec);
+        let matrix = Matrix::new_from_vec(vec);
         Transformation { matrix }
     }
 
@@ -110,13 +106,13 @@ impl Transformation {
     /// - z in proportion to x
     /// - z in proportion to y
     pub fn shearing(x_y: f64, x_z: f64, y_x: f64, y_z: f64, z_x: f64, z_y: f64) -> Transformation {
-        let vec = vec![
+        let vec = [
             1.0, x_y, x_z, 0.0, //
             y_x, 1.0, y_z, 0.0, //
             z_x, z_y, 1.0, 0.0, //
             0.0, 0.0, 0.0, 1.0,
         ];
-        let matrix = Matrix::new_from_vec(4, 4, vec);
+        let matrix = Matrix::new_from_vec(vec);
         Transformation { matrix }
     }
 
@@ -127,13 +123,13 @@ impl Transformation {
         // true up, allows `up` to be an approximation
         let true_up = left.cross_product(&forward);
 
-        let vec = vec![
+        let vec = [
             left.x, left.y, left.z, 0.0, //
             true_up.x, true_up.y, true_up.z, 0.0, //
             -forward.x, -forward.y, -forward.z, 0.0, //
             0.0, 0.0, 0.0, 1.0,
         ];
-        let orientation = Matrix::new_from_vec(4, 4, vec);
+        let orientation = Matrix::new_from_vec(vec);
 
         Transformation {
             matrix: orientation,

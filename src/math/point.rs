@@ -104,18 +104,23 @@ impl Neg for Point {
 }
 
 impl Mul<Matrix> for Point {
-    /// using `Mul` (`*`) for multiplying `Points` with `Matrix` (Tansformation): `Point` * `Matrix`
     type Output = Self;
 
+    /// using `Mul` (`*`) for multiplying `Points` with `Matrix` (Tansformation): `Point` * `Matrix`
+    ///```text
+    /// [ 1.0,   2.0,  3.0,  4.0,        [x,
+    ///   5.0,   6.0,  7.0,  8.0,   Mul   y
+    ///   9.0,  10.0, 11.0, 12.0,   Mul   z
+    ///   13.0, 14.0, 15.0, 15.0,]        0.0]
+    ///```
     fn mul(self, m: Matrix) -> Self::Output {
-        // 1.0 is the 'magic' number, used to distinguish between vectors and points
-        // the point is converted to a matrix to allow multiplication
-        let self_matrix = Matrix::new_from_vec(4, 1, vec![self.x, self.y, self.z, 1.0]);
-        let product = m * self_matrix;
+        // 0.0 is the 'magic' number, used to distinguish between vectors and points
+        let m = m.data;
+        let p = self;
         Self {
-            x: product.data[0],
-            y: product.data[1],
-            z: product.data[2],
+            x: m[0] * p.x + m[1] * p.y + m[2] * p.z + m[3],
+            y: m[4] * p.x + m[5] * p.y + m[6] * p.z + m[7],
+            z: m[8] * p.x + m[9] * p.y + m[10] * p.z + m[11],
         }
     }
 }
