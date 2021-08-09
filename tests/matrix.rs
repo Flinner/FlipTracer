@@ -1,4 +1,4 @@
-use raytracer::math::matrix::Matrix;
+use raytracer::{math::matrix::Matrix, testing::Testing};
 
 #[test]
 fn construct_4x4_matrix() {
@@ -129,10 +129,12 @@ fn inverse_matrix() {
     ];
 
     let matrix4 = Matrix::new_from_vec(vec4);
-    let inverse = Matrix::new_from_vec(invvec);
-
     assert_eq!(matrix4.determinant(), 532.0);
-    assert_eq!(matrix4.inverse(), Some(inverse));
+
+    let inv_matrix4 = Matrix::new_from_vec(vec4).inverse().unwrap();
+    for (i, e) in invvec.iter().enumerate() {
+        Testing::assert_nearly_eq(*e, inv_matrix4.data[i])
+    }
 }
 
 #[test]
