@@ -1,7 +1,7 @@
 use super::color::Color;
 use crate::graphics::color;
 
-#[derive(Debug)]
+#[derive(Debug,  Clone)]
 /// Canvas, a grid of pixels, with `height` and `width` (for faster access)
 pub struct Canvas {
     pub width: usize,
