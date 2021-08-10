@@ -1,9 +1,15 @@
+use std::{
+    sync::Arc,
+    thread::{self, JoinHandle},
+};
+
 use crate::{
     math::{point::Point, ray::Ray, transformations::Transformation},
     objects::world::World,
 };
 
 use super::canvas::Canvas;
+const THREADS: usize = 12;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 /// Camera has the canvas always one unit away.
@@ -87,19 +93,44 @@ impl Camera {
         Ray::new(origin, direction)
     }
 
+    /// same as `ray_for_pixel` but converts `i` to `(x,y)` and then calls `ray_for_pixel`
+    fn ray_for_pixel_i(&self, i: usize) -> Ray {
+        let y = i / self.hsize;
+        let x = i % self.hsize;
+        self.ray_for_pixel(x, y)
+    }
+
     pub fn render(&self, world: World) -> Canvas {
-        let mut image = Canvas::new(self.hsize as usize, self.vsize as usize);
+        let mut canvas = Canvas::new(self.hsize as usize, self.vsize as usize);
+
         let vsize = self.vsize as usize;
         let hsize = self.hsize as usize;
+        let len = hsize * vsize;
 
-        (0..vsize).for_each(|y| {
-            (0..hsize).for_each(|x| {
-                let ray = self.ray_for_pixel(x, y);
-                let color = world.color_at(ray);
-                image.write(x, y, color);
-            });
+        let chunk_size = len / THREADS;
+        let chunks = len / chunk_size;
+        // TODO: remedinder doesn't get rendered!
+        let rem = len % chunk_size;
+        eprintln!("chunks: {} size:{}, rem: {}", chunks, chunk_size, rem);
+
+        (0..chunks).for_each(|i| {
+            // (0..chunk_size).for_each(|i| {
+            let offset = i * chunk_size;
+
+            for j in offset..(offset + chunk_size) {
+                //eprintln!("j:{} x:{} y:{}", j, x, y);
+                self.render_pixel(&mut canvas, &world, j);
+            }
         });
-        image
+        // canvas
+        canvas
+    }
+
+    /// helper for `render`
+    fn render_pixel(&self, canvas: &mut Canvas, world: &World, i: usize) {
+        let ray = self.ray_for_pixel_i(i);
+        let color = world.color_at(ray);
+        canvas.write_i(i, color);
     }
 }
 

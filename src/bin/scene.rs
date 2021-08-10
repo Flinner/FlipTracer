@@ -54,7 +54,7 @@ fn main() {
     ));
     world.objects = vec![floor, left_wall, right_wall, middle, right, left];
 
-    let mut camera = Camera::new(1080, 1920, FRAC_PI_3);
+    let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
     camera.transform = Transformation::view(
         Point::new(0.0, 1.5, -5.0),
         Point::new(0.0, 1.0, 0.0),

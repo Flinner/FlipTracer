@@ -8,13 +8,10 @@ fn body(canvas: Canvas) -> String {
 
     // scale colors to 255 and return it in a single Vec
     // ["255 0 0", "0 1 4", ...]
-    canvas.grid.iter().enumerate().for_each(|(x, colors)| {
-        colors.iter().enumerate().for_each(|(y, color)| {
-            let scaled = color.scale(0.0, 255.0).round();
+    canvas.grid.iter().enumerate().for_each(|(i, color)| {
+        let scaled = color.scale(0.0, 255.0).round();
 
-            pixels[x * canvas.width + y] =
-                format!("{} {} {}", scaled.red, scaled.green, scaled.blue);
-        });
+        pixels[i] = format!("{} {} {}", scaled.red, scaled.green, scaled.blue);
     });
 
     // split rows into elements of 5.
