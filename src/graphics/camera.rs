@@ -1,4 +1,4 @@
-use rayon::prelude::*;
+// use rayon::prelude::*;
 
 use crate::{
     math::{point::Point, ray::Ray, transformations::Transformation},
@@ -100,7 +100,8 @@ impl Camera {
         let mut canvas = Canvas::new(self.hsize as usize, self.vsize as usize);
         canvas
             .grid
-            .par_iter_mut()
+            .iter_mut()
+            // .par_iter_mut()
             .enumerate()
             .for_each(|(i, color)| {
                 let ray = self.ray_for_pixel_i(i);
