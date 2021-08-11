@@ -19,17 +19,13 @@ pub struct Sphere {
     pub material: Material,
 }
 
-impl Sphere {
-    /// Creates a new `Sphere`.
-    pub fn default() -> Self {
-        Self {
-            uid: time_now(),
-            transformation: Transformation::identity(),
-            material: Material::default(),
-        }
+impl Default for Sphere {
+    fn default() -> Self {
+        Sphere::new(Transformation::identity())
     }
+}
 
-    /// Creates a new `Sphere` with `Transformation`.
+impl Sphere {
     pub fn new(transformation: Transformation) -> Self {
         Self {
             uid: time_now(),
