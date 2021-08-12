@@ -43,6 +43,7 @@ impl Vector {
     /// Normalize the `Vector`
     pub fn normalize(&self) -> Self {
         let magnitude = self.magnitude();
+        // TODO: guard against zero vectors that have 0 magnitude!
         Self {
             x: self.x / magnitude,
             y: self.y / magnitude,
