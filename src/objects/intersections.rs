@@ -3,13 +3,13 @@ use crate::{
     math::{point::Point, ray::Ray, vector::Vector},
 };
 
-use super::{sphere::Sphere, world::World};
+use super::{shape::Shape, world::World};
 
 #[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
 pub struct Intersection {
     pub intersects_at: f64,
-    pub object: Sphere,
+    pub object: Shape,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -21,7 +21,7 @@ pub struct Intersections {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PreComputed {
     pub intersects_at: f64,
-    pub object: Sphere,
+    pub object: Shape,
     pub inside: bool,
     pub point: Point,
     pub eyev: Vector,
@@ -55,7 +55,7 @@ impl Intersections {
     }
 
     /// Returns `intersection_at: f64`
-    pub fn get_object(&self, index: usize) -> Option<Sphere> {
+    pub fn get_object(&self, index: usize) -> Option<Shape> {
         self.get(index).map(|intersection| intersection.object)
     }
     pub fn hit(&self) -> Option<&Intersection> {
@@ -72,7 +72,7 @@ impl Intersections {
 }
 
 impl Intersection {
-    pub fn new(intersects_at: f64, object: Sphere) -> Self {
+    pub fn new(intersects_at: f64, object: Shape) -> Self {
         Intersection {
             intersects_at,
             object,
@@ -88,8 +88,8 @@ impl Intersection {
 
     /// Precomputes the point in world space where the intersection occurred
     pub fn prepare_computations(&self, ray: Ray) -> Option<PreComputed> {
-        let point = ray.position(self.intersects_at);
         let intersects_at = self.intersects_at;
+        let point = ray.position(intersects_at);
         let object = self.object;
         let eyev = -ray.direction;
         let mut normalv = self.object.normal_at(point)?;
@@ -119,8 +119,8 @@ impl Intersection {
 impl PreComputed {
     pub fn shade_hit(&self, w: &World) -> Color {
         let shadowed = w.is_shadowed(self.over_point);
-        self.object.material.lighting(
-            w.light.unwrap(),
+        self.object.material().lighting(
+            w.light.expect("no light!"),
             self.over_point,
             self.eyev,
             self.normalv,

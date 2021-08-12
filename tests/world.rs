@@ -50,7 +50,7 @@ fn intersect_world_with_ray() {
 fn preparing_computations() {
     let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = Sphere::default();
-    let i = Intersection::new(4.0, shape);
+    let i = Intersection::new(4.0, shape.into());
 
     let comps = i.prepare_computations(ray).unwrap();
 
@@ -66,7 +66,7 @@ fn shading_an_intersection() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = w.objects[0];
-    let i = Intersection::new(4.0, shape);
+    let i = Intersection::new(4.0, shape.into());
 
     let comps = i.prepare_computations(r).unwrap();
     let c = comps.shade_hit(&w);
@@ -113,14 +113,20 @@ fn color_when_ray_hits() {
 #[test]
 fn color_when_intersection_behind_ray() {
     let mut w = World::default();
-    let outer = &mut w.objects[0];
+    let mut outer = Sphere {
+        ..Default::default()
+    };
     outer.material.ambient = 1.0;
-    let inner = &mut w.objects[1];
+    let mut inner = Sphere {
+        ..Default::default()
+    };
     inner.material.ambient = 1.0;
     let r = Ray::new(Point::new(0.0, 0.0, 0.75), Vector::new(0.0, 0.0, -1.0));
 
+    w.objects = vec![outer.into(), inner.into()];
+
     let inner = &w.objects[1];
-    assert_eq!(w.color_at(r), inner.material.color)
+    assert_eq!(w.color_at(r), inner.material().color)
 }
 
 #[test]
@@ -162,11 +168,11 @@ fn intersection_is_shadow() {
     let s1 = Sphere::default();
     let s2 = Sphere::new(Transformation::translation(0.0, 0.0, 10.0));
 
-    w.objects = vec![s1, s2.clone()];
+    w.objects = vec![s1.into(), s2.into()];
 
     let i = Intersection {
         intersects_at: 4.0,
-        object: s2,
+        object: s2.into(),
     };
 
     let comps = i.prepare_computations(r).unwrap();

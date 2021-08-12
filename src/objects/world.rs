@@ -6,12 +6,12 @@ use crate::{
     math::{point::Point, ray::Ray, transformations::Transformation},
 };
 
-use super::{intersections::Intersections, sphere::Sphere};
+use super::{intersections::Intersections, shape::Shape, sphere::Sphere};
 
 /// A world of `objects` (now only `Spheres`!) and `Pointlight`
 #[derive(PartialEq, Debug, Clone)]
 pub struct World {
-    pub objects: Vec<Sphere>,
+    pub objects: Vec<Shape>,
     pub light: Option<PointLight>,
 }
 
@@ -25,7 +25,7 @@ impl Default for World {
 
         let s2 = Sphere::new(Transformation::scaling(0.5, 0.5, 0.5));
         World {
-            objects: vec![s1, s2],
+            objects: vec![s1.into(), s2.into()],
             light: Some(light),
         }
     }

@@ -1,3 +1,4 @@
+use std::convert::Into;
 use std::f64::consts;
 
 use raytracer::{
@@ -8,7 +9,7 @@ use raytracer::{
         transformations::Transformation,
         vector::{self, Vector},
     },
-    objects::sphere::Sphere,
+    objects::{shape::Shape, sphere::Sphere},
     testing::Testing,
 };
 
@@ -19,7 +20,7 @@ fn intersect_two_points() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::default();
+    let s: Shape = Sphere::default().into();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 4.0);
@@ -34,7 +35,7 @@ fn intersecets_at_tanget() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::default();
+    let s: Shape = Sphere::default().into();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 5.0);
@@ -50,7 +51,7 @@ fn ray_misses() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::default();
+    let s: Shape = Sphere::default().into();
     let _xs = s.intersects(&ray).unwrap();
 }
 
@@ -61,7 +62,7 @@ fn ray_originates_in_sphere() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::default();
+    let s: Shape = Sphere::default().into();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -1.0);
@@ -75,7 +76,7 @@ fn sphere_behind_ray() {
 
     let ray = Ray::new(origin, direction);
 
-    let s = Sphere::default();
+    let s: Shape = Sphere::default().into();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -6.0);
@@ -86,8 +87,8 @@ fn sphere_behind_ray() {
 fn sphere_default_transformation() {
     let transformation = Transformation::identity();
 
-    let s = Sphere::default();
-    assert_eq!(s.transformation, transformation)
+    let s: Shape = Sphere::default().into();
+    assert_eq!(s.transformation(), transformation)
 }
 
 #[test]
@@ -98,7 +99,7 @@ fn intersecting_scaled_sphere() {
     let ray = Ray::new(origin, direction);
 
     let transformation = Transformation::scaling(2.0, 2.0, 2.0);
-    let s = Sphere::new(transformation);
+    let s: Shape = Sphere::new(transformation).into();
 
     let xs = s.intersects(&ray).unwrap();
 
@@ -117,7 +118,7 @@ fn intersecting_translated_sphere() {
     let ray = Ray::new(origin, direction);
 
     let transformation = Transformation::scaling(5.0, 0.0, 0.0);
-    let s = Sphere::new(transformation);
+    let s: Shape = Sphere::new(transformation).into();
 
     let _xs = s.intersects(&ray).unwrap();
 }
@@ -127,19 +128,19 @@ fn normal_of_sphere() {
     let sqrt3_by3 = 3.0_f64.sqrt() / 3.0;
     let tests = vec![
         (
-            Sphere::default().normal_at(Point::new(1.0, 0.0, 0.0)),
+            Shape::Sphere(Sphere::default()).normal_at(Point::new(1.0, 0.0, 0.0)),
             vector::UNIT_X,
         ),
         (
-            Sphere::default().normal_at(Point::new(0.0, 1.0, 0.0)),
+            Shape::Sphere(Sphere::default()).normal_at(Point::new(0.0, 1.0, 0.0)),
             vector::UNIT_Y,
         ),
         (
-            Sphere::default().normal_at(Point::new(0.0, 0.0, 1.0)),
+            Shape::Sphere(Sphere::default()).normal_at(Point::new(0.0, 0.0, 1.0)),
             vector::UNIT_Z,
         ),
         (
-            Sphere::default().normal_at(Point::new(sqrt3_by3, sqrt3_by3, sqrt3_by3)),
+            Shape::Sphere(Sphere::default()).normal_at(Point::new(sqrt3_by3, sqrt3_by3, sqrt3_by3)),
             Vector::new(sqrt3_by3, sqrt3_by3, sqrt3_by3),
         ),
     ];
@@ -161,7 +162,7 @@ fn normal_of_translated_sphere() {
 
     let tests = vec![
         (
-            Sphere::new(translation).normal_at(Point::new(
+            Shape::Sphere(Sphere::new(translation)).normal_at(Point::new(
                 0.0,
                 1.70711,
                 -consts::FRAC_1_SQRT_2, // -0.7011
@@ -169,7 +170,8 @@ fn normal_of_translated_sphere() {
             Vector::new(0.0, consts::FRAC_1_SQRT_2, -consts::FRAC_1_SQRT_2),
         ),
         (
-            Sphere::new(scaled_rotated).normal_at(Point::new(0.0, sqrt2_by2, -sqrt2_by2)),
+            Shape::Sphere(Sphere::new(scaled_rotated))
+                .normal_at(Point::new(0.0, sqrt2_by2, -sqrt2_by2)),
             Vector::new(0.0, 0.97014, -0.24254),
         ),
     ];
