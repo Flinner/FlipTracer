@@ -22,7 +22,7 @@ fn main() {
 
     let mut floor = Plane::default();
     floor.transformation = Transformation::scaling(10.0, 0.01, 10.0);
-    floor.material.pattern = Some(Pattern::new(
+    floor.material.pattern = Some(Pattern::stripped(
         color::WHITE,
         color::BLACK,
         Transformation::scaling(0.1, 0.1, 0.1) * Transformation::rotate_y(FRAC_PI_3),
@@ -49,7 +49,7 @@ fn main() {
     middle.material.color = Color::new(0.1, 1.0, 0.5); // green
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
-    middle.material.pattern = Some(Pattern::new(
+    middle.material.pattern = Some(Pattern::stripped(
         color::RED,
         color::GREEN,
         Transformation::scaling(0.3, 0.3, 0.3) * Transformation::rotate_y(1.0),
@@ -61,7 +61,7 @@ fn main() {
     right.material.color = Color::new(0.5, 1.0, 0.1); // green
     right.material.diffuse = 1.0;
     right.material.specular = 0.3;
-    right.material.pattern = Some(Pattern::new(
+    right.material.pattern = Some(Pattern::stripped(
         color::BLUE,
         color::WHITE,
         Transformation::scaling(0.3, 0.3, 0.3) * Transformation::rotate_z(1.0),

@@ -128,7 +128,7 @@ fn lighting_with_the_surface_in_shadow() {
 fn new_material_with_pattern_applied() {
     let color = Color::new(1.0, 1.0, 1.0);
 
-    let stripe_pattern = Pattern::new(color::WHITE, color::BLACK, Transformation::identity());
+    let stripe_pattern = Pattern::stripped(color::WHITE, color::BLACK, Transformation::identity());
     let material = Material::new(color, 1.0, 0.0, 0.0, 200.0, Some(stripe_pattern));
 
     let eyev = Vector::new(0.0, 0.0, -1.0);
