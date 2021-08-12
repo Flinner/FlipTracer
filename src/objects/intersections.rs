@@ -103,6 +103,7 @@ impl Intersection {
             inside = false
         }
         let over_point = point + normalv * 0.0000001; // EPSILON
+                                                      // TODO: move EPSILON to Shapes
 
         Some(PreComputed {
             intersects_at,

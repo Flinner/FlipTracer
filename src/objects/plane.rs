@@ -36,7 +36,7 @@ impl ShapeInterface for Plane {
         }
     }
 
-    fn intersects(&self, ray: &Ray) -> Option<Intersections> {
+    fn local_intersects(&self, ray: &Ray) -> Option<Intersections> {
         todo!()
     }
 

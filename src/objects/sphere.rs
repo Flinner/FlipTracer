@@ -42,7 +42,7 @@ impl ShapeInterface for Sphere {
     }
 
     /// Check `Shapeinterface.intersects()`
-    fn intersects(&self, ray: &Ray) -> Option<Intersections> {
+    fn local_intersects(&self, ray: &Ray) -> Option<Intersections> {
         let sphere_to_ray = ray.origin - point::ORIGIN;
 
         let a = ray.direction.dot_product(&ray.direction);

@@ -18,10 +18,11 @@ impl Shape {
         let transformation = self.transformation().inverse()?;
         let ray = &ray.transform(transformation);
         match self {
-            Shape::Sphere(s) => s.intersects(ray),
-            Shape::Plane(s) => s.intersects(ray),
+            Shape::Sphere(s) => s.local_intersects(ray),
+            Shape::Plane(s) => s.local_intersects(ray),
         }
     }
+
     pub fn normal_at(&self, world_point: Point) -> Option<Vector> {
         // converting to object space
         let object_point = self.transformation().inverse()? * world_point;
@@ -35,6 +36,7 @@ impl Shape {
         let world_normal = (self.transformation().inverse()?.transpose()) * object_normal;
         Some(world_normal.normalize())
     }
+
     pub fn transformation(&self) -> Transformation {
         match self {
             Shape::Sphere(s) => s.transformation,
@@ -71,7 +73,7 @@ pub(in crate::objects) trait ShapeInterface {
     /// all points are relative to the object i.e, object space
     /// Should NEVER be called directly!
     /// call `Shape.intersects()`
-    fn intersects(&self, ray: &Ray) -> Option<Intersections>;
+    fn local_intersects(&self, ray: &Ray) -> Option<Intersections>;
 
     /// Returns normal (perpendicular to surface) at `point`
     /// all points are relative to the object i.e, object space
