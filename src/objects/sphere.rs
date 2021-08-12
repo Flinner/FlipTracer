@@ -35,7 +35,7 @@ impl Sphere {
 impl ShapeInterface for Sphere {
     fn new(transformation: Transformation) -> Self {
         Self {
-            uid: Shape::shape_id(),
+            uid: Shape::new_shape_id(),
             transformation,
             material: Material::default(),
         }
