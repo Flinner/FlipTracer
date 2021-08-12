@@ -10,7 +10,7 @@ use crate::{
 
 use super::{
     intersections::{Intersection, Intersections},
-    shape::Shape,
+    shape::{Shape, ShapeInterface},
 };
 
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -28,6 +28,12 @@ impl Default for Sphere {
 
 impl Sphere {
     pub fn new(transformation: Transformation) -> Self {
+        ShapeInterface::new(transformation)
+    }
+}
+
+impl ShapeInterface for Sphere {
+    fn new(transformation: Transformation) -> Self {
         Self {
             uid: Shape::shape_id(),
             transformation,
@@ -35,10 +41,8 @@ impl Sphere {
         }
     }
 
-    /// all points are relative to the object i.e, object space
-    /// Should NEVER be called directly!
-    /// call `Shape.intersects()`
-    pub(in crate::objects) fn intersects(&self, ray: &Ray) -> Option<Intersections> {
+    /// Check `Shapeinterface.intersects()`
+    fn intersects(&self, ray: &Ray) -> Option<Intersections> {
         let sphere_to_ray = ray.origin - point::ORIGIN;
 
         let a = ray.direction.dot_product(&ray.direction);
@@ -61,11 +65,8 @@ impl Sphere {
         }
     }
 
-    /// Returns normal (perpendicular to surface) at `point`
-    /// all points are relative to the object i.e, object space
-    /// Should NEVER be called directly!
-    /// call `Shape.normal_at()`
-    pub(in crate::objects) fn object_normal_at(&self, object_point: Point) -> Option<Vector> {
+    /// Check `Shapeinterface.normal_at()`
+    fn object_normal_at(&self, object_point: Point) -> Option<Vector> {
         let object_normal = object_point - point::ORIGIN;
         Some(object_normal)
     }

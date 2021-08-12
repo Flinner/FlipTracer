@@ -66,3 +66,19 @@ impl Shape {
             .as_nanos()
     }
 }
+
+pub(in crate::objects) trait ShapeInterface {
+    /// As you would expect, returns a new object
+    fn new(transformation: Transformation) -> Self;
+
+    /// all points are relative to the object i.e, object space
+    /// Should NEVER be called directly!
+    /// call `Shape.intersects()`
+    fn intersects(&self, ray: &Ray) -> Option<Intersections>;
+
+    /// Returns normal (perpendicular to surface) at `point`
+    /// all points are relative to the object i.e, object space
+    /// Should NEVER be called directly!
+    /// call `Shape.normal_at()`
+    fn object_normal_at(&self, object_point: Point) -> Option<Vector>;
+}
