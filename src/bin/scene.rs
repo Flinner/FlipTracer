@@ -1,10 +1,11 @@
-use std::f64::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4};
+#![allow(clippy::field_reassign_with_default)]
 
 use raytracer::{
     graphics::{camera::Camera, color::Color, lights::PointLight, ppm},
     math::{point::Point, transformations::Transformation, vector::Vector},
     objects::{sphere::Sphere, world::World},
 };
+use std::f64::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4};
 
 fn main() {
     // extreemly flattend floor with mattee textrue
@@ -52,9 +53,17 @@ fn main() {
         Point::new(-10.0, 10.0, -10.0),
         Color::new(1.0, 1.0, 1.0),
     ));
-    world.objects = vec![floor, left_wall, right_wall, middle, right, left];
+    world.objects = vec![
+        floor.into(),
+        left_wall.into(),
+        right_wall.into(),
+        middle.into(),
+        right.into(),
+        left.into(),
+    ];
 
-    let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
+    //let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
+    let mut camera = Camera::new(300, 300, FRAC_PI_3);
     camera.transform = Transformation::view(
         Point::new(0.0, 1.5, -5.0),
         Point::new(0.0, 1.0, 0.0),

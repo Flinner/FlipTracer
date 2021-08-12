@@ -2,9 +2,11 @@ use raytracer::graphics::canvas::Canvas;
 use raytracer::graphics::color;
 use raytracer::graphics::color::Color;
 use raytracer::graphics::lights::PointLight;
+use raytracer::graphics::materials::Material;
 use raytracer::graphics::ppm;
 use raytracer::math::point::Point;
 use raytracer::math::ray::Ray;
+use raytracer::objects::shape::Shape;
 //use raytracer::math::transformations::Transformation;
 use raytracer::objects::sphere::Sphere;
 
@@ -13,11 +15,16 @@ pub fn main() {
 
     let origin = Point::new(0.0, 0.0, -5.0);
 
-    let mut sphere = Sphere::default();
-    sphere.material.color = Color::new(1.0, 0.2, 1.0); // purple
-    sphere.material.shininess = 900.0;
-    sphere.material.ambient = 0.2;
-    sphere.material.diffuse = 1.0;
+    let mut material = Material::default();
+    material.color = Color::new(1.0, 0.2, 1.0); // purple
+    material.shininess = 900.0;
+    material.ambient = 0.2;
+    material.diffuse = 1.0;
+    let sphere: Shape = Sphere {
+        material,
+        ..Default::default()
+    }
+    .into();
 
     let light = PointLight::new(Point::new(-5.0, 10.0, -15.0), Color::new(1.0, 1.0, 1.0));
 
@@ -52,7 +59,7 @@ pub fn main() {
             let eye = ray.direction;
 
             let color = sphere
-                .material
+                .material()
                 .lighting(light, hit_point, eye, normal, false);
             canvas.write(x, y, color);
         }
