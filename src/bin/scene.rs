@@ -1,16 +1,32 @@
 #![allow(clippy::field_reassign_with_default)]
 
 use raytracer::{
-    graphics::{camera::Camera, color::Color, lights::PointLight, ppm},
+    graphics::{
+        camera::Camera,
+        color::{self, Color},
+        lights::PointLight,
+        patterns::Pattern,
+        ppm,
+    },
     math::{point::Point, transformations::Transformation, vector::Vector},
-    objects::{sphere::Sphere, world::World},
+    objects::{plane::Plane, sphere::Sphere, world::World},
 };
 use std::f64::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4};
 
 fn main() {
     // extreemly flattend floor with mattee textrue
-    let mut floor = Sphere::default();
+    // let mut floor = Sphere::default();
+    // floor.transformation = Transformation::scaling(10.0, 0.01, 10.0);
+    // floor.material.color = Color::new(1.0, 0.9, 0.9);
+    // floor.material.specular = 0.0;
+
+    let mut floor = Plane::default();
     floor.transformation = Transformation::scaling(10.0, 0.01, 10.0);
+    floor.material.pattern = Some(Pattern::new(
+        color::WHITE,
+        color::BLACK,
+        Transformation::scaling(0.1, 0.1, 0.1) * Transformation::rotate_y(FRAC_PI_3),
+    ));
     floor.material.color = Color::new(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
 
@@ -33,20 +49,30 @@ fn main() {
     middle.material.color = Color::new(0.1, 1.0, 0.5); // green
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
+    middle.material.pattern = Some(Pattern::new(
+        color::RED,
+        color::GREEN,
+        Transformation::scaling(0.3, 0.3, 0.3) * Transformation::rotate_y(1.0),
+    ));
 
     let mut right = Sphere::default();
     right.transformation =
-        Transformation::translation(1.5, 1.0, -0.5) * Transformation::scaling(0.5, 0.5, 0.5);
+        Transformation::translation(1.5, 0.5, -0.5) * Transformation::scaling(0.5, 0.5, 0.5);
     right.material.color = Color::new(0.5, 1.0, 0.1); // green
-    right.material.diffuse = 0.7;
+    right.material.diffuse = 1.0;
     right.material.specular = 0.3;
+    right.material.pattern = Some(Pattern::new(
+        color::BLUE,
+        color::WHITE,
+        Transformation::scaling(0.3, 0.3, 0.3) * Transformation::rotate_z(1.0),
+    ));
 
     let mut left = Sphere::default();
     left.transformation =
         Transformation::translation(-1.5, 0.33, -0.75) * Transformation::scaling(0.33, 0.33, 0.33);
     left.material.color = Color::new(1.0, 0.8, 0.1); // yellow
     left.material.diffuse = 0.7;
-    left.material.specular = 0.3;
+    left.material.specular = 0.1;
 
     let mut world = World::new();
     world.light = Some(PointLight::new(
@@ -55,15 +81,15 @@ fn main() {
     ));
     world.objects = vec![
         floor.into(),
-        left_wall.into(),
-        right_wall.into(),
+        // left_wall.into(),
+        // right_wall.into(),
         middle.into(),
         right.into(),
         left.into(),
     ];
 
-    //let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
-    let mut camera = Camera::new(300, 300, FRAC_PI_3);
+    let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
+    // let mut camera = Camera::new(300, 300, FRAC_PI_3);
     camera.transform = Transformation::view(
         Point::new(0.0, 1.5, -5.0),
         Point::new(0.0, 1.0, 0.0),

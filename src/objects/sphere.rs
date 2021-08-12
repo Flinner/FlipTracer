@@ -16,8 +16,8 @@ use super::{
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Sphere {
     pub uid: u128,
-    pub transformation: Transformation,
-    pub material: Material,
+    pub transformation: Transformation, // TODO: maybe using Option for Transformation could lead to better performance?
+    pub material: Material, // TODO: all shapes look the same, maybe have a `struct Shape{uid,trans,material, shape_type} ?
 }
 
 impl Default for Sphere {

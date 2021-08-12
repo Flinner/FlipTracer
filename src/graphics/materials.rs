@@ -1,8 +1,12 @@
 use super::{
     color::{self, Color},
     lights::PointLight,
+    patterns::Pattern,
 };
-use crate::math::{point::Point, vector::Vector};
+use crate::{
+    math::{point::Point, vector::Vector},
+    objects::shape::Shape,
+};
 
 /// Bui Tuong Phong Material
 #[derive(Clone, PartialEq, Copy, Debug)]
@@ -17,16 +21,26 @@ pub struct Material {
     /// Value between 10 and 200 work best,default: 200.0
     /// no limits apart from `f64`
     pub shininess: f64,
+    /// Pattern
+    pub pattern: Option<Pattern>,
 }
 
 impl Material {
-    pub fn new(color: Color, ambient: f64, diffuse: f64, specular: f64, shininess: f64) -> Self {
+    pub fn new(
+        color: Color,
+        ambient: f64,
+        diffuse: f64,
+        specular: f64,
+        shininess: f64,
+        pattern: Option<Pattern>,
+    ) -> Self {
         Self {
             ambient,
             color,
             diffuse,
             specular,
             shininess,
+            pattern,
         }
     }
     /// default material
@@ -37,10 +51,12 @@ impl Material {
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
+            pattern: None,
         }
     }
     pub fn lighting(
         &self,
+        object: Shape,
         light: PointLight,
         position: Point,
         eye: Vector,
@@ -50,8 +66,17 @@ impl Material {
         let diffuse;
         let specular;
         let ambient;
+        let color;
+
+        // apply pattern
+        if self.pattern.is_some() {
+            color = object.pattern_at(position).unwrap();
+        } else {
+            color = self.color
+        };
+
         // combine the surface color with the light's color
-        let effective_color = self.color * light.color;
+        let effective_color = color * light.color;
 
         // find the direction of the light source
         let lightv = (light.position - position).normalize();

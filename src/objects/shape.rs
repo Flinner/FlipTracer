@@ -1,5 +1,5 @@
 use super::{plane::Plane, sphere::Sphere};
-use crate::graphics::materials::Material;
+use crate::graphics::{color::Color, materials::Material};
 use crate::math::point::Point;
 use crate::math::ray::Ray;
 use crate::math::transformations::Transformation;
@@ -35,6 +35,13 @@ impl Shape {
         // converting to back to world space
         let world_normal = (self.transformation().inverse()?.transpose()) * object_normal;
         Some(world_normal.normalize())
+    }
+
+    pub fn pattern_at(&self, world_point: Point) -> Option<Color> {
+        let object_point = self.transformation().inverse()? * world_point;
+        let pattern_space = self.material().pattern?.transformation.inverse()? * object_point;
+
+        Some(self.material().pattern?.at(pattern_space))
     }
 
     pub fn transformation(&self) -> Transformation {

@@ -60,7 +60,7 @@ pub fn main() {
 
             let color = sphere
                 .material()
-                .lighting(light, hit_point, eye, normal, false);
+                .lighting(sphere, light, hit_point, eye, normal, false);
             canvas.write(x, y, color);
         }
     }
