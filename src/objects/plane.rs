@@ -1,6 +1,7 @@
 use crate::{
     graphics::materials::Material,
     math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
+    objects::intersections::Intersection,
 };
 
 use super::{
@@ -36,12 +37,41 @@ impl ShapeInterface for Plane {
         }
     }
 
+    /// Four Cases
+    /// 1. Ray Parallel to plane, no intersections
+    /// 1. Ray is *coplaner* to plane, infinite intersections on infinitly thin plane.\
+    /// consider no intersections and ray misses
+    /// 1. Ray origin is above the plane
+    /// 1. Ray origin is below the plane
     fn local_intersects(&self, ray: &Ray) -> Option<Intersections> {
-        todo!()
+        if ray.direction.y.abs() < 0.00001
+        // TODO: use  EPSILON
+        // case 1 and 2
+        {
+            None
+        } else {
+            // case 3 and 4
+            let intersects_at = -ray.origin.y / ray.direction.y;
+            let object = (*self).into();
+            let intersection = Intersection {
+                intersects_at,
+                object,
+            };
+
+            Some(Intersections {
+                list: vec![intersection],
+            })
+        }
     }
 
     /// planes always have a constant normal
     fn object_normal_at(&self, _object_point: Point) -> Option<Vector> {
         Some(Vector::new(0.0, 1.0, 0.0))
+    }
+}
+
+impl From<Plane> for Shape {
+    fn from(s: Plane) -> Self {
+        Shape::Plane(s)
     }
 }
