@@ -49,7 +49,7 @@ fn intersect_world_with_ray() {
 fn preparing_computations() {
     let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = shape::default::sphere();
-    let i = Intersection::new(4.0, shape.into());
+    let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(ray).unwrap();
 
@@ -65,7 +65,7 @@ fn shading_an_intersection() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = w.objects[0];
-    let i = Intersection::new(4.0, shape.into());
+    let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(r).unwrap();
     let c = comps.shade_hit(&w);
@@ -124,7 +124,7 @@ fn color_when_intersection_behind_ray() {
     inner.material.ambient = 1.0;
     let r = Ray::new(Point::new(0.0, 0.0, 0.75), Vector::new(0.0, 0.0, -1.0));
 
-    w.objects = vec![outer.into(), inner.into()];
+    w.objects = vec![outer, inner];
 
     let inner = &w.objects[1];
     assert_eq!(w.color_at(r), inner.material.color)

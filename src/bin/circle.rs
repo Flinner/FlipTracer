@@ -23,8 +23,7 @@ pub fn main() {
         material,
         shape_type: ShapeType::Sphere,
         ..Default::default()
-    }
-    .into();
+    };
 
     let light = PointLight::new(Point::new(-5.0, 10.0, -15.0), Color::new(1.0, 1.0, 1.0));
 
