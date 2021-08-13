@@ -31,6 +31,7 @@ pub enum PatternType {
     Ring,
     /// Checkers, like Chess, but in 3D space too
     Checker,
+    // TODO: more patterns!
 }
 
 impl Pattern {

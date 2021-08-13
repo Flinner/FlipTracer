@@ -21,6 +21,9 @@ pub struct Material {
     /// Value between 10 and 200 work best,default: 200.0
     /// no limits apart from `f64`
     pub shininess: f64,
+    /// Value Between 0 and 1.
+    /// 0 is non-reflective, 1 is a perfect mirror
+    pub reflective: f64,
     /// Pattern
     pub pattern: Option<Pattern>,
 }
@@ -32,6 +35,7 @@ impl Material {
         diffuse: f64,
         specular: f64,
         shininess: f64,
+        reflective: f64,
         pattern: Option<Pattern>,
     ) -> Self {
         Self {
@@ -40,6 +44,7 @@ impl Material {
             diffuse,
             specular,
             shininess,
+            reflective,
             pattern,
         }
     }
@@ -52,8 +57,10 @@ impl Material {
             specular: 0.9,
             shininess: 200.0,
             pattern: None,
+            reflective: 0.0,
         }
     }
+    // TODO: move to object?
     pub fn lighting(
         &self,
         object: Shape,
