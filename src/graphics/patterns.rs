@@ -95,8 +95,17 @@ mod color_at {
     }
 
     /// Returns the color caused by `Ring` Pattern
-    pub(super) fn ring(_pattern: &Pattern, _pattern_point: Point) -> Color {
-        todo!()
+    pub(super) fn ring(pattern: &Pattern, pattern_point: Point) -> Color {
+        let p = pattern_point;
+
+        // distance from radius
+        let radius = (p.x.powf(2.0) + p.z.powf(2.0)).sqrt();
+
+        if radius.floor() % 2.0 == 0.0 {
+            pattern.a
+        } else {
+            pattern.b
+        }
     }
 
     /// Returns the color caused by `Checker` Pattern

@@ -11,8 +11,7 @@ mod stripe {
     use super::*;
     #[test]
     fn creating_pattern() {
-        let stripe_pattern =
-            Pattern::stripped(color::WHITE, color::BLACK, Transformation::identity());
+        let stripe_pattern = Pattern::stripped(WHITE, BLACK, Transformation::identity());
         let stripe_pattern_test = Pattern {
             a: WHITE,
             b: BLACK,
@@ -24,24 +23,21 @@ mod stripe {
 
     #[test]
     fn constant_in_y() {
-        let stripe_pattern =
-            Pattern::stripped(color::WHITE, color::BLACK, Transformation::identity());
+        let stripe_pattern = Pattern::stripped(WHITE, BLACK, Transformation::identity());
         assert_eq!(stripe_pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
         assert_eq!(stripe_pattern.at(Point::new(0.0, 1.0, 0.0)), WHITE);
         assert_eq!(stripe_pattern.at(Point::new(0.0, 2.0, 0.0)), WHITE);
     }
     #[test]
     fn constant_in_z() {
-        let stripe_pattern =
-            Pattern::stripped(color::WHITE, color::BLACK, Transformation::identity());
+        let stripe_pattern = Pattern::stripped(WHITE, BLACK, Transformation::identity());
         assert_eq!(stripe_pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
         assert_eq!(stripe_pattern.at(Point::new(0.0, 0.0, 1.0)), WHITE);
         assert_eq!(stripe_pattern.at(Point::new(0.0, 0.0, 2.0)), WHITE);
     }
     #[test]
     fn pattern_alternates_in_x() {
-        let stripe_pattern =
-            Pattern::stripped(color::WHITE, color::BLACK, Transformation::identity());
+        let stripe_pattern = Pattern::stripped(WHITE, BLACK, Transformation::identity());
         assert_eq!(stripe_pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
         assert_eq!(stripe_pattern.at(Point::new(0.9, 0.0, 0.0)), WHITE);
         assert_eq!(stripe_pattern.at(Point::new(1.0, 0.0, 0.0)), BLACK);
@@ -108,5 +104,17 @@ mod gradient {
             pattern.at(Point::new(0.75, 0.0, 0.0)),
             Color::new(0.25, 0.25, 0.25)
         );
+    }
+}
+
+mod ring {
+    use super::*;
+    #[test]
+    fn ring_extends_in_both_x_and_y() {
+        let pattern = Pattern::ring(WHITE, BLACK, Transformation::identity());
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
+        assert_eq!(pattern.at(Point::new(1.0, 0.0, 0.0)), BLACK);
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 1.0)), BLACK);
+        assert_eq!(pattern.at(Point::new(0.708, 0.0, 0.708)), BLACK);
     }
 }
