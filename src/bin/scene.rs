@@ -26,19 +26,19 @@ fn main() {
         color::WHITE,
         color::BLACK,
         Transformation::scaling(0.1, 0.1, 0.1) * Transformation::rotate_y(FRAC_PI_3),
-        PatternType::Stripped,
+        PatternType::Checker,
     ));
     floor.material.color = Color::new(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
 
-    let mut left_wall = shape::default::sphere();
+    let mut left_wall = shape::default::plane();
     left_wall.transformation = Transformation::translation(0.0, 0.0, 5.0)
         * Transformation::rotate_y(-FRAC_PI_4)
         * Transformation::rotate_x(FRAC_PI_2)
         * Transformation::scaling(10.0, 0.01, 10.0);
     left_wall.material = floor.material;
 
-    let mut right_wall = shape::default::sphere();
+    let mut right_wall = shape::default::plane();
     right_wall.transformation = Transformation::translation(0.0, 0.0, 5.0)
         * Transformation::rotate_y(FRAC_PI_4)
         * Transformation::rotate_x(FRAC_PI_2)
@@ -51,10 +51,12 @@ fn main() {
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
     middle.material.pattern = Some(Pattern::new(
+        color::WHITE,
         color::RED,
-        color::GREEN,
-        Transformation::scaling(0.3, 0.3, 0.3) * Transformation::rotate_y(1.0),
-        PatternType::Stripped,
+        Transformation::scaling(4.3, 4.3, 4.3)
+            * Transformation::translation(0.0, 3.0, 3.0)
+            * Transformation::rotate_z(1.0),
+        PatternType::Gradient,
     ));
 
     let mut right = shape::default::sphere();
@@ -66,7 +68,7 @@ fn main() {
     right.material.pattern = Some(Pattern::new(
         color::BLUE,
         color::WHITE,
-        Transformation::scaling(0.3, 0.3, 0.3) * Transformation::rotate_z(1.0),
+        Transformation::scaling(0.3, 0.3, 0.3) * Transformation::rotate_z(1.5),
         PatternType::Stripped,
     ));
 
@@ -76,6 +78,12 @@ fn main() {
     left.material.color = Color::new(1.0, 0.8, 0.1); // yellow
     left.material.diffuse = 0.7;
     left.material.specular = 0.1;
+    left.material.pattern = Some(Pattern::new(
+        color::BLUE,
+        color::WHITE,
+        Transformation::scaling(1.0, 1.0, 1.0) * Transformation::translation(0.5, 0.5, 0.5),
+        PatternType::Checker,
+    ));
 
     let mut world = World::new();
     world.light = Some(PointLight::new(
@@ -83,8 +91,7 @@ fn main() {
         Color::new(1.0, 1.0, 1.0),
     ));
     world.objects = vec![
-        floor, // left_wall,
-        // right_wall,
+        floor, // left_wall, right_wall,
         middle, right, left,
     ];
 
