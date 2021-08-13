@@ -1,4 +1,5 @@
 use crate::{
+    constants,
     math::{point::Point, ray::Ray, vector::Vector},
     objects::intersections::Intersection,
 };
@@ -12,8 +13,7 @@ use super::{intersections::Intersections, shape::Shape};
 /// 1. Ray origin is above the plane
 /// 1. Ray origin is below the plane
 pub(super) fn local_intersects(shape: &Shape, ray: &Ray) -> Option<Intersections> {
-    if ray.direction.y.abs() < 0.00001
-    // TODO: use  EPSILON
+    if ray.direction.y.abs() < constants::EPSILON
     // case 1 and 2
     {
         None

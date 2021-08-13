@@ -8,7 +8,10 @@ use crate::{
     objects::shape,
 };
 
-use super::{intersections::Intersections, shape::Shape};
+use super::{
+    intersections::{Intersections, PreComputed},
+    shape::Shape,
+};
 
 /// A world of `objects` (now only `Spheres`!) and `Pointlight`
 #[derive(PartialEq, Debug, Clone)]
@@ -34,6 +37,7 @@ impl Default for World {
 }
 
 impl World {
+    /// An empty new world
     pub fn new() -> Self {
         World {
             objects: vec![],
@@ -58,16 +62,17 @@ impl World {
     }
 
     /// intersects with the world given the ray and then return color at resulting intersection
-    pub fn color_at(&self, ray: Ray) -> Color {
+    /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
+    pub fn color_at(&self, ray: Ray, remaining: usize) -> Color {
         let is = self.intersect(ray);
         if let Some(hit) = is.hit() {
             let comp = hit.prepare_computations(ray).unwrap();
-            comp.shade_hit(self)
+            self.shade_hit(&comp, remaining - 1)
         } else {
             color::BLACK
         }
     }
-
+    /// Returns true if there is a shadow
     pub fn is_shadowed(&self, point: Point) -> bool {
         if let Some(light) = self.light {
             let v = light.position - point;
@@ -82,6 +87,45 @@ impl World {
             }
         } else {
             false // no light = no shadow
+        }
+    }
+
+    /// calculates the the color at intersection (from `PreComputed`)
+    /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
+    pub fn shade_hit(&self, comps: &PreComputed, remaining: usize) -> Color {
+        let shadowed = self.is_shadowed(comps.over_point);
+
+        // color from surface
+        let surface = comps.object.material.lighting(
+            comps.object,
+            self.light.expect("no light!"),
+            comps.over_point,
+            comps.eyev,
+            comps.normalv,
+            shadowed,
+        );
+        // color from reflection
+        let reflected = self.reflected_color(comps, remaining - 1);
+        // final color
+        reflected + surface
+    }
+
+    /// color of reflected ray
+    /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
+    /// if `remaining` is zero, the function will return `color::BLACK`
+    pub fn reflected_color(&self, comps: &PreComputed, remaining: usize) -> Color {
+        // reflection to begin with
+        if comps.object.material.reflective == 0.0
+	    // end recurisive reflection
+	    || remaining<=0
+        {
+            color::BLACK
+        } else {
+            let reflect_ray = Ray::new(comps.over_point, comps.reflectv);
+            let color = self.color_at(reflect_ray, remaining - 1);
+
+            // "dilute" the color with reflective
+            color * comps.object.material.reflective
         }
     }
 }

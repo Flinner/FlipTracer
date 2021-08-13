@@ -1,9 +1,9 @@
 use crate::{
-    graphics::color::Color,
+    constants,
     math::{point::Point, ray::Ray, vector::Vector},
 };
 
-use super::{shape::Shape, world::World};
+use super::shape::Shape;
 
 #[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
@@ -26,6 +26,8 @@ pub struct PreComputed {
     pub point: Point,
     pub eyev: Vector,
     pub normalv: Vector,
+    /// Reflected Ray Direction (assuming there is reflection!)
+    pub reflectv: Vector,
     /// Offsets towards the normal, prevents shadow 'acne'
     pub over_point: Point,
 }
@@ -102,8 +104,9 @@ impl Intersection {
         } else {
             inside = false
         }
-        let over_point = point + normalv * 0.0000001; // EPSILON
-                                                      // TODO: move EPSILON to Shapes
+        let reflectv = ray.direction.reflect(normalv);
+        let over_point = point + normalv * constants::EPSILON;
+        // TODO: move EPSILON to Shapes
 
         Some(PreComputed {
             intersects_at,
@@ -113,20 +116,7 @@ impl Intersection {
             eyev,
             normalv,
             over_point,
+            reflectv,
         })
-    }
-}
-
-impl PreComputed {
-    pub fn shade_hit(&self, w: &World) -> Color {
-        let shadowed = w.is_shadowed(self.over_point);
-        self.object.material.lighting(
-            self.object,
-            w.light.expect("no light!"),
-            self.over_point,
-            self.eyev,
-            self.normalv,
-            shadowed,
-        )
     }
 }

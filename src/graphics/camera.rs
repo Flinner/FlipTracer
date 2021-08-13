@@ -1,6 +1,7 @@
 // use rayon::prelude::*;
 
 use crate::{
+    constants,
     math::{point::Point, ray::Ray, transformations::Transformation},
     objects::world::World,
 };
@@ -105,7 +106,7 @@ impl Camera {
             .enumerate()
             .for_each(|(i, color)| {
                 let ray = self.ray_for_pixel_i(i);
-                *color = world.color_at(ray);
+                *color = world.color_at(ray, constants::MAX_REFLECTION_RECRUSTION);
             });
         // canvas
         canvas

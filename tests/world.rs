@@ -1,10 +1,18 @@
+use std::f64::consts::SQRT_2;
+
 use raytracer::{
+    constants::MAX_REFLECTION_RECRUSTION,
     graphics::{
         color::{self, Color},
         lights::PointLight,
         materials::Material,
     },
-    math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
+    math::{
+        point::{self, Point},
+        ray::Ray,
+        transformations::Transformation,
+        vector::Vector,
+    },
     objects::{
         intersections::{Intersection, Intersections},
         shape::{self, Shape, ShapeType},
@@ -68,7 +76,7 @@ fn shading_an_intersection() {
     let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(r).unwrap();
-    let c = comps.shade_hit(&w);
+    let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Testing::assert_nearly_eq(c, Color::new(0.38066, 0.47583, 0.2855))
 }
@@ -88,7 +96,7 @@ fn shading_an_intersection_from_inside() {
     let i = Intersection::new(0.5, shape);
 
     let comps = i.prepare_computations(r).unwrap();
-    let c = comps.shade_hit(&w);
+    let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Testing::assert_nearly_eq(c, Color::new(0.90498, 0.90498, 0.90498))
 }
@@ -98,7 +106,7 @@ fn color_when_ray_misses() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 1.0, 0.0));
 
-    assert_eq!(w.color_at(r), color::BLACK)
+    assert_eq!(w.color_at(r, MAX_REFLECTION_RECRUSTION), color::BLACK)
 }
 
 #[test]
@@ -106,7 +114,10 @@ fn color_when_ray_hits() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
 
-    Testing::assert_nearly_eq(w.color_at(r), Color::new(0.38066, 0.47583, 0.2855))
+    Testing::assert_nearly_eq(
+        w.color_at(r, MAX_REFLECTION_RECRUSTION),
+        Color::new(0.38066, 0.47583, 0.2855),
+    )
 }
 
 #[test]
@@ -127,7 +138,10 @@ fn color_when_intersection_behind_ray() {
     w.objects = vec![outer, inner];
 
     let inner = &w.objects[1];
-    assert_eq!(w.color_at(r), inner.material.color)
+    assert_eq!(
+        w.color_at(r, MAX_REFLECTION_RECRUSTION),
+        inner.material.color
+    )
 }
 
 #[test]
@@ -180,7 +194,100 @@ fn intersection_is_shadow() {
     };
 
     let comps = i.prepare_computations(r).unwrap();
-    let c = comps.shade_hit(&w);
+    let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Testing::assert_nearly_eq(c, Color::new(0.1, 0.1, 0.1))
+}
+
+#[test]
+fn precomputing_reflection_vector() {
+    let shape = shape::default::plane();
+
+    let r = Ray::new(
+        Point::new(0.0, 1.0, -1.0),
+        Vector::new(0.0, -SQRT_2 / 2.0, SQRT_2 / 2.0),
+    );
+    let i = Intersection::new(SQRT_2, shape);
+    let comps = i.prepare_computations(r).unwrap();
+    assert_eq!(comps.reflectv, Vector::new(0.0, SQRT_2 / 2.0, SQRT_2 / 2.0))
+}
+
+#[test]
+fn reflect_color_for_nonreflective_material() {
+    let mut w = World::default();
+    let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
+
+    let shape = &mut w.objects[0];
+    shape.material.ambient = 1.0;
+
+    let i = Intersection::new(1.0, *shape);
+    let comps = i.prepare_computations(r).unwrap();
+    let c = w.reflected_color(&comps, MAX_REFLECTION_RECRUSTION);
+
+    assert_eq!(c, color::BLACK)
+}
+
+#[test]
+fn reflect_color_for_reflective_material() {
+    let mut w = World::default();
+    let mut material = Material::default();
+    material.reflective = 0.5;
+
+    let shape = shape::new::plane(Transformation::translation(0.0, -1.0, 0.0), material);
+    w.objects.push(shape);
+
+    let r = Ray::new(
+        Point::new(0.0, 0.0, -3.0),
+        Vector::new(0.0, -SQRT_2 / 2.0, SQRT_2 / 2.0),
+    );
+
+    let i = Intersection::new(SQRT_2, shape);
+    let comps = i.prepare_computations(r).unwrap();
+    let c = w.reflected_color(&comps, MAX_REFLECTION_RECRUSTION);
+
+    Color::assert_nearly_eq(c, Color::new(0.1903306125, 0.237913265737, 0.142747959442));
+}
+
+#[test]
+fn shade_hit_with_reflective_material() {
+    let mut w = World::default();
+    let mut material = Material::default();
+    material.reflective = 0.5;
+
+    let shape = shape::new::plane(Transformation::translation(0.0, -1.0, 0.0), material);
+    w.objects.push(shape);
+
+    let r = Ray::new(
+        Point::new(0.0, 0.0, -3.0),
+        Vector::new(0.0, -SQRT_2 / 2.0, SQRT_2 / 2.0),
+    );
+
+    let i = Intersection::new(SQRT_2, shape);
+    let comps = i.prepare_computations(r).unwrap();
+    let color = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
+
+    Color::assert_nearly_eq(
+        color,
+        Color::new(0.87675599850, 0.9243386516513, 0.8291733453562),
+    );
+}
+
+#[test]
+fn shade_hit_with_infinite_recursion() {
+    // to plane mirrors facing each other with a ray reflecting for infinity
+    let mut w = World::new();
+    w.light = Some(PointLight::new(point::ORIGIN, color::BLACK));
+
+    let mut material = Material::default();
+    material.reflective = 0.5;
+
+    let lower = shape::new::plane(Transformation::translation(0.0, -1.0, 0.0), material);
+    let upper = shape::new::plane(Transformation::translation(0.0, 1.0, 0.0), material);
+
+    w.objects.push(lower);
+    w.objects.push(upper);
+
+    let ray = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 1.0, 0.0));
+    let c = w.color_at(ray, MAX_REFLECTION_RECRUSTION);
+    assert_eq!(c, color::BLACK)
 }
