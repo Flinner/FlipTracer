@@ -6,7 +6,7 @@ mod stripe {
     use raytracer::{
         graphics::patterns::PatternType,
         math::{point::Point, transformations::Transformation},
-        objects::{shape::Shape, sphere::Sphere},
+        objects::shape::{self, Shape},
     };
     #[test]
     fn creating_pattern() {
@@ -50,9 +50,10 @@ mod stripe {
     }
     #[test]
     fn pattern_with_object_transformation() {
-        let mut sphere = Sphere::new(Transformation::scaling(2.0, 2.0, 2.0));
+        let mut sphere = shape::default::sphere();
+        sphere.transformation = Transformation::scaling(2.0, 2.0, 2.0);
         sphere.material.pattern = Some(Pattern::stripped(WHITE, BLACK, Transformation::identity()));
-        let object: Shape = sphere.into();
+        let object: Shape = sphere;
         let color = object.pattern_at(Point::new(1.5, 0.0, 0.0)).unwrap();
 
         assert_eq!(color, WHITE);
@@ -60,26 +61,27 @@ mod stripe {
 
     #[test]
     fn pattern_with_pattern_transformation() {
-        let mut sphere = Sphere::default();
+        let mut sphere = shape::default::sphere();
         sphere.material.pattern = Some(Pattern::stripped(
             WHITE,
             BLACK,
             Transformation::scaling(2.0, 2.0, 2.0),
         ));
-        let object: Shape = sphere.into();
+        let object: Shape = sphere;
         let color = object.pattern_at(Point::new(1.5, 0.0, 0.0)).unwrap();
 
         assert_eq!(color, WHITE);
     }
     #[test]
     fn pattern_with_object_transformation_and_pattern_transformation() {
-        let mut sphere = Sphere::new(Transformation::scaling(2.0, 2.0, 2.0));
+        let mut sphere = shape::default::sphere();
+        sphere.transformation = Transformation::scaling(2.0, 2.0, 2.0);
         sphere.material.pattern = Some(Pattern::stripped(
             WHITE,
             BLACK,
             Transformation::translation(0.5, 0.0, 0.0),
         ));
-        let object: Shape = sphere.into();
+        let object: Shape = sphere;
         let color = object.pattern_at(Point::new(2.5, 0.0, 0.0)).unwrap();
 
         assert_eq!(color, WHITE);

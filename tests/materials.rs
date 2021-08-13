@@ -3,7 +3,7 @@ use raytracer::graphics::patterns::Pattern;
 use raytracer::graphics::{color::Color, materials::Material};
 use raytracer::math::point;
 use raytracer::math::transformations::Transformation;
-use raytracer::objects::sphere::Sphere;
+use raytracer::objects::shape::{self, Shape};
 use raytracer::{
     graphics::lights::PointLight,
     math::{point::Point, vector::Vector},
@@ -28,7 +28,7 @@ fn lighting_with_eye_between_the_light_and_surface() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s = Sphere::default().into(); // useless placeholder
+    let s: Shape = shape::default::sphere();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
     assert_eq!(result, Color::new(1.9, 1.9, 1.9));
@@ -45,7 +45,7 @@ fn lighting_with_eye_between_the_light_and_surface_eye_offset_45() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s = Sphere::default().into(); // useless placeholder
+    let s: Shape = shape::default::sphere();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
     assert_eq!(result, Color::new(1.0, 1.0, 1.0));
@@ -62,7 +62,7 @@ fn lighting_with_eye_between_the_light_and_surface_light_offset_45() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s = Sphere::default().into(); // useless placeholder
+    let s: Shape = shape::default::sphere();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
 
@@ -81,7 +81,7 @@ fn lighting_with_eye_opposite_surface_light_offset_45() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s = Sphere::default().into(); // useless placeholder
+    let s: Shape = shape::default::sphere();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
 
@@ -98,7 +98,7 @@ fn lighting_with_light_behind_surface() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, 10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s = Sphere::default().into(); // useless placeholder
+    let s: Shape = shape::default::sphere();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
 
@@ -116,7 +116,7 @@ fn lighting_with_the_surface_in_shadow() {
     let light = PointLight::new(Point::new(0.0, 0.0, 10.0), Color::new(1.0, 1.0, 1.0));
     let in_shadow = true;
 
-    let s = Sphere::default().into(); // useless placeholder
+    let s: Shape = shape::default::sphere();
 
     let result = material.lighting(s, light, position, eyev, normal, in_shadow);
 
@@ -136,27 +136,13 @@ fn new_material_with_pattern_applied() {
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
     let in_shadow = false;
 
-    let s = Sphere {
+    let s = Shape {
         material,
         ..Default::default()
     }; // useless placeholder
 
-    let c1 = material.lighting(
-        s.into(),
-        light,
-        Point::new(0.9, 0.0, 0.0),
-        eyev,
-        normal,
-        in_shadow,
-    );
-    let c2 = material.lighting(
-        s.into(),
-        light,
-        Point::new(1.1, 0.0, 0.0),
-        eyev,
-        normal,
-        in_shadow,
-    );
+    let c1 = material.lighting(s, light, Point::new(0.9, 0.0, 0.0), eyev, normal, in_shadow);
+    let c2 = material.lighting(s, light, Point::new(1.1, 0.0, 0.0), eyev, normal, in_shadow);
 
     assert_eq!(c1, color::WHITE);
     assert_eq!(c2, color::BLACK);

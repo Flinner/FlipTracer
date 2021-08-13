@@ -4,22 +4,22 @@ use raytracer::{
         ray::Ray,
         vector::{self, Vector},
     },
-    objects::{plane::Plane, shape::Shape},
+    objects::shape::{self, Shape},
 };
 
 #[test]
 fn normal_of_planes() {
     let tests = vec![
         (
-            Shape::Plane(Plane::default()).normal_at(Point::new(1.0, 0.0, 0.0)),
+            shape::default::plane().normal_at(Point::new(1.0, 0.0, 0.0)),
             vector::UNIT_Y,
         ),
         (
-            Shape::Plane(Plane::default()).normal_at(Point::new(0.0, 1.0, 0.0)),
+            shape::default::plane().normal_at(Point::new(0.0, 1.0, 0.0)),
             vector::UNIT_Y,
         ),
         (
-            Shape::Plane(Plane::default()).normal_at(Point::new(1.0, 0.0, 1.0)),
+            shape::default::plane().normal_at(Point::new(1.0, 0.0, 1.0)),
             vector::UNIT_Y,
         ),
     ];
@@ -40,7 +40,7 @@ fn intersecets_with_ray_parallel_to_plane() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Plane::default().into();
+    let s: Shape = shape::default::plane();
     let _xs = s.intersects(&ray).unwrap();
 }
 
@@ -53,7 +53,7 @@ fn intersecets_with_a_coplanar_ray() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Plane::default().into();
+    let s: Shape = shape::default::plane();
     let _xs = s.intersects(&ray).unwrap();
 }
 
@@ -64,7 +64,7 @@ fn intersecets_with_a_plane_from_above() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Plane::default().into();
+    let s: Shape = shape::default::plane();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 1);
     assert_eq!(xs.get_intersection(0).unwrap(), 1.0);
@@ -79,7 +79,7 @@ fn intersecets_with_a_plane_from_below() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Plane::default().into();
+    let s: Shape = shape::default::plane();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 1);
     assert_eq!(xs.get_intersection(0).unwrap(), 1.0);

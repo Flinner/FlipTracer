@@ -2,11 +2,12 @@ use raytracer::{
     graphics::{
         color::{self, Color},
         lights::PointLight,
+        materials::Material,
     },
     math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
     objects::{
         intersections::{Intersection, Intersections},
-        sphere::Sphere,
+        shape::{self, Shape, ShapeType},
         world::World,
     },
     testing::Testing,
@@ -15,12 +16,10 @@ use raytracer::{
 #[test]
 fn default_world() {
     let light = PointLight::new(Point::new(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
-    let mut s1 = Sphere::default();
+    let mut s1 = shape::default::sphere();
     s1.material.color = Color::new(0.8, 1.0, 0.6);
     s1.material.diffuse = 0.7;
     s1.material.specular = 0.2;
-
-    let _s2 = Sphere::new(Transformation::scaling(0.5, 0.5, 0.5));
 
     let w = World::default();
 
@@ -49,7 +48,7 @@ fn intersect_world_with_ray() {
 #[test]
 fn preparing_computations() {
     let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = Sphere::default();
+    let shape = shape::default::sphere();
     let i = Intersection::new(4.0, shape.into());
 
     let comps = i.prepare_computations(ray).unwrap();
@@ -113,11 +112,13 @@ fn color_when_ray_hits() {
 #[test]
 fn color_when_intersection_behind_ray() {
     let mut w = World::default();
-    let mut outer = Sphere {
+    let mut outer = Shape {
+        shape_type: ShapeType::Sphere,
         ..Default::default()
     };
     outer.material.ambient = 1.0;
-    let mut inner = Sphere {
+    let mut inner = Shape {
+        shape_type: ShapeType::Sphere,
         ..Default::default()
     };
     inner.material.ambient = 1.0;
@@ -126,7 +127,7 @@ fn color_when_intersection_behind_ray() {
     w.objects = vec![outer.into(), inner.into()];
 
     let inner = &w.objects[1];
-    assert_eq!(w.color_at(r), inner.material().color)
+    assert_eq!(w.color_at(r), inner.material.color)
 }
 
 #[test]
@@ -165,14 +166,17 @@ fn intersection_is_shadow() {
         Color::new(1.0, 1.0, 1.0),
     ));
     let r = Ray::new(Point::new(0.0, 0.0, 5.0), Vector::new(0.0, 0.0, 1.0));
-    let s1 = Sphere::default();
-    let s2 = Sphere::new(Transformation::translation(0.0, 0.0, 10.0));
+    let s1 = shape::default::sphere();
+    let s2 = shape::new::sphere(
+        Transformation::translation(0.0, 0.0, 10.0),
+        Material::default(),
+    );
 
-    w.objects = vec![s1.into(), s2.into()];
+    w.objects = vec![s1, s2];
 
     let i = Intersection {
         intersects_at: 4.0,
-        object: s2.into(),
+        object: s2,
     };
 
     let comps = i.prepare_computations(r).unwrap();

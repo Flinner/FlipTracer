@@ -1,4 +1,3 @@
-use std::convert::Into;
 use std::f64::consts;
 
 use raytracer::{
@@ -9,7 +8,7 @@ use raytracer::{
         transformations::Transformation,
         vector::{self, Vector},
     },
-    objects::{shape::Shape, sphere::Sphere},
+    objects::shape::{self, Shape},
     testing::Testing,
 };
 
@@ -20,7 +19,7 @@ fn intersect_two_points() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Sphere::default().into();
+    let s: Shape = shape::default::sphere();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 4.0);
@@ -35,7 +34,7 @@ fn intersecets_at_tanget() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Sphere::default().into();
+    let s: Shape = shape::default::sphere();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), 5.0);
@@ -51,7 +50,7 @@ fn ray_misses() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Sphere::default().into();
+    let s: Shape = shape::default::sphere();
     let _xs = s.intersects(&ray).unwrap();
 }
 
@@ -62,7 +61,7 @@ fn ray_originates_in_sphere() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Sphere::default().into();
+    let s: Shape = shape::default::sphere();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -1.0);
@@ -76,7 +75,7 @@ fn sphere_behind_ray() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = Sphere::default().into();
+    let s: Shape = shape::default::sphere();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0).unwrap(), -6.0);
@@ -87,8 +86,8 @@ fn sphere_behind_ray() {
 fn sphere_default_transformation() {
     let transformation = Transformation::identity();
 
-    let s: Shape = Sphere::default().into();
-    assert_eq!(s.transformation(), transformation)
+    let s: Shape = shape::default::sphere();
+    assert_eq!(s.transformation, transformation)
 }
 
 #[test]
@@ -99,7 +98,8 @@ fn intersecting_scaled_sphere() {
     let ray = Ray::new(origin, direction);
 
     let transformation = Transformation::scaling(2.0, 2.0, 2.0);
-    let s: Shape = Sphere::new(transformation).into();
+    let mut s: Shape = shape::default::sphere();
+    s.transformation = transformation;
 
     let xs = s.intersects(&ray).unwrap();
 
@@ -118,7 +118,8 @@ fn intersecting_translated_sphere() {
     let ray = Ray::new(origin, direction);
 
     let transformation = Transformation::scaling(5.0, 0.0, 0.0);
-    let s: Shape = Sphere::new(transformation).into();
+    let mut s: Shape = shape::default::sphere();
+    s.transformation = transformation;
 
     let _xs = s.intersects(&ray).unwrap();
 }
@@ -128,19 +129,19 @@ fn normal_of_sphere() {
     let sqrt3_by3 = 3.0_f64.sqrt() / 3.0;
     let tests = vec![
         (
-            Shape::Sphere(Sphere::default()).normal_at(Point::new(1.0, 0.0, 0.0)),
+            shape::default::sphere().normal_at(Point::new(1.0, 0.0, 0.0)),
             vector::UNIT_X,
         ),
         (
-            Shape::Sphere(Sphere::default()).normal_at(Point::new(0.0, 1.0, 0.0)),
+            shape::default::sphere().normal_at(Point::new(0.0, 1.0, 0.0)),
             vector::UNIT_Y,
         ),
         (
-            Shape::Sphere(Sphere::default()).normal_at(Point::new(0.0, 0.0, 1.0)),
+            shape::default::sphere().normal_at(Point::new(0.0, 0.0, 1.0)),
             vector::UNIT_Z,
         ),
         (
-            Shape::Sphere(Sphere::default()).normal_at(Point::new(sqrt3_by3, sqrt3_by3, sqrt3_by3)),
+            shape::default::sphere().normal_at(Point::new(sqrt3_by3, sqrt3_by3, sqrt3_by3)),
             Vector::new(sqrt3_by3, sqrt3_by3, sqrt3_by3),
         ),
     ];
@@ -159,10 +160,11 @@ fn normal_of_translated_sphere() {
     let translation = Transformation::translation(0.0, 1.0, 0.0);
     let scaled_rotated =
         Transformation::scaling(1.0, 0.5, 1.0) * Transformation::rotate_z(consts::PI / 5.0);
+    let material = Material::default();
 
     let tests = vec![
         (
-            Shape::Sphere(Sphere::new(translation)).normal_at(Point::new(
+            shape::new::sphere(translation, material).normal_at(Point::new(
                 0.0,
                 1.70711,
                 -consts::FRAC_1_SQRT_2, // -0.7011
@@ -170,7 +172,7 @@ fn normal_of_translated_sphere() {
             Vector::new(0.0, consts::FRAC_1_SQRT_2, -consts::FRAC_1_SQRT_2),
         ),
         (
-            Shape::Sphere(Sphere::new(scaled_rotated))
+            shape::new::sphere(scaled_rotated, material)
                 .normal_at(Point::new(0.0, sqrt2_by2, -sqrt2_by2)),
             Vector::new(0.0, 0.97014, -0.24254),
         ),
@@ -185,12 +187,12 @@ fn normal_of_translated_sphere() {
 
 #[test]
 fn sphere_default_material() {
-    assert_eq!(Sphere::default().material, Material::default())
+    assert_eq!(shape::default::sphere().material, Material::default())
 }
 
 #[test]
 fn sphere_given_material() {
-    let mut s = Sphere::default();
+    let mut s = shape::default::sphere();
     let mut m = Material::default();
     m.ambient = 1.0;
     s.material = m;
