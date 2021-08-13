@@ -88,8 +88,10 @@ mod color_at {
     }
 
     /// Returns the color caused by `Gradient` Pattern
-    pub(super) fn gradient(_pattern: &Pattern, _pattern_pointt: Point) -> Color {
-        todo!()
+    pub(super) fn gradient(pattern: &Pattern, pattern_point: Point) -> Color {
+        let distance = pattern.b - pattern.a;
+        let fraction = pattern_point.x - pattern_point.x.floor();
+        pattern.a + distance * fraction
     }
 
     /// Returns the color caused by `Ring` Pattern

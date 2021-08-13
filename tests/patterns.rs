@@ -1,13 +1,14 @@
+use color::{BLACK, WHITE};
 use raytracer::graphics::{color, patterns::Pattern};
+use raytracer::{
+    graphics::color::Color,
+    graphics::patterns::PatternType,
+    math::{point::Point, transformations::Transformation},
+    objects::shape::{self, Shape},
+};
 
 mod stripe {
     use super::*;
-    use color::{BLACK, WHITE};
-    use raytracer::{
-        graphics::patterns::PatternType,
-        math::{point::Point, transformations::Transformation},
-        objects::shape::{self, Shape},
-    };
     #[test]
     fn creating_pattern() {
         let stripe_pattern =
@@ -85,5 +86,27 @@ mod stripe {
         let color = object.pattern_at(Point::new(2.5, 0.0, 0.0)).unwrap();
 
         assert_eq!(color, WHITE);
+    }
+}
+
+mod gradient {
+
+    use super::*;
+    #[test]
+    fn gradient_linearly_interpolates_between_colors() {
+        let pattern = Pattern::gradient(WHITE, BLACK, Transformation::identity());
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
+        assert_eq!(
+            pattern.at(Point::new(0.25, 0.0, 0.0)),
+            Color::new(0.75, 0.75, 0.75)
+        );
+        assert_eq!(
+            pattern.at(Point::new(0.5, 0.0, 0.0)),
+            Color::new(0.5, 0.5, 0.5)
+        );
+        assert_eq!(
+            pattern.at(Point::new(0.75, 0.0, 0.0)),
+            Color::new(0.25, 0.25, 0.25)
+        );
     }
 }
