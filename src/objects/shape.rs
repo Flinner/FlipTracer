@@ -144,7 +144,7 @@ pub mod default {
     /// `Transformation`: `Transformation::default()`
     pub fn plane() -> Shape {
         Shape {
-            shape_type: ShapeType::Sphere,
+            shape_type: ShapeType::Plane,
             ..Default::default()
         }
     }

@@ -62,7 +62,7 @@ pub(super) fn local_intersects(sphere: &Shape, ray: &Ray) -> Option<Intersection
 }
 
 /// Check `Shapeinterface.normal_at()`
-pub(super) fn object_normal_at(sphere: &Shape, object_point: Point) -> Option<Vector> {
+pub(super) fn object_normal_at(_sphere: &Shape, object_point: Point) -> Option<Vector> {
     let object_normal = object_point - point::ORIGIN;
     Some(object_normal)
 }
