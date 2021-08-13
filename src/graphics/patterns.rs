@@ -62,6 +62,11 @@ impl Pattern {
         Self::new(a, b, transformation, PatternType::Ring)
     }
 
+    /// new `Checker` Pattern
+    pub fn checker(a: Color, b: Color, transformation: Transformation) -> Self {
+        Self::new(a, b, transformation, PatternType::Checker)
+    }
+
     // returns the stripe pattern at point
     /// uses pattern space point, not World-Space, or Object-Space!
     pub fn at(&self, pattern_point: Point) -> Color {
@@ -109,7 +114,14 @@ mod color_at {
     }
 
     /// Returns the color caused by `Checker` Pattern
-    pub(super) fn checker(_pattern: &Pattern, _pattern_pointt: Point) -> Color {
-        todo!()
+    pub(super) fn checker(pattern: &Pattern, pattern_point: Point) -> Color {
+        let p = pattern_point;
+        let sum = p.x.floor() + p.y.floor() + p.z.floor();
+
+        if sum % 2.0 == 0.0 {
+            pattern.a
+        } else {
+            pattern.b
+        }
     }
 }

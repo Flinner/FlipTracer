@@ -118,3 +118,28 @@ mod ring {
         assert_eq!(pattern.at(Point::new(0.708, 0.0, 0.708)), BLACK);
     }
 }
+
+mod checker {
+    use super::*;
+    #[test]
+    fn repeats_in_x() {
+        let pattern = Pattern::checker(WHITE, BLACK, Transformation::identity());
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
+        assert_eq!(pattern.at(Point::new(0.99, 0.0, 0.0)), WHITE);
+        assert_eq!(pattern.at(Point::new(1.01, 0.0, 0.0)), BLACK);
+    }
+    #[test]
+    fn repeats_in_y() {
+        let pattern = Pattern::checker(WHITE, BLACK, Transformation::identity());
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
+        assert_eq!(pattern.at(Point::new(0.0, 0.99, 0.0)), WHITE);
+        assert_eq!(pattern.at(Point::new(0.0, 1.01, 0.0)), BLACK);
+    }
+    #[test]
+    fn repeats_in_z() {
+        let pattern = Pattern::checker(WHITE, BLACK, Transformation::identity());
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 0.0)), WHITE);
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 0.99)), WHITE);
+        assert_eq!(pattern.at(Point::new(0.0, 0.0, 1.01)), BLACK);
+    }
+}
