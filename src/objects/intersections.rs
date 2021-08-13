@@ -120,7 +120,7 @@ impl Intersection {
 impl PreComputed {
     pub fn shade_hit(&self, w: &World) -> Color {
         let shadowed = w.is_shadowed(self.over_point);
-        self.object.material().lighting(
+        self.object.material.lighting(
             self.object,
             w.light.expect("no light!"),
             self.over_point,
