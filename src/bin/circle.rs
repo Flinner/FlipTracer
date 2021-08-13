@@ -6,9 +6,8 @@ use raytracer::graphics::materials::Material;
 use raytracer::graphics::ppm;
 use raytracer::math::point::Point;
 use raytracer::math::ray::Ray;
-use raytracer::objects::shape::Shape;
+use raytracer::objects::shape::{Shape, ShapeType};
 //use raytracer::math::transformations::Transformation;
-use raytracer::objects::sphere::Sphere;
 
 pub fn main() {
     let mut canvas = Canvas::new_color(500, 500, color::BLACK);
@@ -20,8 +19,9 @@ pub fn main() {
     material.shininess = 900.0;
     material.ambient = 0.2;
     material.diffuse = 1.0;
-    let sphere: Shape = Sphere {
+    let sphere: Shape = Shape {
         material,
+        shape_type: ShapeType::Sphere,
         ..Default::default()
     }
     .into();
@@ -59,7 +59,7 @@ pub fn main() {
             let eye = ray.direction;
 
             let color = sphere
-                .material()
+                .material
                 .lighting(sphere, light, hit_point, eye, normal, false);
             canvas.write(x, y, color);
         }
