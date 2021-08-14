@@ -20,7 +20,7 @@ fn main() {
     // floor.material.color = Color::new(1.0, 0.9, 0.9);
     // floor.material.specular = 0.0;
 
-    let mut floor = shape::default::plane();
+    let mut floor = shape::plane::default();
     floor.transformation = Transformation::scaling(10.0, 0.01, 10.0);
     floor.material.reflective = 1.0;
     floor.material.pattern = Some(Pattern::new(
@@ -34,21 +34,21 @@ fn main() {
     floor.material.color = Color::new(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
 
-    let mut left_wall = shape::default::plane();
+    let mut left_wall = shape::plane::default();
     left_wall.transformation = Transformation::translation(0.0, 0.0, 5.0)
         * Transformation::rotate_y(-FRAC_PI_4)
         * Transformation::rotate_x(FRAC_PI_2)
         * Transformation::scaling(10.0, 0.01, 10.0);
     left_wall.material = floor.material;
 
-    let mut right_wall = shape::default::plane();
+    let mut right_wall = shape::plane::default();
     right_wall.transformation = Transformation::translation(0.0, 0.0, 5.0)
         * Transformation::rotate_y(FRAC_PI_4)
         * Transformation::rotate_x(FRAC_PI_2)
         * Transformation::scaling(10.0, 0.01, 10.0);
     right_wall.material = floor.material;
 
-    let mut middle = shape::default::sphere();
+    let mut middle = shape::sphere::default();
     middle.transformation = Transformation::translation(-0.5, 1.0, 0.5);
     middle.material.color = Color::new(0.1, 1.0, 0.5); // green
     middle.material.reflective = 0.9;
@@ -63,7 +63,7 @@ fn main() {
         PatternType::Checker,
     ));
 
-    let mut right = shape::default::sphere();
+    let mut right = shape::sphere::default();
     right.transformation =
         Transformation::translation(1.5, 0.5, -0.5) * Transformation::scaling(0.5, 0.5, 0.5);
     right.material.color = Color::new(0.5, 1.0, 0.1); // green
@@ -76,7 +76,7 @@ fn main() {
         PatternType::Stripped,
     ));
 
-    let mut left = shape::default::sphere();
+    let mut left = shape::sphere::default();
     left.transformation =
         Transformation::translation(-1.5, 0.33, -0.75) * Transformation::scaling(0.33, 0.33, 0.33);
     left.material.color = Color::new(1.0, 0.8, 0.1); // yellow
