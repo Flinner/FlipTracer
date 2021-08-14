@@ -66,7 +66,7 @@ impl World {
     pub fn color_at(&self, ray: Ray, remaining: usize) -> Color {
         let is = self.intersect(ray);
         if let Some(hit) = is.hit() {
-            let comp = hit.prepare_computations(ray).unwrap();
+            let comp = hit.prepare_computations(ray, Some(is.clone())).unwrap();
             self.shade_hit(&comp, remaining - 1)
         } else {
             color::BLACK

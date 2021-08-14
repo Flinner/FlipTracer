@@ -59,3 +59,24 @@ pub fn default() -> Shape {
         ..Default::default()
     }
 }
+
+/// Returns a glassy `Shape` with `shape_type` `Sphere`
+/// Equivelent to `sphere::default()` But:
+/// `Material.transparency`= `1.0`
+/// `Material.refractive_index`= `1.5`
+///
+/// ```
+/// use raytracer::objects::sphere::glass;
+/// let glass_sphere = glass();
+///
+/// let gs = glass_sphere;
+/// assert_eq!(gs.material.transparency, 1.0);
+/// assert_eq!(gs.material.refractive_index, 1.5);
+/// ```
+
+pub fn glass() -> Shape {
+    let mut m = Material::default();
+    m.transparency = 1.0;
+    m.refractive_index = 1.5;
+    new(Transformation::identity(), m)
+}

@@ -30,6 +30,10 @@ pub struct PreComputed {
     pub reflectv: Vector,
     /// Offsets towards the normal, prevents shadow 'acne'
     pub over_point: Point,
+    /// refractive index of the material being exited
+    pub refractive_exited: f64,
+    /// refractive index of the material being entered
+    pub refractive_entered: f64,
 }
 
 impl Intersections {
@@ -51,12 +55,14 @@ impl Intersections {
         }
     }
     /// Returns `intersection_at: f64`
+    /// `None` if there is no Shape (index out of bounds)
     pub fn get_intersection(&self, index: usize) -> Option<f64> {
         self.get(index)
             .map(|intersection| intersection.intersects_at)
     }
 
-    /// Returns `intersection_at: f64`
+    /// Returns `Some(Shape)` at `index`
+    /// `None` if there is no Shape (index out of bounds)
     pub fn get_object(&self, index: usize) -> Option<Shape> {
         self.get(index).map(|intersection| intersection.object)
     }
@@ -67,6 +73,7 @@ impl Intersections {
     /// Used to Chain `.agregate` calls
     pub fn agregate(self, rhs: Intersection) -> Intersections {
         let mut list = self.list;
+        // TODO: sort on hit?
         list.push(rhs);
         list// keep it sorted
             .sort_unstable_by(|a, b| a.intersects_at.partial_cmp(&b.intersects_at).unwrap());
@@ -89,14 +96,53 @@ impl Intersection {
         }
     }
 
-    /// Precomputes the point in world space where the intersection occurred
-    pub fn prepare_computations(&self, ray: Ray) -> Option<PreComputed> {
+    /// Precomputes the point in world space where the intersection occurred.
+    /// `xs` is the list of all intersections, used for computing refractive index
+    /// for transperant objects. If there are no intersections just plug in `None`.
+    pub fn prepare_computations(&self, ray: Ray, xs: Option<Intersections>) -> Option<PreComputed> {
         let intersects_at = self.intersects_at;
         let point = ray.position(intersects_at);
         let object = self.object;
         let eyev = -ray.direction;
         let mut normalv = self.object.normal_at(point)?;
         let inside: bool;
+        let mut refractive_exited: f64 = 1.0;
+        let mut refractive_entered: f64 = 1.0;
+
+        // TODO: compare to unwrap_or
+        let xs = xs.unwrap_or_else(|| Intersections {
+            list: vec![self.to_owned()],
+        });
+
+        // record which objects have been encoutered (for refraction)
+        let mut containers: Vec<Shape> = Vec::with_capacity(xs.list.len());
+        for i in &xs.list {
+            let is_hit = xs.hit().unwrap().object.uid == i.object.uid;
+            if is_hit {
+                if let Some(last) = containers.last() {
+                    refractive_exited = last.material.refractive_index;
+                } else {
+                    refractive_exited = 1.0
+                }
+            }
+            if let Some(index) = containers.iter().position(|x| x.uid == i.object.uid) {
+                // intersection is exiting object
+                // since it already entered and is present in the container
+                containers.remove(index);
+            } else {
+                // intersection is entering object
+                // push it, next time it is encoutered, this branch won't run
+                containers.push(i.object);
+            }
+            if is_hit {
+                if let Some(last) = containers.last() {
+                    refractive_entered = last.material.refractive_index;
+                } else {
+                    refractive_entered = 1.0
+                }
+                break;
+            }
+        }
 
         // when the intersection is inside the object, invert the normal
         if normalv.dot_product(&eyev) < 0.0 {
@@ -107,7 +153,6 @@ impl Intersection {
         }
         let reflectv = ray.direction.reflect(normalv);
         let over_point = point + normalv * constants::EPSILON;
-        // TODO: move EPSILON to Shapes
 
         Some(PreComputed {
             intersects_at,
@@ -116,8 +161,10 @@ impl Intersection {
             point,
             eyev,
             normalv,
-            over_point,
             reflectv,
+            over_point,
+            refractive_exited,
+            refractive_entered,
         })
     }
 }
