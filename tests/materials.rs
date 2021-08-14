@@ -13,13 +13,15 @@ use raytracer::{
 fn new_material_light() {
     let color = Color::new(1.0, 1.0, 1.0);
 
-    let material = Material::new(color, 0.1, 0.9, 0.3, 200.0, 0.5, None);
+    let material = Material::new(color, 0.1, 0.9, 0.3, 200.0, 0.5, 0.4, 0.9, None);
 
     assert_eq!(material.ambient, 0.1);
     assert_eq!(material.diffuse, 0.9);
     assert_eq!(material.specular, 0.3);
     assert_eq!(material.shininess, 200.0);
     assert_eq!(material.reflective, 0.5);
+    assert_eq!(material.transparency, 0.4);
+    assert_eq!(material.refractive_index, 0.9);
 }
 #[test]
 fn lighting_with_eye_between_the_light_and_surface() {
@@ -131,7 +133,17 @@ fn new_material_with_pattern_applied() {
     let color = Color::new(1.0, 1.0, 1.0);
 
     let stripe_pattern = Pattern::stripped(color::WHITE, color::BLACK, Transformation::identity());
-    let material = Material::new(color, 1.0, 0.0, 0.0, 200.0, 0.0, Some(stripe_pattern));
+    let material = Material::new(
+        color,
+        1.0,
+        0.0,
+        0.0,
+        200.0,
+        0.0,
+        0.0,
+        1.0,
+        Some(stripe_pattern),
+    );
 
     let eyev = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
@@ -151,7 +163,14 @@ fn new_material_with_pattern_applied() {
 }
 
 #[test]
-fn default_material() {
+fn default_material_reflective() {
     let m = Material::default();
     assert_eq!(m.reflective, 0.0);
+}
+
+#[test]
+fn transperancy_and_refractive_index_for_default_material() {
+    let m = Material::default();
+    assert_eq!(m.refractive_index, 1.0);
+    assert_eq!(m.transparency, 0.0);
 }

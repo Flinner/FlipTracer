@@ -24,6 +24,10 @@ pub struct Material {
     /// Value Between 0 and 1.
     /// 0 is non-reflective, 1 is a perfect mirror
     pub reflective: f64,
+    /// Transparency, 0 is opaque, 1 is (perfectly) transparent
+    pub transparency: f64,
+    /// Refreactive Index
+    pub refractive_index: f64,
     /// Pattern
     pub pattern: Option<Pattern>,
 }
@@ -36,6 +40,8 @@ impl Material {
         specular: f64,
         shininess: f64,
         reflective: f64,
+        transparency: f64,
+        refractive_index: f64,
         pattern: Option<Pattern>,
     ) -> Self {
         Self {
@@ -45,6 +51,8 @@ impl Material {
             specular,
             shininess,
             reflective,
+            transparency,
+            refractive_index,
             pattern,
         }
     }
@@ -56,8 +64,10 @@ impl Material {
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
-            pattern: None,
             reflective: 0.0,
+            transparency: 0.0,
+            refractive_index: 1.0,
+            pattern: None,
         }
     }
     // TODO: move to object?

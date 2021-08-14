@@ -22,10 +22,13 @@ fn main() {
 
     let mut floor = shape::default::plane();
     floor.transformation = Transformation::scaling(10.0, 0.01, 10.0);
+    floor.material.reflective = 1.0;
     floor.material.pattern = Some(Pattern::new(
         color::WHITE,
         color::BLACK,
-        Transformation::scaling(0.1, 0.1, 0.1) * Transformation::rotate_y(FRAC_PI_3),
+        Transformation::scaling(0.1, 0.1, 0.1)
+            * Transformation::translation(-10.0, 0.0, 10.0)
+            * Transformation::rotate_y(FRAC_PI_3),
         PatternType::Checker,
     ));
     floor.material.color = Color::new(1.0, 0.9, 0.9);
@@ -48,15 +51,16 @@ fn main() {
     let mut middle = shape::default::sphere();
     middle.transformation = Transformation::translation(-0.5, 1.0, 0.5);
     middle.material.color = Color::new(0.1, 1.0, 0.5); // green
-    middle.material.diffuse = 0.7;
-    middle.material.specular = 0.3;
+    middle.material.reflective = 0.9;
+    middle.material.diffuse = 0.9;
+    middle.material.specular = 0.9;
     middle.material.pattern = Some(Pattern::new(
         color::WHITE,
         color::RED,
         Transformation::scaling(4.3, 4.3, 4.3)
             * Transformation::translation(0.0, 3.0, 3.0)
             * Transformation::rotate_z(1.0),
-        PatternType::Gradient,
+        PatternType::Checker,
     ));
 
     let mut right = shape::default::sphere();
@@ -96,6 +100,7 @@ fn main() {
     ];
 
     let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
+    // let mut camera = Camera::new(3840, 2160, FRAC_PI_3);
     // let mut camera = Camera::new(300, 300, FRAC_PI_3);
     camera.transform = Transformation::view(
         Point::new(0.0, 1.5, -5.0),
