@@ -9,34 +9,6 @@ use super::{
     shape::Shape,
 };
 
-// #[derive(Clone, Copy, PartialEq, Debug)]
-// pub struct Sphere {
-//     pub uid: u128,
-//     pub transformation: Transformation,
-//     pub material: Material, // TODO: all shapes look the same, maybe have a `struct Shape{uid,trans,material, shape_type} ?
-// }
-
-// impl Default for Sphere {
-//     fn default() -> Self {
-//         Sphere::new(Transformation::identity())
-//     }
-// }
-
-// impl Sphere {
-//     pub fn new(transformation: Transformation) -> Self {
-//         ShapeInterface::new(transformation)
-//     }
-// }
-
-// impl ShapeInterface for Sphere {
-// fn new(transformation: Transformation) -> Self {
-//     Self {
-//         uid: Shape::new_shape_id(),
-//         transformation,
-//         material: Material::default(),
-//     }
-// }
-
 /// Check `Shapeinterface.intersects()`
 pub(super) fn local_intersects(sphere: &Shape, ray: &Ray) -> Option<Intersections> {
     let sphere_to_ray = ray.origin - point::ORIGIN;
