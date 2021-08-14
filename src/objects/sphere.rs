@@ -33,7 +33,7 @@ pub(super) fn local_intersects(sphere: &Shape, ray: &Ray) -> Option<Intersection
         let i1 = Intersection::new(t1, object);
         let i2 = Intersection::new(t2, object);
 
-        Some(i1.agregate(&i2))
+        Some(i1.agregate(i2))
     }
 }
 

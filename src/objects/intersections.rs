@@ -65,11 +65,12 @@ impl Intersections {
     }
 
     /// Used to Chain `.agregate` calls
-    pub fn agregate(mut self, rhs: &Intersection) -> Intersections {
-        self.list.push(rhs.clone());
-        self.list// keep it sorted
+    pub fn agregate(self, rhs: Intersection) -> Intersections {
+        let mut list = self.list;
+        list.push(rhs);
+        list// keep it sorted
             .sort_unstable_by(|a, b| a.intersects_at.partial_cmp(&b.intersects_at).unwrap());
-        self
+        Intersections { list }
     }
 }
 
@@ -82,9 +83,9 @@ impl Intersection {
     }
 
     /// Returns `Intersections`
-    pub fn agregate(&self, rhs: &Self) -> Intersections {
+    pub fn agregate(self, rhs: Self) -> Intersections {
         Intersections {
-            list: vec![self.clone(), rhs.clone()],
+            list: vec![self, rhs],
         }
     }
 

@@ -26,7 +26,7 @@ fn agregate_intersections() {
     let i1 = Intersection::new(1.0, s);
     let i2 = Intersection::new(2.0, s);
 
-    let xs = i1.agregate(&i2);
+    let xs = i1.agregate(i2);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs.get_intersection(0), Some(1.0));
@@ -39,7 +39,7 @@ fn hit_when_all_intersections_positive() {
     let i1 = Intersection::new(1.0, s);
     let i2 = Intersection::new(2.0, s);
 
-    let xs = i1.agregate(&i2);
+    let xs = i1.clone().agregate(i2);
 
     assert_eq!(xs.hit(), Some(&i1));
 }
@@ -50,7 +50,7 @@ fn hit_when_some_intersections_negative() {
     let i1 = Intersection::new(-1.0, s);
     let i2 = Intersection::new(1.0, s);
 
-    let xs = i1.agregate(&i2);
+    let xs = i1.agregate(i2.clone());
 
     assert_eq!(xs.hit(), Some(&i2));
 }
@@ -61,7 +61,7 @@ fn hit_when_all_intersections_negative() {
     let i1 = Intersection::new(-1.0, s);
     let i2 = Intersection::new(-2.0, s);
 
-    let xs = i1.agregate(&i2);
+    let xs = i1.agregate(i2);
 
     assert_eq!(xs.hit(), None);
 }
@@ -74,7 +74,7 @@ fn hit_is_lowest_non_negative() {
     let i3 = Intersection::new(-3.0, s);
     let i4 = Intersection::new(2.0, s);
 
-    let xs = i1.agregate(&i2).agregate(&i3).agregate(&i4);
+    let xs = i1.agregate(i2).agregate(i3).agregate(i4.clone());
     assert_eq!(xs.hit(), Some(&i4));
 }
 
