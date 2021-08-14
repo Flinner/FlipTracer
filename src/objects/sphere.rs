@@ -38,10 +38,3 @@ pub(super) fn object_normal_at(_sphere: &Shape, object_point: Point) -> Option<V
     let object_normal = object_point - point::ORIGIN;
     Some(object_normal)
 }
-// }
-
-// impl From<Sphere> for Shape {
-//     fn from(s: Sphere) -> Self {
-//         Shape::Sphere(s)
-//     }
-// }
