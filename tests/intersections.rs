@@ -15,14 +15,14 @@ fn intersection_encapsulate_object() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.get_object(0), Some(s));
 }
 
 #[test]
 fn agregate_intersections() {
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i1 = Intersection::new(1.0, s);
     let i2 = Intersection::new(2.0, s);
 
@@ -35,7 +35,7 @@ fn agregate_intersections() {
 
 #[test]
 fn hit_when_all_intersections_positive() {
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i1 = Intersection::new(1.0, s);
     let i2 = Intersection::new(2.0, s);
 
@@ -46,7 +46,7 @@ fn hit_when_all_intersections_positive() {
 
 #[test]
 fn hit_when_some_intersections_negative() {
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i1 = Intersection::new(-1.0, s);
     let i2 = Intersection::new(1.0, s);
 
@@ -57,7 +57,7 @@ fn hit_when_some_intersections_negative() {
 
 #[test]
 fn hit_when_all_intersections_negative() {
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i1 = Intersection::new(-1.0, s);
     let i2 = Intersection::new(-2.0, s);
 
@@ -68,7 +68,7 @@ fn hit_when_all_intersections_negative() {
 
 #[test]
 fn hit_is_lowest_non_negative() {
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i1 = Intersection::new(5.0, s);
     let i2 = Intersection::new(7.0, s);
     let i3 = Intersection::new(-3.0, s);
@@ -84,7 +84,7 @@ fn hit_when_intersection_is_outside() {
     let direction = Vector::new(0.0, 0.0, 1.0);
 
     let ray = Ray::new(origin, direction);
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i = Intersection::new(4.0, s);
 
     let comps = i.prepare_computations(ray).unwrap();
@@ -97,7 +97,7 @@ fn hit_when_intersection_is_inside() {
     let direction = Vector::new(0.0, 0.0, 1.0);
 
     let ray = Ray::new(origin, direction);
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i = Intersection::new(1.0, s);
 
     let comps = i.prepare_computations(ray).unwrap();
@@ -113,7 +113,7 @@ fn hit_should_offset_the_point() {
     let direction = Vector::new(0.0, 0.0, 1.0);
 
     let ray = Ray::new(origin, direction);
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
     let i = Intersection::new(5.0, s);
 
     let comps = i.prepare_computations(ray).unwrap();

@@ -11,15 +11,15 @@ use raytracer::{
 fn normal_of_planes() {
     let tests = vec![
         (
-            shape::default::plane().normal_at(Point::new(1.0, 0.0, 0.0)),
+            shape::plane::default().normal_at(Point::new(1.0, 0.0, 0.0)),
             vector::UNIT_Y,
         ),
         (
-            shape::default::plane().normal_at(Point::new(0.0, 1.0, 0.0)),
+            shape::plane::default().normal_at(Point::new(0.0, 1.0, 0.0)),
             vector::UNIT_Y,
         ),
         (
-            shape::default::plane().normal_at(Point::new(1.0, 0.0, 1.0)),
+            shape::plane::default().normal_at(Point::new(1.0, 0.0, 1.0)),
             vector::UNIT_Y,
         ),
     ];
@@ -40,7 +40,7 @@ fn intersecets_with_ray_parallel_to_plane() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = shape::default::plane();
+    let s: Shape = shape::plane::default();
     let _xs = s.intersects(&ray).unwrap();
 }
 
@@ -53,7 +53,7 @@ fn intersecets_with_a_coplanar_ray() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = shape::default::plane();
+    let s: Shape = shape::plane::default();
     let _xs = s.intersects(&ray).unwrap();
 }
 
@@ -64,7 +64,7 @@ fn intersecets_with_a_plane_from_above() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = shape::default::plane();
+    let s: Shape = shape::plane::default();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 1);
     assert_eq!(xs.get_intersection(0).unwrap(), 1.0);
@@ -79,7 +79,7 @@ fn intersecets_with_a_plane_from_below() {
 
     let ray = Ray::new(origin, direction);
 
-    let s: Shape = shape::default::plane();
+    let s: Shape = shape::plane::default();
     let xs = s.intersects(&ray).unwrap();
     assert_eq!(xs.count(), 1);
     assert_eq!(xs.get_intersection(0).unwrap(), 1.0);

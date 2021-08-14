@@ -47,7 +47,7 @@ mod stripe {
     }
     #[test]
     fn pattern_with_object_transformation() {
-        let mut sphere = shape::default::sphere();
+        let mut sphere = shape::sphere::default();
         sphere.transformation = Transformation::scaling(2.0, 2.0, 2.0);
         sphere.material.pattern = Some(Pattern::stripped(WHITE, BLACK, Transformation::identity()));
         let object: Shape = sphere;
@@ -58,7 +58,7 @@ mod stripe {
 
     #[test]
     fn pattern_with_pattern_transformation() {
-        let mut sphere = shape::default::sphere();
+        let mut sphere = shape::sphere::default();
         sphere.material.pattern = Some(Pattern::stripped(
             WHITE,
             BLACK,
@@ -71,7 +71,7 @@ mod stripe {
     }
     #[test]
     fn pattern_with_object_transformation_and_pattern_transformation() {
-        let mut sphere = shape::default::sphere();
+        let mut sphere = shape::sphere::default();
         sphere.transformation = Transformation::scaling(2.0, 2.0, 2.0);
         sphere.material.pattern = Some(Pattern::stripped(
             WHITE,

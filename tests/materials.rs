@@ -32,7 +32,7 @@ fn lighting_with_eye_between_the_light_and_surface() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
     assert_eq!(result, Color::new(1.9, 1.9, 1.9));
@@ -49,7 +49,7 @@ fn lighting_with_eye_between_the_light_and_surface_eye_offset_45() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
     assert_eq!(result, Color::new(1.0, 1.0, 1.0));
@@ -66,7 +66,7 @@ fn lighting_with_eye_between_the_light_and_surface_light_offset_45() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
 
@@ -85,7 +85,7 @@ fn lighting_with_eye_opposite_surface_light_offset_45() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
 
@@ -102,7 +102,7 @@ fn lighting_with_light_behind_surface() {
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, 10.0), Color::new(1.0, 1.0, 1.0));
 
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
 
     let result = material.lighting(s, light, position, eyev, normal, false);
 
@@ -120,7 +120,7 @@ fn lighting_with_the_surface_in_shadow() {
     let light = PointLight::new(Point::new(0.0, 0.0, 10.0), Color::new(1.0, 1.0, 1.0));
     let in_shadow = true;
 
-    let s: Shape = shape::default::sphere();
+    let s: Shape = shape::sphere::default();
 
     let result = material.lighting(s, light, position, eyev, normal, in_shadow);
 

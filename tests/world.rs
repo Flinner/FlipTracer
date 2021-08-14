@@ -16,6 +16,7 @@ use raytracer::{
     objects::{
         intersections::{Intersection, Intersections},
         shape::{self, Shape, ShapeType},
+        sphere,
         world::World,
     },
     testing::Testing,
@@ -24,7 +25,7 @@ use raytracer::{
 #[test]
 fn default_world() {
     let light = PointLight::new(Point::new(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
-    let mut s1 = shape::default::sphere();
+    let mut s1 = sphere::default();
     s1.material.color = Color::new(0.8, 1.0, 0.6);
     s1.material.diffuse = 0.7;
     s1.material.specular = 0.2;
@@ -56,7 +57,7 @@ fn intersect_world_with_ray() {
 #[test]
 fn preparing_computations() {
     let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = shape::default::sphere();
+    let shape: Shape = shape::sphere::default();
     let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(ray).unwrap();
@@ -180,8 +181,8 @@ fn intersection_is_shadow() {
         Color::new(1.0, 1.0, 1.0),
     ));
     let r = Ray::new(Point::new(0.0, 0.0, 5.0), Vector::new(0.0, 0.0, 1.0));
-    let s1 = shape::default::sphere();
-    let s2 = shape::new::sphere(
+    let s1 = shape::sphere::default();
+    let s2 = shape::sphere::new(
         Transformation::translation(0.0, 0.0, 10.0),
         Material::default(),
     );
@@ -201,7 +202,7 @@ fn intersection_is_shadow() {
 
 #[test]
 fn precomputing_reflection_vector() {
-    let shape = shape::default::plane();
+    let shape = shape::plane::default();
 
     let r = Ray::new(
         Point::new(0.0, 1.0, -1.0),
@@ -233,7 +234,7 @@ fn reflect_color_for_reflective_material() {
     let mut material = Material::default();
     material.reflective = 0.5;
 
-    let shape = shape::new::plane(Transformation::translation(0.0, -1.0, 0.0), material);
+    let shape = shape::plane::new(Transformation::translation(0.0, -1.0, 0.0), material);
     w.objects.push(shape);
 
     let r = Ray::new(
@@ -254,7 +255,7 @@ fn shade_hit_with_reflective_material() {
     let mut material = Material::default();
     material.reflective = 0.5;
 
-    let shape = shape::new::plane(Transformation::translation(0.0, -1.0, 0.0), material);
+    let shape = shape::plane::new(Transformation::translation(0.0, -1.0, 0.0), material);
     w.objects.push(shape);
 
     let r = Ray::new(
@@ -281,8 +282,8 @@ fn shade_hit_with_infinite_recursion() {
     let mut material = Material::default();
     material.reflective = 0.5;
 
-    let lower = shape::new::plane(Transformation::translation(0.0, -1.0, 0.0), material);
-    let upper = shape::new::plane(Transformation::translation(0.0, 1.0, 0.0), material);
+    let lower = shape::plane::new(Transformation::translation(0.0, -1.0, 0.0), material);
+    let upper = shape::plane::new(Transformation::translation(0.0, 1.0, 0.0), material);
 
     w.objects.push(lower);
     w.objects.push(upper);
