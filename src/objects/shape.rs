@@ -6,7 +6,8 @@ use crate::math::vector::Vector;
 use crate::objects::intersections::Intersections;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use super::{plane, sphere};
+/// expose the shapes
+pub use super::{plane, sphere};
 
 #[derive(PartialEq, Copy, Debug, Clone)]
 pub struct Shape {
@@ -105,47 +106,6 @@ impl Default for Shape {
             transformation: Transformation::identity(),
             material: Material::default(),
             shape_type: ShapeType::Sphere,
-        }
-    }
-}
-
-/// As you would expect, returns a new `Shape`
-/// requires a `Material`, which you can use `Material::default()`
-pub mod new {
-    use super::*;
-    /// Returns a `Shape` with `shape_type` `Sphere`
-    /// Equivelent to `Shape::new(transformation, material, ShapeType::Sphere)`
-    pub fn sphere(transformation: Transformation, material: Material) -> Shape {
-        Shape::new(transformation, material, ShapeType::Sphere)
-    }
-    /// Returns a `Shape` with `shape_type` `Plane`
-    /// Equivelent to `Shape::new(transformation, material, ShapeType::Sphere)`
-    pub fn plane(transformation: Transformation, material: Material) -> Shape {
-        Shape::new(transformation, material, ShapeType::Plane)
-    }
-}
-
-/// Returns a `Shape` with good defaults
-pub mod default {
-    use super::*;
-    /// Returns a `Shape` with
-    /// `shape_type` `ShapeType::Sphere`
-    /// `Material`: `Material::default()`
-    /// `Transformation`: `Transformation::default()`
-    pub fn sphere() -> Shape {
-        Shape {
-            shape_type: ShapeType::Sphere,
-            ..Default::default()
-        }
-    }
-    /// Returns a `Shape` with
-    /// `shape_type` `ShapeType::Plane`
-    /// `Material`: `Material::default()`
-    /// `Transformation`: `Transformation::default()`
-    pub fn plane() -> Shape {
-        Shape {
-            shape_type: ShapeType::Plane,
-            ..Default::default()
         }
     }
 }

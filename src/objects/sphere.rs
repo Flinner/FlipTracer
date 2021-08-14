@@ -1,12 +1,16 @@
-use crate::math::{
-    point::{self, Point},
-    ray::Ray,
-    vector::Vector,
+use crate::{
+    graphics::materials::Material,
+    math::{
+        point::{self, Point},
+        ray::Ray,
+        transformations::Transformation,
+        vector::Vector,
+    },
 };
 
 use super::{
     intersections::{Intersection, Intersections},
-    shape::Shape,
+    shape::{Shape, ShapeType},
 };
 
 /// Check `Shapeinterface.intersects()`
@@ -37,4 +41,21 @@ pub(super) fn local_intersects(sphere: &Shape, ray: &Ray) -> Option<Intersection
 pub(super) fn object_normal_at(_sphere: &Shape, object_point: Point) -> Option<Vector> {
     let object_normal = object_point - point::ORIGIN;
     Some(object_normal)
+}
+
+/// Returns a `Shape` with `shape_type` `Sphere`
+/// Equivelent to `Shape::new(transformation, material, ShapeType::Sphere)`
+pub fn new(transformation: Transformation, material: Material) -> Shape {
+    Shape::new(transformation, material, ShapeType::Sphere)
+}
+
+/// Returns a `Shape` with
+/// `shape_type` `ShapeType::Sphere`
+/// `Material`: `Material::default()`
+/// `Transformation`: `Transformation::default()`
+pub fn default() -> Shape {
+    Shape {
+        shape_type: ShapeType::Sphere,
+        ..Default::default()
+    }
 }

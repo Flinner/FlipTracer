@@ -28,7 +28,7 @@ impl Default for World {
         s1.material.diffuse = 0.7;
         s1.material.specular = 0.2;
 
-        let s2 = shape::new::sphere(Transformation::scaling(0.5, 0.5, 0.5), Material::default());
+        let s2 = shape::sphere::new(Transformation::scaling(0.5, 0.5, 0.5), Material::default());
         World {
             objects: vec![s1, s2],
             light: Some(light),
