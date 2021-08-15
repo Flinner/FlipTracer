@@ -1,6 +1,5 @@
-use std::f64::EPSILON;
-
 use raytracer::{
+    constants,
     math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
     objects::{
         intersections::{Intersection, Intersections},
@@ -88,7 +87,11 @@ fn hit_when_intersection_is_outside() {
     let s: Shape = shape::sphere::default();
     let i = Intersection::new(4.0, s);
 
-    let comps = i.prepare_computations(ray, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(ray, xs).unwrap();
     assert!(!comps.inside);
 }
 
@@ -101,7 +104,11 @@ fn hit_when_intersection_is_inside() {
     let s: Shape = shape::sphere::default();
     let i = Intersection::new(1.0, s);
 
-    let comps = i.prepare_computations(ray, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(ray, xs).unwrap();
     assert!(comps.inside);
     assert_eq!(comps.point, Point::new(0.0, 0.0, 1.0));
     assert_eq!(comps.eyev, Vector::new(0.0, 0.0, -1.0));
@@ -117,14 +124,17 @@ fn hit_should_offset_the_point() {
     s.transformation = Transformation::translation(0.0, 0.0, 1.0);
     let i = Intersection::new(5.0, s);
 
-    let comps = i.prepare_computations(ray, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(ray, xs).unwrap();
     println!("comps.over_point.z {}", comps.over_point.z);
     assert!(comps.over_point.z < -constants::EPSILON / 2.0);
     assert!(comps.point.z > comps.over_point.z)
 }
 
 #[test]
-#[ignore = "doen't work :("]
 fn finding_refractive_indices_of_inner_and_outer_surface() {
     // n1 is the material being exited
     // n2 is the material being entered
@@ -154,12 +164,16 @@ fn finding_refractive_indices_of_inner_and_outer_surface() {
     let i4 = Intersection::new(4.75, b);
     let i5 = Intersection::new(5.25, c);
     let i6 = Intersection::new(6.0, a);
-    let xs = i1
-        .agregate(i2)
-        .agregate(i3)
-        .agregate(i4)
-        .agregate(i5)
-        .agregate(i6);
+    // let xs = i1
+    //     .agregate(i2)
+    //     .agregate(i3)
+    //     .agregate(i4)
+    //     .agregate(i5)
+    //     .agregate(i6);
+
+    let xs: Intersections = Intersections {
+        list: vec![i1, i2, i3, i4, i5, i6],
+    };
 
     // index, refractive_exited, refractive_entered
     let test_cases: [(usize, f64, f64); 6] = [
@@ -171,7 +185,7 @@ fn finding_refractive_indices_of_inner_and_outer_surface() {
         (5, 1.5, 1.0),
     ];
     for (i, refractive_exited, refractive_entered) in test_cases {
-        println!("{}", i);
+        println!("======{}", i);
         let comps = xs
             .get(i)
             .unwrap()

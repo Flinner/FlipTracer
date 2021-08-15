@@ -56,11 +56,15 @@ fn intersect_world_with_ray() {
 
 #[test]
 fn preparing_computations() {
-    let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape: Shape = shape::sphere::default();
     let i = Intersection::new(4.0, shape);
 
-    let comps = i.prepare_computations(ray, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
 
     assert_eq!(comps.intersects_at, i.intersects_at);
     assert_eq!(comps.object, i.object);
@@ -76,7 +80,12 @@ fn shading_an_intersection() {
     let shape = w.objects[0];
     let i = Intersection::new(4.0, shape);
 
-    let comps = i.prepare_computations(r, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
+
     let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Testing::assert_nearly_eq(c, Color::new(0.38066, 0.47583, 0.2855))
@@ -96,7 +105,11 @@ fn shading_an_intersection_from_inside() {
     let shape = w.objects[1];
     let i = Intersection::new(0.5, shape);
 
-    let comps = i.prepare_computations(r, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
     let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Testing::assert_nearly_eq(c, Color::new(0.90498, 0.90498, 0.90498))
@@ -194,7 +207,12 @@ fn intersection_is_shadow() {
         object: s2,
     };
 
-    let comps = i.prepare_computations(r, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
+
     let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Testing::assert_nearly_eq(c, Color::new(0.1, 0.1, 0.1))
@@ -209,7 +227,12 @@ fn precomputing_reflection_vector() {
         Vector::new(0.0, -SQRT_2 / 2.0, SQRT_2 / 2.0),
     );
     let i = Intersection::new(SQRT_2, shape);
-    let comps = i.prepare_computations(r, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
+
     assert_eq!(comps.reflectv, Vector::new(0.0, SQRT_2 / 2.0, SQRT_2 / 2.0))
 }
 
@@ -222,7 +245,12 @@ fn reflect_color_for_nonreflective_material() {
     shape.material.ambient = 1.0;
 
     let i = Intersection::new(1.0, *shape);
-    let comps = i.prepare_computations(r, None).unwrap();
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
+
     let c = w.reflected_color(&comps, MAX_REFLECTION_RECRUSTION);
 
     assert_eq!(c, color::BLACK)
@@ -243,7 +271,12 @@ fn reflect_color_for_reflective_material() {
     );
 
     let i = Intersection::new(SQRT_2, shape);
-    let comps = i.prepare_computations(r, None).unwrap();
+
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
     let c = w.reflected_color(&comps, MAX_REFLECTION_RECRUSTION);
 
     Color::assert_nearly_eq(c, Color::new(0.1903306125, 0.237913265737, 0.142747959442));
@@ -264,7 +297,12 @@ fn shade_hit_with_reflective_material() {
     );
 
     let i = Intersection::new(SQRT_2, shape);
-    let comps = i.prepare_computations(r, None).unwrap();
+
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(r, xs).unwrap();
     let color = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Color::assert_nearly_eq(

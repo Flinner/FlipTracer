@@ -106,45 +106,15 @@ impl Intersection {
         let eyev = -ray.direction;
         let mut normalv = self.object.normal_at(point)?;
         let inside: bool;
-        let mut refractive_exited: f64 = 1.0;
-        let mut refractive_entered: f64 = 1.0;
 
         // TODO: compare to unwrap_or
-        let xs = xs.unwrap_or_else(|| Intersections {
-            list: vec![self.to_owned()],
-        });
+        // only for tests!
+        // let xs = xs.unwrap_or_else(|| Intersections {
+        //     list: vec![self.to_owned()],
+        // });
 
-        // record which objects have been encoutered (for refraction)
-        let mut containers: Vec<Shape> = Vec::with_capacity(xs.list.len());
-        for i in &xs.list {
-            let is_hit = xs.hit().unwrap().object.uid == i.object.uid;
-            if is_hit {
-                if let Some(last) = containers.last() {
-                    refractive_exited = last.material.refractive_index;
-                } else {
-                    refractive_exited = 1.0
-                }
-            }
-            if let Some(index) = containers.iter().position(|x| x.uid == i.object.uid) {
-                // intersection is exiting object
-                // since it already entered and is present in the container
-                containers.remove(index);
-            } else {
-                // intersection is entering object
-                // push it, next time it is encoutered, this branch won't run
-                containers.push(i.object);
-            }
-            if is_hit {
-                if let Some(last) = containers.last() {
-                    refractive_entered = last.material.refractive_index;
-                } else {
-                    refractive_entered = 1.0
-                }
-                break;
-            }
-        }
+        let (refractive_exited, refractive_entered) = refractive_index(self, xs.unwrap());
 
-        // when the intersection is inside the object, invert the normal
         if normalv.dot_product(&eyev) < 0.0 {
             inside = true;
             normalv = -normalv
@@ -167,4 +137,43 @@ impl Intersection {
             refractive_entered,
         })
     }
+}
+
+fn refractive_index(hit: &Intersection, xs: Intersections) -> (f64, f64) {
+    let mut refractive_exited: f64 = 1.0;
+    let mut refractive_entered: f64 = 1.0;
+
+    // record which objects have been encoutered (for refraction)
+    let mut containers: Vec<Shape> = Vec::with_capacity(xs.list.len());
+
+    for i in &xs.list {
+        let is_hit = hit.object.uid == i.object.uid
+            && (hit.intersects_at - i.intersects_at).abs() < constants::EPSILON;
+
+        if is_hit {
+            if let Some(last) = containers.last() {
+                refractive_exited = last.material.refractive_index;
+            } else {
+                refractive_exited = 1.0
+            }
+        }
+        if let Some(index) = containers.iter().position(|x| x.uid == i.object.uid) {
+            // intersection is exiting object
+            // since it already entered and is present in the container
+            containers.remove(index);
+        } else {
+            // intersection is entering object
+            // push it, next time it is encoutered, this branch won't run
+            containers.push(i.object);
+        }
+        if is_hit {
+            if let Some(last) = containers.last() {
+                refractive_entered = last.material.refractive_index;
+            } else {
+                refractive_entered = 1.0;
+            }
+            break;
+        }
+    }
+    (refractive_exited, refractive_entered)
 }
