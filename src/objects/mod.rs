@@ -1,3 +1,4 @@
+pub mod cube;
 pub mod intersections;
 pub mod plane;
 pub mod shape;
