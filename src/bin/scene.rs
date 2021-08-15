@@ -99,9 +99,9 @@ fn main() {
         middle, right, left,
     ];
 
-    let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
+    // let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
     // let mut camera = Camera::new(3840, 2160, FRAC_PI_3);
-    // let mut camera = Camera::new(300, 300, FRAC_PI_3);
+    let mut camera = Camera::new(300, 300, FRAC_PI_3);
     camera.transform = Transformation::view(
         Point::new(0.0, 1.5, -5.0),
         Point::new(0.0, 1.0, 0.0),
