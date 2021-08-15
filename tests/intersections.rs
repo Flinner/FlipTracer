@@ -195,3 +195,23 @@ fn finding_refractive_indices_of_inner_and_outer_surface() {
         assert_eq!(comps.refractive_entered, refractive_entered);
     }
 }
+
+#[test]
+fn under_point_is_offset_below_surface() {
+    let origin = Point::new(0.0, 0.0, -5.0);
+    let direction = Vector::new(0.0, 0.0, 1.0);
+
+    let ray = Ray::new(origin, direction);
+    let mut s: Shape = shape::sphere::glass();
+    s.transformation = Transformation::translation(0.0, 0.0, 1.0);
+    let i = Intersection::new(5.0, s);
+
+    let xs = Some(Intersections {
+        list: vec![i.to_owned()],
+    });
+
+    let comps = i.prepare_computations(ray, xs).unwrap();
+    println!("comps.over_point.z {}", comps.under_point.z);
+    assert!(comps.under_point.z > constants::EPSILON / 2.0);
+    assert!(comps.point.z < comps.under_point.z)
+}

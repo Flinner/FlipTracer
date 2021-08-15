@@ -30,6 +30,8 @@ pub struct PreComputed {
     pub reflectv: Vector,
     /// Offsets towards the normal, prevents shadow 'acne'
     pub over_point: Point,
+    /// Offsets below the normal, refactored ray originate here
+    pub under_point: Point,
     /// refractive index of the material being exited
     pub refractive_exited: f64,
     /// refractive index of the material being entered
@@ -123,6 +125,7 @@ impl Intersection {
         }
         let reflectv = ray.direction.reflect(normalv);
         let over_point = point + normalv * constants::EPSILON;
+        let under_point = point + (normalv * -constants::EPSILON);
 
         Some(PreComputed {
             intersects_at,
@@ -133,6 +136,7 @@ impl Intersection {
             normalv,
             reflectv,
             over_point,
+            under_point,
             refractive_exited,
             refractive_entered,
         })
