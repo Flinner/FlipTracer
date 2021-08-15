@@ -142,6 +142,14 @@ impl Add<Vector> for Point {
     }
 }
 
+impl Sub<Vector> for Point {
+    type Output = Self;
+
+    fn sub(self, rhs: Vector) -> Self::Output {
+        self.negative_displacment(&rhs)
+    }
+}
+
 impl Sub for Point {
     type Output = Vector;
 

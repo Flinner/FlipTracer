@@ -125,7 +125,7 @@ impl Intersection {
         }
         let reflectv = ray.direction.reflect(normalv);
         let over_point = point + normalv * constants::EPSILON;
-        let under_point = point + (normalv * -constants::EPSILON);
+        let under_point = point - (normalv * constants::EPSILON);
 
         Some(PreComputed {
             intersects_at,
