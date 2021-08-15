@@ -108,18 +108,18 @@ fn hit_when_intersection_is_inside() {
     assert_eq!(comps.normalv, Vector::new(0.0, 0.0, -1.0)); // inverted
 }
 #[test]
-#[ignore = "Fails :(, even thou the ray tracer works works fine"]
 fn hit_should_offset_the_point() {
     let origin = Point::new(0.0, 0.0, -5.0);
     let direction = Vector::new(0.0, 0.0, 1.0);
 
     let ray = Ray::new(origin, direction);
-    let s: Shape = shape::sphere::default();
+    let mut s: Shape = shape::sphere::default();
+    s.transformation = Transformation::translation(0.0, 0.0, 1.0);
     let i = Intersection::new(5.0, s);
 
     let comps = i.prepare_computations(ray, None).unwrap();
     println!("comps.over_point.z {}", comps.over_point.z);
-    assert!(comps.over_point.z < -EPSILON / 2.0);
+    assert!(comps.over_point.z < -constants::EPSILON / 2.0);
     assert!(comps.point.z > comps.over_point.z)
 }
 
