@@ -33,6 +33,7 @@ fn main() {
     ));
     floor.material.color = Color::new(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
+    floor.material.ambient = 0.8;
 
     let mut left_wall = shape::plane::default();
     left_wall.transformation = Transformation::translation(0.0, 0.0, 5.0)
@@ -49,19 +50,27 @@ fn main() {
     right_wall.material = floor.material;
 
     let mut middle = shape::sphere::default();
-    middle.transformation = Transformation::translation(-0.5, 1.0, 0.5);
+    middle.transformation = Transformation::translation(0.0, 1.0, 0.0);
     middle.material.color = Color::new(0.1, 1.0, 0.5); // green
-    middle.material.reflective = 0.9;
-    middle.material.diffuse = 0.9;
+    middle.material.diffuse = 0.0;
     middle.material.specular = 0.9;
-    middle.material.pattern = Some(Pattern::new(
-        color::WHITE,
-        color::RED,
-        Transformation::scaling(4.3, 4.3, 4.3)
-            * Transformation::translation(0.0, 3.0, 3.0)
-            * Transformation::rotate_z(1.0),
-        PatternType::Checker,
-    ));
+    middle.material.shininess = 300.0;
+    middle.material.reflective = 0.9;
+    middle.material.transparency = 0.9;
+    middle.material.refractive_index = 1.5;
+    middle.material.color = Color::new(0.0, 0.0, 0.0);
+
+    let mut air = shape::sphere::default();
+    air.transformation =
+        Transformation::translation(0.0, 1.0, 0.0) * Transformation::scaling(0.5, 0.5, 0.5);
+    air.material.ambient = 0.0;
+    air.material.diffuse = 0.0;
+    air.material.specular = 0.9;
+    air.material.shininess = 300.0;
+    air.material.reflective = 0.9;
+    air.material.transparency = 0.9;
+    air.material.refractive_index = 1.0000034;
+    air.material.color = Color::new(1.0, 1.0, 1.0);
 
     let mut right = shape::sphere::default();
     right.transformation =
@@ -96,12 +105,12 @@ fn main() {
     ));
     world.objects = vec![
         floor, // left_wall, right_wall,
-        middle, right, left,
+        air, middle, right, left,
     ];
 
     // let mut camera = Camera::new(1920, 1080, FRAC_PI_3);
-    // let mut camera = Camera::new(3840, 2160, FRAC_PI_3);
-    let mut camera = Camera::new(300, 300, FRAC_PI_3);
+    let mut camera = Camera::new(3840, 2160, FRAC_PI_3);
+    // let mut camera = Camera::new(300, 300, FRAC_PI_3);
     camera.transform = Transformation::view(
         Point::new(0.0, 1.5, -5.0),
         Point::new(0.0, 1.0, 0.0),
