@@ -469,3 +469,38 @@ fn shade_hit_with_transperant_material() {
 
     Testing::assert_nearly_eq(color, Color::new(0.93642, 0.68642, 0.68642));
 }
+
+#[test]
+fn shade_hit_with_reflective_transperant_material() {
+    let mut world = World::default();
+
+    let mut floor_material = Material::default();
+    floor_material.transparency = 0.5;
+    floor_material.reflective = 0.5;
+    floor_material.refractive_index = 1.5;
+
+    let floor = shape::plane::new(Transformation::translation(0.0, -1.0, 0.0), floor_material);
+
+    let mut ball_material = Material::default();
+    ball_material.color = Color::new(1.0, 0.0, 0.0);
+    ball_material.ambient = 0.5;
+
+    let ball = shape::sphere::new(Transformation::translation(0.0, -3.5, -0.5), ball_material);
+
+    world.objects.push(floor);
+    world.objects.push(ball);
+
+    let ray = Ray::new(
+        Point::new(0.0, 0.0, -3.0),
+        Vector::new(0.0, -SQRT_2 / 2.0, SQRT_2 / 2.0),
+    );
+    let i1 = Intersection::new(SQRT_2, floor);
+    let xs = Intersections {
+        list: vec![i1.clone()],
+    };
+
+    let comps = i1.prepare_computations(ray, Some(xs)).unwrap();
+    let color = world.shade_hit(&comps, 5);
+
+    Testing::assert_nearly_eq(color, Color::new(0.93391, 0.69643, 0.69243));
+}

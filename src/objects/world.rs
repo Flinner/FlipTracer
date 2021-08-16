@@ -107,8 +107,17 @@ impl World {
         // color from reflection
         let reflected = self.reflected_color(comps, remaining - 1);
         let refracted = self.refracted_color(comps, remaining - 1);
-        // final color
-        reflected + surface + refracted
+
+        let material = comps.object.material;
+
+        // if both reflective and transparenct. use schlick formula to get Fresnel effect
+        if material.reflective > 0.0 && material.transparency > 0.0 {
+            let reflectance = comps.schlick();
+            surface + reflected * reflectance + refracted * (1.0 - reflectance)
+        } else {
+            // final color
+            reflected + surface + refracted
+        }
     }
 
     /// color of reflected ray
@@ -145,10 +154,8 @@ impl World {
 	    || remaining == 0
 	    || sin2_t > 1.0
         {
-            eprintln!("black");
             color::BLACK
         } else {
-            eprintln!("calculatee");
             // finding refracted ray
             let cos_t = (1.0 - sin2_t).sqrt();
             let direction = comps.normalv * (n_ratio * cos_i - cos_t) - //.

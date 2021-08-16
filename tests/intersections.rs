@@ -6,7 +6,9 @@ use raytracer::{
         shape::{self, Shape},
         sphere,
     },
+    testing::Testing,
 };
+use std::f64::consts::SQRT_2;
 
 #[test]
 fn intersection_encapsulate_object() {
@@ -214,4 +216,61 @@ fn under_point_is_offset_below_surface() {
     println!("comps.over_point.z {}", comps.under_point.z);
     assert!(comps.under_point.z > constants::EPSILON / 2.0);
     assert!(comps.point.z < comps.under_point.z)
+}
+
+#[test]
+fn schilck_approx_under_total_internal_reflection() {
+    let shape = sphere::glass();
+    let ray = Ray::new(
+        Point::new(0.0, 0.0, SQRT_2 / 2.0),
+        Vector::new(0.0, 1.0, 0.0),
+    );
+    let i1 = Intersection::new(-SQRT_2 / 2.0, shape);
+    let i2 = Intersection::new(SQRT_2 / 2.0, shape);
+    let xs = i1.agregate(i2);
+
+    let comps = xs
+        .get(1)
+        .unwrap()
+        .prepare_computations(ray, Some(xs))
+        .unwrap();
+    let reflectance = comps.schlick();
+
+    assert_eq!(reflectance, 1.0)
+}
+
+#[test]
+fn schilck_approx_with_perpenducual_viewing_angle() {
+    let shape = sphere::glass();
+    let ray = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 1.0, 0.0));
+    let i1 = Intersection::new(-1.0, shape);
+    let i2 = Intersection::new(01.0, shape);
+    let xs = i1.agregate(i2);
+
+    let comps = xs
+        .get(1)
+        .unwrap()
+        .prepare_computations(ray, Some(xs))
+        .unwrap();
+    let reflectance = comps.schlick();
+
+    Testing::assert_nearly_eq(reflectance, 0.04)
+}
+
+#[test]
+fn schilck_approx_with_with_small_angle_entered_greater_than_exited() {
+    let shape = sphere::glass();
+    let ray = Ray::new(Point::new(0.0, 0.99, -2.0), Vector::new(0.0, 0.0, 1.0));
+    let i1 = Intersection::new(1.8589, shape);
+    // let i2 = Intersection::new(01.0, shape);
+    let xs = Intersections { list: vec![i1] };
+
+    let comps = xs
+        .get(0)
+        .unwrap()
+        .prepare_computations(ray, Some(xs))
+        .unwrap();
+    let reflectance = comps.schlick();
+
+    Testing::assert_nearly_eq(reflectance, 0.48873)
 }

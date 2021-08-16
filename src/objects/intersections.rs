@@ -32,9 +32,9 @@ pub struct PreComputed {
     pub over_point: Point,
     /// Offsets below the normal, refactored ray originate here
     pub under_point: Point,
-    /// refractive index of the material being exited
+    /// refractive index of the material being exited (n1)
     pub refractive_exited: f64,
-    /// refractive index of the material being entered
+    /// refractive index of the material being entered (n2)
     pub refractive_entered: f64,
 }
 
@@ -143,6 +143,32 @@ impl Intersection {
     }
 }
 
+impl PreComputed {
+    /// Finds Fresnel Effect
+    /// returns reflectance
+    pub fn schlick(&self) -> f64 {
+        // cos of the angle between eye and normal vectors
+        let mut cos = self.eyev.dot_product(&self.normalv);
+        let n1 = self.refractive_exited;
+        let n2 = self.refractive_entered;
+
+        // total internal reflection can only accour if n1 > n2
+        if n1 > n2 {
+            let n = n1 / n2;
+            let sin2_t = n.powi(2) * (1.0 - cos.powi(2));
+
+            if sin2_t > 1.0 {
+                return 1.0;
+            }
+            // when n1 > n2, use cos(theta_t) instead
+            let cos_t = (1.0 - sin2_t).sqrt();
+            cos = cos_t;
+        }
+        let r0 = ((n1 - n2) / (n1 + n2)).powi(2);
+        r0 + (1.0 - r0) * (1.0 - cos).powi(5)
+    }
+}
+
 fn refractive_index(hit: &Intersection, xs: Intersections) -> (f64, f64) {
     let mut refractive_exited: f64 = 1.0;
     let mut refractive_entered: f64 = 1.0;
@@ -164,6 +190,7 @@ fn refractive_index(hit: &Intersection, xs: Intersections) -> (f64, f64) {
         if let Some(index) = containers.iter().position(|x| x.uid == i.object.uid) {
             // intersection is exiting object
             // since it already entered and is present in the container
+            // TODO: use swap_remove
             containers.remove(index);
         } else {
             // intersection is entering object
