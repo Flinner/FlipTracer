@@ -106,8 +106,9 @@ impl World {
         );
         // color from reflection
         let reflected = self.reflected_color(comps, remaining - 1);
+        let refracted = self.refracted_color(comps, remaining - 1);
         // final color
-        reflected + surface
+        reflected + surface + refracted
     }
 
     /// color of reflected ray
@@ -126,6 +127,37 @@ impl World {
 
             // "dilute" the color with reflective
             color * comps.object.material.reflective
+        }
+    }
+
+    /// color of refracted ray
+    /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
+    /// if `remaining` is zero, the function will return `color::BLACK`
+    pub fn refracted_color(&self, comps: &PreComputed, remaining: usize) -> Color {
+        // ratio of first index of refraction to the second.
+        let n_ratio = comps.refractive_exited / comps.refractive_entered;
+        let cos_i = comps.eyev.dot_product(&comps.normalv);
+        let sin2_t = n_ratio.powi(2) * (1.0 - cos_i.powi(2));
+
+        // reflection to begin with
+        if comps.object.material.transparency == 0.0
+	    // end recurisive reflection
+	    || remaining == 0
+	    || sin2_t > 1.0
+        {
+            eprintln!("black");
+            color::BLACK
+        } else {
+            eprintln!("calculatee");
+            // finding refracted ray
+            let cos_t = (1.0 - sin2_t).sqrt();
+            let direction = comps.normalv * (n_ratio * cos_i - cos_t) - //.
+		comps.eyev * n_ratio;
+
+            // create refracted ray
+            let refract_ray = Ray::new(comps.under_point, direction);
+            self.color_at(refract_ray, remaining - 1) * //.
+		comps.object.material.transparency
         }
     }
 }

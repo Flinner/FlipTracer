@@ -6,6 +6,7 @@ use raytracer::{
         color::{self, Color},
         lights::PointLight,
         materials::Material,
+        patterns::Pattern,
     },
     math::{
         point::{self, Point},
@@ -329,4 +330,142 @@ fn shade_hit_with_infinite_recursion() {
     let ray = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 1.0, 0.0));
     let c = w.color_at(ray, MAX_REFLECTION_RECRUSTION);
     assert_eq!(c, color::BLACK)
+}
+
+#[test]
+fn refracted_color_for_opaque_surface() {
+    let mut w = World::default();
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+
+    let shape = &mut w.objects[0];
+    shape.material.ambient = 1.0;
+
+    let i1 = Intersection::new(4.0, *shape);
+    let i2 = Intersection::new(6.0, *shape);
+    let xs = i1.clone().agregate(i2);
+
+    let comps = i1.prepare_computations(r, Some(xs)).unwrap();
+
+    let c = w.refracted_color(&comps, MAX_REFLECTION_RECRUSTION);
+
+    assert_eq!(c, color::BLACK)
+}
+
+#[test]
+fn refracted_color_with_max_recursion_depth() {
+    // to plane mirrors facing each other with a ray reflecting for infinity
+    let mut w = World::default();
+    // w.light = Some(PointLight::new(point::ORIGIN, color::BLACK));
+
+    let shape = &mut w.objects[0];
+    shape.material.transparency = 1.0;
+    shape.material.refractive_index = 1.5;
+
+    let i1 = Intersection::new(4.0, *shape);
+    let i2 = Intersection::new(6.0, *shape);
+    let xs = i1.clone().agregate(i2);
+
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+
+    let comps = i1.prepare_computations(r, Some(xs)).unwrap();
+
+    let c = w.refracted_color(&comps, 0); //remaining is zero
+
+    assert_eq!(c, color::BLACK)
+}
+
+#[test]
+fn refracted_color_under_total_internal_reflection() {
+    // to plane mirrors facing each other with a ray reflecting for infinity
+    let mut w = World::default();
+    // w.light = Some(PointLight::new(point::ORIGIN, color::BLACK));
+
+    let shape = &mut w.objects[0];
+    shape.material.transparency = 1.0;
+    shape.material.refractive_index = 1.5;
+
+    let i1 = Intersection::new(-SQRT_2 / 2.0, *shape);
+    let i2 = Intersection::new(SQRT_2 / 2.0, *shape);
+    let xs = i1.agregate(i2.clone());
+
+    let r = Ray::new(
+        Point::new(0.0, 0.0, SQRT_2 / 2.0),
+        Vector::new(0.0, 1.0, 0.0),
+    );
+
+    let comps = i2.prepare_computations(r, Some(xs)).unwrap();
+
+    let c = w.refracted_color(&comps, 5); //remaining is zero
+
+    assert_eq!(c, color::BLACK)
+}
+
+#[test]
+#[ignore = "ahhhhhhhhhh"]
+fn refracted_color_with_a_refracted_ray() {
+    let mut world = World::default();
+    let a = &mut world.objects[0];
+    a.material.ambient = 1.0;
+    a.material.pattern = Some(Pattern::default());
+
+    let b = &mut world.objects[1];
+    b.material.transparency = 1.0;
+    b.material.refractive_index = 1.5;
+
+    let a = world.objects[0];
+    let b = world.objects[1];
+    let r = Ray::new(Point::new(0.0, 0.0, 0.1), Vector::new(0.0, 1.0, 0.0));
+
+    // world.objects = vec![a, b];
+
+    let i1 = Intersection::new(-0.9899, a);
+    let i2 = Intersection::new(-0.4899, b);
+    let i3 = Intersection::new(0.4899, b);
+    let i4 = Intersection::new(0.9899, a);
+
+    let xs = i1.agregate(i2).agregate(i3).agregate(i4);
+    // let comps = i1.prepare_computations(r, Some(xs)).unwrap();
+    let comps = xs
+        .get(1)
+        .unwrap()
+        .prepare_computations(r, Some(xs))
+        .unwrap();
+
+    let color = world.refracted_color(&comps, 5);
+
+    assert_eq!(color, Color::new(0.0, 0.99888, 0.04725))
+}
+
+#[test]
+fn shade_hit_with_transperant_material() {
+    let mut world = World::default();
+
+    let mut floor_material = Material::default();
+    floor_material.transparency = 0.5;
+    floor_material.refractive_index = 1.5;
+
+    let floor = shape::plane::new(Transformation::translation(0.0, -1.0, 0.0), floor_material);
+
+    let mut ball_material = Material::default();
+    ball_material.color = Color::new(1.0, 0.0, 0.0);
+    ball_material.ambient = 0.5;
+
+    let ball = shape::sphere::new(Transformation::translation(0.0, -3.5, -0.5), ball_material);
+
+    world.objects.push(floor);
+    world.objects.push(ball);
+
+    let ray = Ray::new(
+        Point::new(0.0, 0.0, -3.0),
+        Vector::new(0.0, -SQRT_2 / 2.0, SQRT_2 / 2.0),
+    );
+    let i1 = Intersection::new(SQRT_2, floor);
+    let xs = Intersections {
+        list: vec![i1.clone()],
+    };
+
+    let comps = i1.prepare_computations(ray, Some(xs)).unwrap();
+    let color = world.shade_hit(&comps, 5);
+
+    Testing::assert_nearly_eq(color, Color::new(0.93642, 0.68642, 0.68642));
 }
