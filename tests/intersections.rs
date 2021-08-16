@@ -89,11 +89,11 @@ fn hit_when_intersection_is_outside() {
     let s: Shape = shape::sphere::default();
     let i = Intersection::new(4.0, s);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(ray, xs).unwrap();
+    let comps = i.prepare_computations(ray, Some(&xs)).unwrap();
     assert!(!comps.inside);
 }
 
@@ -106,11 +106,11 @@ fn hit_when_intersection_is_inside() {
     let s: Shape = shape::sphere::default();
     let i = Intersection::new(1.0, s);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(ray, xs).unwrap();
+    let comps = i.prepare_computations(ray, Some(&xs)).unwrap();
     assert!(comps.inside);
     assert_eq!(comps.point, Point::new(0.0, 0.0, 1.0));
     assert_eq!(comps.eyev, Vector::new(0.0, 0.0, -1.0));
@@ -126,11 +126,11 @@ fn hit_should_offset_the_point() {
     s.transformation = Transformation::translation(0.0, 0.0, 1.0);
     let i = Intersection::new(5.0, s);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(ray, xs).unwrap();
+    let comps = i.prepare_computations(ray, Some(&xs)).unwrap();
     println!("comps.over_point.z {}", comps.over_point.z);
     assert!(comps.over_point.z < -constants::EPSILON / 2.0);
     assert!(comps.point.z > comps.over_point.z)
@@ -191,7 +191,7 @@ fn finding_refractive_indices_of_inner_and_outer_surface() {
         let comps = xs
             .get(i)
             .unwrap()
-            .prepare_computations(ray, Some(xs.clone()))
+            .prepare_computations(ray, Some(&xs))
             .unwrap();
         assert_eq!(comps.refractive_exited, refractive_exited);
         assert_eq!(comps.refractive_entered, refractive_entered);
@@ -208,11 +208,11 @@ fn under_point_is_offset_below_surface() {
     s.transformation = Transformation::translation(0.0, 0.0, 1.0);
     let i = Intersection::new(5.0, s);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(ray, xs).unwrap();
+    let comps = i.prepare_computations(ray, Some(&xs)).unwrap();
     println!("comps.over_point.z {}", comps.under_point.z);
     assert!(comps.under_point.z > constants::EPSILON / 2.0);
     assert!(comps.point.z < comps.under_point.z)
@@ -232,7 +232,7 @@ fn schilck_approx_under_total_internal_reflection() {
     let comps = xs
         .get(1)
         .unwrap()
-        .prepare_computations(ray, Some(xs))
+        .prepare_computations(ray, Some(&xs))
         .unwrap();
     let reflectance = comps.schlick();
 
@@ -250,7 +250,7 @@ fn schilck_approx_with_perpenducual_viewing_angle() {
     let comps = xs
         .get(1)
         .unwrap()
-        .prepare_computations(ray, Some(xs))
+        .prepare_computations(ray, Some(&xs))
         .unwrap();
     let reflectance = comps.schlick();
 
@@ -268,7 +268,7 @@ fn schilck_approx_with_with_small_angle_entered_greater_than_exited() {
     let comps = xs
         .get(0)
         .unwrap()
-        .prepare_computations(ray, Some(xs))
+        .prepare_computations(ray, Some(&xs))
         .unwrap();
     let reflectance = comps.schlick();
 

@@ -6,7 +6,6 @@ use raytracer::{
         color::{self, Color},
         lights::PointLight,
         materials::Material,
-        patterns::Pattern,
     },
     math::{
         point::{self, Point},
@@ -61,11 +60,11 @@ fn preparing_computations() {
     let shape: Shape = shape::sphere::default();
     let i = Intersection::new(4.0, shape);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
 
     assert_eq!(comps.intersects_at, i.intersects_at);
     assert_eq!(comps.object, i.object);
@@ -81,11 +80,11 @@ fn shading_an_intersection() {
     let shape = w.objects[0];
     let i = Intersection::new(4.0, shape);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
 
     let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
@@ -106,11 +105,11 @@ fn shading_an_intersection_from_inside() {
     let shape = w.objects[1];
     let i = Intersection::new(0.5, shape);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
     let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Testing::assert_nearly_eq(c, Color::new(0.90498, 0.90498, 0.90498))
@@ -208,11 +207,11 @@ fn intersection_is_shadow() {
         object: s2,
     };
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
 
     let c = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
@@ -228,11 +227,11 @@ fn precomputing_reflection_vector() {
         Vector::new(0.0, -SQRT_2 / 2.0, SQRT_2 / 2.0),
     );
     let i = Intersection::new(SQRT_2, shape);
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
 
     assert_eq!(comps.reflectv, Vector::new(0.0, SQRT_2 / 2.0, SQRT_2 / 2.0))
 }
@@ -246,11 +245,11 @@ fn reflect_color_for_nonreflective_material() {
     shape.material.ambient = 1.0;
 
     let i = Intersection::new(1.0, *shape);
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
 
     let c = w.reflected_color(&comps, MAX_REFLECTION_RECRUSTION);
 
@@ -273,11 +272,11 @@ fn reflect_color_for_reflective_material() {
 
     let i = Intersection::new(SQRT_2, shape);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
     let c = w.reflected_color(&comps, MAX_REFLECTION_RECRUSTION);
 
     Color::assert_nearly_eq(c, Color::new(0.1903306125, 0.237913265737, 0.142747959442));
@@ -299,11 +298,11 @@ fn shade_hit_with_reflective_material() {
 
     let i = Intersection::new(SQRT_2, shape);
 
-    let xs = Some(Intersections {
+    let xs = Intersections {
         list: vec![i.to_owned()],
-    });
+    };
 
-    let comps = i.prepare_computations(r, xs).unwrap();
+    let comps = i.prepare_computations(r, Some(&xs)).unwrap();
     let color = w.shade_hit(&comps, MAX_REFLECTION_RECRUSTION);
 
     Color::assert_nearly_eq(
@@ -344,7 +343,7 @@ fn refracted_color_for_opaque_surface() {
     let i2 = Intersection::new(6.0, *shape);
     let xs = i1.clone().agregate(i2);
 
-    let comps = i1.prepare_computations(r, Some(xs)).unwrap();
+    let comps = i1.prepare_computations(r, Some(&xs)).unwrap();
 
     let c = w.refracted_color(&comps, MAX_REFLECTION_RECRUSTION);
 
@@ -367,7 +366,7 @@ fn refracted_color_with_max_recursion_depth() {
 
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
 
-    let comps = i1.prepare_computations(r, Some(xs)).unwrap();
+    let comps = i1.prepare_computations(r, Some(&xs)).unwrap();
 
     let c = w.refracted_color(&comps, 0); //remaining is zero
 
@@ -393,7 +392,7 @@ fn refracted_color_under_total_internal_reflection() {
         Vector::new(0.0, 1.0, 0.0),
     );
 
-    let comps = i2.prepare_computations(r, Some(xs)).unwrap();
+    let comps = i2.prepare_computations(r, Some(&xs)).unwrap();
 
     let c = w.refracted_color(&comps, 5); //remaining is zero
 
@@ -401,12 +400,11 @@ fn refracted_color_under_total_internal_reflection() {
 }
 
 #[test]
-#[ignore = "ahhhhhhhhhh"]
 fn refracted_color_with_a_refracted_ray() {
     let mut world = World::default();
     let a = &mut world.objects[0];
     a.material.ambient = 1.0;
-    a.material.pattern = Some(Pattern::default());
+    a.material.pattern = None;
 
     let b = &mut world.objects[1];
     b.material.transparency = 1.0;
@@ -426,14 +424,16 @@ fn refracted_color_with_a_refracted_ray() {
     let xs = i1.agregate(i2).agregate(i3).agregate(i4);
     // let comps = i1.prepare_computations(r, Some(xs)).unwrap();
     let comps = xs
-        .get(1)
+        .get(2)
         .unwrap()
-        .prepare_computations(r, Some(xs))
+        .prepare_computations(r, Some(&xs))
         .unwrap();
 
     let color = world.refracted_color(&comps, 5);
 
     assert_eq!(color, Color::new(0.0, 0.99888, 0.04725))
+    // 	    assert_eq!(color, Color::new(0.0, 0.99888, 0.04725))
+    //     Testing::assert_nearly_eq(color, Color::new(0.0, 0.99888, 0.04725))
 }
 
 #[test]
@@ -464,7 +464,7 @@ fn shade_hit_with_transperant_material() {
         list: vec![i1.clone()],
     };
 
-    let comps = i1.prepare_computations(ray, Some(xs)).unwrap();
+    let comps = i1.prepare_computations(ray, Some(&xs)).unwrap();
     let color = world.shade_hit(&comps, 5);
 
     Testing::assert_nearly_eq(color, Color::new(0.93642, 0.68642, 0.68642));
@@ -499,7 +499,7 @@ fn shade_hit_with_reflective_transperant_material() {
         list: vec![i1.clone()],
     };
 
-    let comps = i1.prepare_computations(ray, Some(xs)).unwrap();
+    let comps = i1.prepare_computations(ray, Some(&xs)).unwrap();
     let color = world.shade_hit(&comps, 5);
 
     Testing::assert_nearly_eq(color, Color::new(0.93391, 0.69643, 0.69243));

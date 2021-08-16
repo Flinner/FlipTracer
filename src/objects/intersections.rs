@@ -101,7 +101,11 @@ impl Intersection {
     /// Precomputes the point in world space where the intersection occurred.
     /// `xs` is the list of all intersections, used for computing refractive index
     /// for transperant objects. If there are no intersections just plug in `None`.
-    pub fn prepare_computations(&self, ray: Ray, xs: Option<Intersections>) -> Option<PreComputed> {
+    pub fn prepare_computations(
+        &self,
+        ray: Ray,
+        xs: Option<&Intersections>,
+    ) -> Option<PreComputed> {
         let intersects_at = self.intersects_at;
         let point = ray.position(intersects_at);
         let object = self.object;
@@ -169,7 +173,7 @@ impl PreComputed {
     }
 }
 
-fn refractive_index(hit: &Intersection, xs: Intersections) -> (f64, f64) {
+fn refractive_index(hit: &Intersection, xs: &Intersections) -> (f64, f64) {
     let mut refractive_exited: f64 = 1.0;
     let mut refractive_entered: f64 = 1.0;
 
