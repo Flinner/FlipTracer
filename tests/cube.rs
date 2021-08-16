@@ -88,3 +88,25 @@ fn ray_misses() {
         assert_eq!(xs, None);
     }
 }
+
+#[test]
+fn normal_on_surface_of_a_cube() {
+    let test_casts = [
+        (Point::new(1.0, 0.5, -0.8), Vector::new(1.0, 0.0, 0.0)),
+        (Point::new(-1.0, -0.2, 0.9), Vector::new(-1.0, 0.0, 0.0)),
+        (Point::new(-0.4, 1.0, -0.1), Vector::new(0.0, 1.0, 0.0)),
+        (Point::new(0.3, -1.0, -0.7), Vector::new(0.0, -1.0, 0.0)),
+        (Point::new(-0.6, 0.3, 1.0), Vector::new(0.0, 0.0, 1.0)),
+        (Point::new(0.4, 0.4, -1.0), Vector::new(0.0, 0.0, -1.0)),
+        (Point::new(1.0, 1.0, 1.0), Vector::new(1.0, 0.0, 0.0)),
+        (Point::new(-1.0, -1.0, -1.0), Vector::new(-1.0, 0.0, 0.0)),
+    ];
+
+    let c = shape::cube::default();
+
+    for (i, (p, n)) in test_casts.iter().enumerate() {
+        eprintln!("running test case: {}", i);
+        let normal = c.normal_at(*p).unwrap();
+        assert_eq!(&normal, n);
+    }
+}

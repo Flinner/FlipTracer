@@ -128,7 +128,7 @@ impl World {
         // reflection to begin with
         if comps.object.material.reflective == 0.0
 	    // end recurisive reflection
-	    || remaining < 0
+	    || remaining <= 0
         {
             color::BLACK
         } else {

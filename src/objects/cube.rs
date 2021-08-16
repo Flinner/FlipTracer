@@ -1,4 +1,5 @@
 use crate::{
+    constants,
     graphics::materials::Material,
     math::{point::Point, ray::Ray, transformations::Transformation, vector::Vector},
 };
@@ -40,11 +41,15 @@ pub(super) fn object_normal_at(_cube: &Shape, object_point: Point) -> Option<Vec
     let x = object_point.x;
     let y = object_point.y;
     let z = object_point.z;
-    let maxc = x.abs().max(y.abs()).max(z.abs());
 
-    Some(if (maxc - x).abs() < std::f64::EPSILON {
+    let absx = x.abs();
+    let absy = y.abs();
+    let absz = z.abs();
+    let maxc = absx.max(absy).max(absz);
+
+    Some(if (maxc - absx).abs() < constants::EPSILON {
         Vector::new(x, 0.0, 0.0)
-    } else if (maxc - y).abs() < std::f64::EPSILON {
+    } else if (maxc - absy).abs() < constants::EPSILON {
         Vector::new(0.0, y, 0.0)
     } else {
         Vector::new(0.0, 0.0, z)
