@@ -6,6 +6,7 @@ use raytracer::{
         color::{self, Color},
         lights::PointLight,
         materials::Material,
+        patterns::Pattern,
     },
     math::{
         point::{self, Point},
@@ -404,7 +405,7 @@ fn refracted_color_with_a_refracted_ray() {
     let mut world = World::default();
     let a = &mut world.objects[0];
     a.material.ambient = 1.0;
-    a.material.pattern = None;
+    a.material.pattern = Some(Pattern::default());
 
     let b = &mut world.objects[1];
     b.material.transparency = 1.0;
@@ -431,9 +432,7 @@ fn refracted_color_with_a_refracted_ray() {
 
     let color = world.refracted_color(&comps, 5);
 
-    assert_eq!(color, Color::new(0.0, 0.99888, 0.04725))
-    // 	    assert_eq!(color, Color::new(0.0, 0.99888, 0.04725))
-    //     Testing::assert_nearly_eq(color, Color::new(0.0, 0.99888, 0.04725))
+    Testing::assert_nearly_eq(color, Color::new(0.0, 0.99888468, 0.0472164))
 }
 
 #[test]

@@ -113,12 +113,7 @@ impl Intersection {
         let mut normalv = self.object.normal_at(point)?;
         let inside: bool;
 
-        // TODO: compare to unwrap_or
-        // only for tests!
-        // let xs = xs.unwrap_or_else(|| Intersections {
-        //     list: vec![self.to_owned()],
-        // });
-
+        // TODO: remove the unwrap
         let (refractive_exited, refractive_entered) = refractive_index(self, xs.unwrap());
 
         if normalv.dot_product(&eyev) < 0.0 {

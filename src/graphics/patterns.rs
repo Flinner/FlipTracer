@@ -16,7 +16,7 @@ impl Default for Pattern {
             color::WHITE,
             color::BLACK,
             Transformation::identity(),
-            PatternType::Stripped,
+            PatternType::NoPattern,
         )
     }
 }
@@ -31,7 +31,8 @@ pub enum PatternType {
     Ring,
     /// Checkers, like Chess, but in 3D space too
     Checker,
-    // TODO: more patterns!
+    /// The Color is the Point
+    NoPattern, // TODO: more patterns!
 }
 
 impl Pattern {
@@ -76,6 +77,7 @@ impl Pattern {
             PatternType::Gradient => color_at::gradient(self, pattern_point),
             PatternType::Ring => color_at::ring(self, pattern_point),
             PatternType::Checker => color_at::checker(self, pattern_point),
+            PatternType::NoPattern => color_at::no_pattern(self, pattern_point),
         }
     }
 }
@@ -124,5 +126,11 @@ mod color_at {
         } else {
             pattern.b
         }
+    }
+
+    /// Returns the color caused by `Checker` Pattern
+    pub(super) fn no_pattern(_pattern: &Pattern, pattern_point: Point) -> Color {
+        let p = pattern_point;
+        Color::new(p.x, p.y, p.z)
     }
 }

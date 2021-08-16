@@ -63,7 +63,7 @@ impl World {
 
     /// intersects with the world given the ray and then return color at resulting intersection
     /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
-    pub fn color_at(&self, ray: Ray, remaining: usize) -> Color {
+    pub fn color_at(&self, ray: Ray, remaining: isize) -> Color {
         let is = self.intersect(ray);
         if let Some(hit) = is.hit() {
             let comp = hit.prepare_computations(ray, Some(&is)).unwrap();
@@ -92,7 +92,7 @@ impl World {
 
     /// calculates the the color at intersection (from `PreComputed`)
     /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
-    pub fn shade_hit(&self, comps: &PreComputed, remaining: usize) -> Color {
+    pub fn shade_hit(&self, comps: &PreComputed, remaining: isize) -> Color {
         let shadowed = self.is_shadowed(comps.over_point);
 
         // color from surface
@@ -113,21 +113,22 @@ impl World {
         // if both reflective and transparenct. use schlick formula to get Fresnel effect
         if material.reflective > 0.0 && material.transparency > 0.0 {
             let reflectance = comps.schlick();
-            surface + reflected * reflectance + refracted * (1.0 - reflectance)
+            surface + reflected * reflectance + //.
+		/*. */refracted * (1.0 - reflectance)
         } else {
             // final color
-            reflected + surface + refracted
+            surface + reflected + refracted
         }
     }
 
     /// color of reflected ray
     /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
     /// if `remaining` is zero, the function will return `color::BLACK`
-    pub fn reflected_color(&self, comps: &PreComputed, remaining: usize) -> Color {
+    pub fn reflected_color(&self, comps: &PreComputed, remaining: isize) -> Color {
         // reflection to begin with
         if comps.object.material.reflective == 0.0
 	    // end recurisive reflection
-	    || remaining == 0
+	    || remaining < 0
         {
             color::BLACK
         } else {
@@ -142,16 +143,18 @@ impl World {
     /// color of refracted ray
     /// `remaining` is the number of recurisive calls left. this is to prevent infinite recursion
     /// if `remaining` is zero, the function will return `color::BLACK`
-    pub fn refracted_color(&self, comps: &PreComputed, remaining: usize) -> Color {
+    pub fn refracted_color(&self, comps: &PreComputed, remaining: isize) -> Color {
+        let n1 = comps.refractive_exited;
+        let n2 = comps.refractive_entered;
+
         // ratio of first index of refraction to the second.
-        let n_ratio = comps.refractive_exited / comps.refractive_entered;
+        let n_ratio = n1 / n2;
         let cos_i = comps.eyev.dot_product(&comps.normalv);
         let sin2_t = n_ratio.powi(2) * (1.0 - cos_i.powi(2));
 
         // reflection to begin with
         if comps.object.material.transparency == 0.0
 	    // end recurisive reflection
-	    || remaining == 0
 	    || sin2_t > 1.0
         {
             color::BLACK
