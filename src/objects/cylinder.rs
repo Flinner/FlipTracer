@@ -46,8 +46,9 @@ pub(super) fn local_intersects(cylinder: &Shape, ray: &Ray) -> Option<Intersecti
     })
 }
 
-pub(super) fn object_normal_at(_cube: &Shape, _object_point: Point) -> Option<Vector> {
-    todo!()
+pub(super) fn object_normal_at(_cube: &Shape, object_point: Point) -> Option<Vector> {
+    let p = object_point;
+    Some(Vector::new(p.x, 0.0, p.z))
 }
 /// Returns a `Shape` with `shape_type` `cylinder`
 /// Equivelent to `Shape::new(transformation, material, ShapeType::Cylinder)`

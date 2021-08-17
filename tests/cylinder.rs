@@ -53,3 +53,21 @@ fn ray_hits() {
         assert_eq!(xs.get_intersection(3), None);
     }
 }
+
+#[test]
+fn normal_vector_on_cylinder() {
+    let test_casts = [
+        (Point::new(1.0, 0.0, 0.0), Vector::new(1.0, 0.0, 0.0)),
+        (Point::new(0.0, 5.0, -1.0), Vector::new(0.0, 0.0, -1.0)),
+        (Point::new(0.0, -2.0, 1.0), Vector::new(0.0, 0.0, 1.0)),
+        (Point::new(-1.0, 1.0, 0.0), Vector::new(-1.0, 0.0, 0.0)),
+    ];
+
+    let c = shape::cylinder::default();
+
+    for (i, (p, n)) in test_casts.iter().enumerate() {
+        eprintln!("running test case: {}", i);
+        let normal = c.normal_at(*p).unwrap();
+        assert_eq!(&normal, n);
+    }
+}
