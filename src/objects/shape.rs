@@ -7,7 +7,7 @@ use crate::objects::intersections::Intersections;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// expose the shapes
-pub use super::{cube, plane, sphere};
+pub use super::{cube, cylinder, plane, sphere};
 
 #[derive(PartialEq, Copy, Debug, Clone)]
 pub struct Shape {
@@ -31,6 +31,7 @@ pub enum ShapeType {
     Sphere,
     Plane,
     Cube,
+    Cylinder,
 }
 
 /// All Functions here change the `Point`s and `Vector`s from *world-space* to *object-space*
@@ -47,6 +48,7 @@ impl Shape {
             ShapeType::Sphere => sphere::local_intersects(self, ray),
             ShapeType::Plane => plane::local_intersects(self, ray),
             ShapeType::Cube => cube::local_intersects(self, ray),
+            ShapeType::Cylinder => cylinder::local_intersects(self, ray),
         }
     }
 
@@ -62,6 +64,7 @@ impl Shape {
             ShapeType::Sphere => sphere::object_normal_at(self, object_point)?,
             ShapeType::Plane => plane::object_normal_at(self, object_point)?,
             ShapeType::Cube => cube::object_normal_at(self, object_point)?,
+            ShapeType::Cylinder => cylinder::object_normal_at(self, object_point)?,
         };
 
         // converting to back to world space
