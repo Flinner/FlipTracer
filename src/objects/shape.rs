@@ -31,7 +31,13 @@ pub enum ShapeType {
     Sphere,
     Plane,
     Cube,
-    Cylinder,
+    /// `min` and `max` are the height to truncated at (y axis)
+    /// `close`: whether the cylinder should have a cap or not
+    Cylinder {
+        min: f64,
+        max: f64,
+        closed: bool,
+    },
 }
 
 /// All Functions here change the `Point`s and `Vector`s from *world-space* to *object-space*
@@ -44,11 +50,14 @@ impl Shape {
         let transformation = self.transformation.inverse()?;
         let ray = &ray.transform(transformation);
 
+        use ShapeType::*;
         match self.shape_type {
-            ShapeType::Sphere => sphere::local_intersects(self, ray),
-            ShapeType::Plane => plane::local_intersects(self, ray),
-            ShapeType::Cube => cube::local_intersects(self, ray),
-            ShapeType::Cylinder => cylinder::local_intersects(self, ray),
+            Sphere => sphere::local_intersects(self, ray),
+            Plane => plane::local_intersects(self, ray),
+            Cube => cube::local_intersects(self, ray),
+            Cylinder { min, max, closed } => {
+                cylinder::local_intersects(self, ray, min, max, closed)
+            }
         }
     }
 
@@ -60,11 +69,16 @@ impl Shape {
         // converting to object space
         let object_point = self.transformation.inverse()? * world_point;
 
+        use ShapeType::*;
         let object_normal: Vector = match self.shape_type {
-            ShapeType::Sphere => sphere::object_normal_at(self, object_point)?,
-            ShapeType::Plane => plane::object_normal_at(self, object_point)?,
-            ShapeType::Cube => cube::object_normal_at(self, object_point)?,
-            ShapeType::Cylinder => cylinder::object_normal_at(self, object_point)?,
+            Sphere => sphere::object_normal_at(self, object_point)?,
+            Plane => plane::object_normal_at(self, object_point)?,
+            Cube => cube::object_normal_at(self, object_point)?,
+            Cylinder {
+                min,
+                max,
+                closed: _,
+            } => cylinder::object_normal_at(self, object_point, min, max)?,
         };
 
         // converting to back to world space
