@@ -6,13 +6,12 @@ use raytracer::{
         color::{self, Color},
         lights::PointLight,
         materials::Material,
-        patterns::{Pattern, PatternType},
         ppm,
     },
     math::{point::Point, transformations::Transformation, vector::Vector},
     objects::{shape, world::World},
 };
-use std::f64::consts::{FRAC_PI_2, FRAC_PI_3, FRAC_PI_4};
+use std::f64::consts::FRAC_PI_2;
 
 fn main() {
     // let mut camera = Camera::new(3840, 2160, FRAC_PI_3);
