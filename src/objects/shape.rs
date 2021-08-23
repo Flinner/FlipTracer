@@ -7,7 +7,7 @@ use crate::objects::intersections::Intersections;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// expose the shapes
-pub use super::{cube, cylinder, plane, sphere};
+pub use super::{cone, cube, cylinder, plane, sphere};
 
 #[derive(PartialEq, Copy, Debug, Clone)]
 pub struct Shape {
@@ -38,6 +38,13 @@ pub enum ShapeType {
         max: f64,
         closed: bool,
     },
+    /// `min` and `max` are the height to truncated at (y axis)
+    /// `close`: whether the Cone should have a cap or not
+    Cone {
+        min: f64,
+        max: f64,
+        closed: bool,
+    },
 }
 
 /// All Functions here change the `Point`s and `Vector`s from *world-space* to *object-space*
@@ -58,6 +65,7 @@ impl Shape {
             Cylinder { min, max, closed } => {
                 cylinder::local_intersects(self, ray, min, max, closed)
             }
+            Cone { min, max, closed } => cone::local_intersects(self, ray, min, max, closed),
         }
     }
 
@@ -79,9 +87,14 @@ impl Shape {
                 max,
                 closed: _,
             } => cylinder::object_normal_at(self, object_point, min, max)?,
+            Cone {
+                min,
+                max,
+                closed: _,
+            } => cone::object_normal_at(self, object_point, min, max)?,
         };
 
-        // converting to back to world space
+        // converting back to world space
         let world_normal = (self.transformation.inverse()?.transpose()) * object_normal;
         Some(world_normal.normalize())
     }
