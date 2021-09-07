@@ -16,7 +16,7 @@ use super::{
 /// consider no intersections and ray misses
 /// 1. Ray origin is above the plane
 /// 1. Ray origin is below the plane
-pub(super) fn local_intersects(shape: &Shape, ray: &Ray) -> Option<Intersections> {
+pub(super) fn local_intersects<'a>(shape: &'a Shape, ray: Ray) -> Option<Intersections<'a>> {
     if ray.direction.y.abs() < constants::EPSILON
     // case 1 and 2
     {
@@ -43,15 +43,15 @@ pub(super) fn object_normal_at(_plane: &Shape, _object_point: Point) -> Option<V
 
 /// Returns a `Shape` with `shape_type` `Plane`
 /// Equivelent to `Shape::new(transformation, material, ShapeType::Sphere)`
-pub fn new(transformation: Transformation, material: Material) -> Shape {
-    Shape::new(transformation, material, ShapeType::Plane)
+pub fn new<'a>(transformation: Transformation, material: Material) -> Shape<'a> {
+    Shape::new(transformation, material, ShapeType::Plane, None)
 }
 
 /// Returns a `Shape` with
 /// `shape_type` `ShapeType::Plane`
 /// `Material`: `Material::default()`
 /// `Transformation`: `Transformation::default()`
-pub fn default() -> Shape {
+pub fn default<'a>() -> Shape<'a> {
     Shape {
         shape_type: ShapeType::Plane,
         ..Default::default()

@@ -14,7 +14,7 @@ use super::{
 };
 
 /// Check `Shapeinterface.intersects()`
-pub(super) fn local_intersects(sphere: &Shape, ray: &Ray) -> Option<Intersections> {
+pub(super) fn local_intersects<'a>(sphere: &'a Shape, ray: Ray) -> Option<Intersections<'a>> {
     let sphere_to_ray = ray.origin - point::ORIGIN;
 
     let a = ray.direction.dot_product(&ray.direction);
@@ -45,15 +45,15 @@ pub(super) fn object_normal_at(_sphere: &Shape, object_point: Point) -> Option<V
 
 /// Returns a `Shape` with `shape_type` `Sphere`
 /// Equivelent to `Shape::new(transformation, material, ShapeType::Sphere)`
-pub fn new(transformation: Transformation, material: Material) -> Shape {
-    Shape::new(transformation, material, ShapeType::Sphere)
+pub fn new<'a>(transformation: Transformation, material: Material) -> Shape<'a> {
+    Shape::new(transformation, material, ShapeType::Sphere, None)
 }
 
 /// Returns a `Shape` with
 /// `shape_type` `ShapeType::Sphere`
 /// `Material`: `Material::default()`
 /// `Transformation`: `Transformation::default()`
-pub fn default() -> Shape {
+pub fn default<'a>() -> Shape<'a> {
     Shape {
         shape_type: ShapeType::Sphere,
         ..Default::default()
@@ -74,7 +74,7 @@ pub fn default() -> Shape {
 /// assert_eq!(gs.material.refractive_index, 1.5);
 /// ```
 
-pub fn glass() -> Shape {
+pub fn glass<'a>() -> Shape<'a> {
     let mut m = Material::default();
     m.transparency = 1.0;
     m.refractive_index = 1.5;

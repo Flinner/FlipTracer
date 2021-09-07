@@ -425,11 +425,8 @@ fn refracted_color_with_a_refracted_ray() {
 
     let xs = i1.agregate(i2).agregate(i3).agregate(i4);
     // let comps = i1.prepare_computations(r, Some(xs)).unwrap();
-    let comps = xs
-        .get(2)
-        .unwrap()
-        .prepare_computations(r, Some(&xs))
-        .unwrap();
+    let comps = xs.get(2).clone().unwrap();
+    let comps = comps.prepare_computations(r, Some(&xs)).unwrap();
 
     let color = world.refracted_color(&comps, 5);
 

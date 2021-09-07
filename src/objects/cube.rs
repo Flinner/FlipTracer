@@ -9,7 +9,7 @@ use super::{
     shape::{Shape, ShapeType},
 };
 
-pub(super) fn local_intersects(cube: &Shape, ray: &Ray) -> Option<Intersections> {
+pub(super) fn local_intersects<'a>(cube: &'a Shape, ray: Ray) -> Option<Intersections<'a>> {
     let (xtmin, xtmax) = check_axis(ray.origin.x, ray.direction.x);
     let (ytmin, ytmax) = check_axis(ray.origin.y, ray.direction.y);
     let (ztmin, ztmax) = check_axis(ray.origin.z, ray.direction.z);
@@ -76,16 +76,16 @@ fn check_axis(origin: f64, direction: f64) -> (f64, f64) {
 }
 
 /// Returns a `Shape` with `shape_type` `Cube`
-/// Equivelent to `Shape::new(transformation, material, ShapeType::Sphere)`
-pub fn new(transformation: Transformation, material: Material) -> Shape {
-    Shape::new(transformation, material, ShapeType::Cube)
+/// Equivelent to `Shape::new(transformation, material, ShapeType::Sphere, None)`
+pub fn new<'a>(transformation: Transformation, material: Material) -> Shape<'a> {
+    Shape::new(transformation, material, ShapeType::Cube, None)
 }
 
 /// Returns a `Shape` with
 /// `shape_type` `ShapeType::Cube`
 /// `Material`: `Material::default()`
 /// `Transformation`: `Transformation::default()`
-pub fn default() -> Shape {
+pub fn default<'a>() -> Shape<'a> {
     Shape {
         shape_type: ShapeType::Cube,
         ..Default::default()

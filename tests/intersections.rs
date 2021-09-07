@@ -188,11 +188,8 @@ fn finding_refractive_indices_of_inner_and_outer_surface() {
     ];
     for (i, refractive_exited, refractive_entered) in test_cases {
         println!("======{}", i);
-        let comps = xs
-            .get(i)
-            .unwrap()
-            .prepare_computations(ray, Some(&xs))
-            .unwrap();
+        let comps = xs.get(i).unwrap();
+        let comps = comps.prepare_computations(ray, Some(&xs)).unwrap();
         assert_eq!(comps.refractive_exited, refractive_exited);
         assert_eq!(comps.refractive_entered, refractive_entered);
     }
@@ -229,11 +226,8 @@ fn schilck_approx_under_total_internal_reflection() {
     let i2 = Intersection::new(SQRT_2 / 2.0, shape);
     let xs = i1.agregate(i2);
 
-    let comps = xs
-        .get(1)
-        .unwrap()
-        .prepare_computations(ray, Some(&xs))
-        .unwrap();
+    let comps = xs.get(1).unwrap();
+    let comps = comps.prepare_computations(ray, Some(&xs)).unwrap();
     let reflectance = comps.schlick();
 
     assert_eq!(reflectance, 1.0)
@@ -247,11 +241,8 @@ fn schilck_approx_with_perpenducual_viewing_angle() {
     let i2 = Intersection::new(01.0, shape);
     let xs = i1.agregate(i2);
 
-    let comps = xs
-        .get(1)
-        .unwrap()
-        .prepare_computations(ray, Some(&xs))
-        .unwrap();
+    let comps = xs.get(1).unwrap();
+    let comps = comps.prepare_computations(ray, Some(&xs)).unwrap();
     let reflectance = comps.schlick();
 
     Testing::assert_nearly_eq(reflectance, 0.04)
@@ -265,11 +256,8 @@ fn schilck_approx_with_with_small_angle_entered_greater_than_exited() {
     // let i2 = Intersection::new(01.0, shape);
     let xs = Intersections { list: vec![i1] };
 
-    let comps = xs
-        .get(0)
-        .unwrap()
-        .prepare_computations(ray, Some(&xs))
-        .unwrap();
+    let comps = xs.get(0).unwrap();
+    let comps = comps.prepare_computations(ray, Some(&xs)).unwrap();
     let reflectance = comps.schlick();
 
     Testing::assert_nearly_eq(reflectance, 0.48873)

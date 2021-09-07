@@ -11,13 +11,13 @@ use super::{
     shape::{Shape, ShapeType},
 };
 
-pub(super) fn local_intersects(
-    cone: &Shape,
-    ray: &Ray,
+pub(super) fn local_intersects<'a>(
+    cone: &'a Shape,
+    ray: Ray,
     min: f64,
     max: f64,
     closed: bool,
-) -> Option<Intersections> {
+) -> Option<Intersections<'a>> {
     // x^2 - y^2 + z^2
     let a = ray.direction.x.powi(2) - ray.direction.y.powi(2) + ray.direction.z.powi(2);
 
@@ -65,7 +65,7 @@ pub(super) fn local_intersects(
         }
     }
     if closed {
-        intersect_caps(cone, min, max, ray, &mut xs);
+        intersect_caps(cone, min, max, &ray, &mut xs);
     }
 
     Some(xs)
@@ -92,18 +92,20 @@ pub(super) fn object_normal_at(
 }
 
 /// Returns a `Shape` with `shape_type` `cone`
-/// Equivelent to `Shape::new(transformation, material, ShapeType::cone)`
-pub fn new(
+/// Equivelent to `Shape::new(transformation, material, ShapeType::cone, None)`
+pub fn new<'a>(
     transformation: Transformation,
     material: Material,
     min: f64,
     max: f64,
     closed: bool,
-) -> Shape {
+) -> Shape<'a> {
     Shape::new(
         transformation,
         material,
         ShapeType::Cone { min, max, closed },
+        // no parent
+        None,
     )
 }
 
@@ -111,7 +113,7 @@ pub fn new(
 /// `shape_type` `ShapeType::Cone`
 /// `Material`: `Material::default()`
 /// `Transformation`: `Transformation::default()`
-pub fn default() -> Shape {
+pub fn default<'a>() -> Shape<'a> {
     Shape {
         shape_type: ShapeType::Cone {
             min: NEG_INFINITY,
@@ -124,7 +126,7 @@ pub fn default() -> Shape {
 
 /// Just like default, but gives you access to min, max and closed
 /// i.e, truncated Cone
-pub fn semi_default(min: f64, max: f64, closed: bool) -> Shape {
+pub fn semi_default<'a>(min: f64, max: f64, closed: bool) -> Shape<'a> {
     Shape {
         shape_type: ShapeType::Cone { min, max, closed },
         ..Default::default()
@@ -142,7 +144,13 @@ fn check_cap(Ray { origin, direction }: &Ray, intersection: f64, radius: f64) ->
 }
 
 /// mutates xs and adds the intersections if any.
-fn intersect_caps(object: Shape, min: f64, max: f64, ray: &Ray, xs: &mut Intersections) {
+fn intersect_caps<'a>(
+    object: Shape<'a>,
+    min: f64,
+    max: f64,
+    ray: &Ray,
+    xs: &mut Intersections<'a>,
+) {
     //    check for an intersection with the LOWER end cap by intersecing
     //    the ray with the plane at  y=Cone.min
     let intersection = (min - ray.origin.y) / ray.direction.y;

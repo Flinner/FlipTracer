@@ -6,11 +6,12 @@ use crate::math::vector::Vector;
 use crate::objects::intersections::Intersections;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use super::groups::Group;
 /// expose the shapes
 pub use super::{cone, cube, cylinder, plane, sphere};
 
 #[derive(PartialEq, Copy, Debug, Clone)]
-pub struct Shape {
+pub struct Shape<'a> {
     /// Generated from current time, unique
     pub uid: u128,
     /// `Transformation::identity()` is "no transformation", using `Option` could be done in the future
@@ -20,6 +21,8 @@ pub struct Shape {
     /// Holds the Shape Type, the only difference between different Shape Types
     /// See `ShapeType`
     pub shape_type: ShapeType,
+    /// Allows `Shape`s to be `Group`ed together
+    pub parent: Option<&'a Group<'a>>,
 }
 
 #[derive(PartialEq, Copy, Debug, Clone)]
@@ -49,13 +52,13 @@ pub enum ShapeType {
 
 /// All Functions here change the `Point`s and `Vector`s from *world-space* to *object-space*
 /// This makes calculations easier
-impl Shape {
+impl<'a> Shape<'a> {
     /// Returns `Some(Intersections)` if there are intersections and `None` if there are none.
     /// `None` can also be used when finding `Intersections` is impossible
     /// such as not being able to convert from *world-space* to *object-space*
-    pub fn intersects(&self, ray: &Ray) -> Option<Intersections> {
+    pub fn intersects(&'a self, ray: &Ray) -> Option<Intersections<'a>> {
         let transformation = self.transformation.inverse()?;
-        let ray = &ray.transform(transformation);
+        let ray = ray.transform(transformation);
 
         use ShapeType::*;
         match self.shape_type {
@@ -112,21 +115,27 @@ impl Shape {
     }
 }
 
-impl Shape {
+impl<'a> Shape<'a> {
     /// As you would expect, returns a new `Shape`
     /// Everthing is set manually, except for the `uid`
     ///      `uid: new_shape_id()`
-    pub fn new(transformation: Transformation, material: Material, shape_type: ShapeType) -> Self {
+    pub fn new(
+        transformation: Transformation,
+        material: Material,
+        shape_type: ShapeType,
+        parent: Option<&'a Group>,
+    ) -> Self {
         Self {
             uid: new_shape_id(),
             transformation,
             material,
             shape_type,
+            parent,
         }
     }
 }
 
-impl Default for Shape {
+impl Default for Shape<'_> {
     /// Default `Shape` has
     /// ```rs
     /// transformation: Transformation::identity(),
@@ -139,6 +148,7 @@ impl Default for Shape {
             transformation: Transformation::identity(),
             material: Material::default(),
             shape_type: ShapeType::Sphere,
+            parent: None,
         }
     }
 }

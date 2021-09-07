@@ -15,12 +15,12 @@ use super::{
 
 /// A world of `objects` (now only `Spheres`!) and `Pointlight`
 #[derive(PartialEq, Debug, Clone)]
-pub struct World {
-    pub objects: Vec<Shape>,
+pub struct World<'a> {
+    pub objects: Vec<Shape<'a>>,
     pub light: Option<PointLight>,
 }
 
-impl Default for World {
+impl Default for World<'_> {
     fn default() -> Self {
         let light = PointLight::new(Point::new(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
         let mut s1 = Shape::default();
@@ -36,7 +36,7 @@ impl Default for World {
     }
 }
 
-impl World {
+impl World<'_> {
     /// An empty new world
     pub fn new() -> Self {
         World {

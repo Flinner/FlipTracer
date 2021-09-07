@@ -11,13 +11,13 @@ use super::{
     shape::{Shape, ShapeType},
 };
 
-pub(super) fn local_intersects(
-    cylinder: &Shape,
-    ray: &Ray,
+pub(super) fn local_intersects<'a>(
+    cylinder: &'a Shape,
+    ray: Ray,
     min: f64,
     max: f64,
     closed: bool,
-) -> Option<Intersections> {
+) -> Option<Intersections<'a>> {
     let a = ray.direction.x.powi(2) + ray.direction.z.powi(2);
 
     let mut xs = Intersections { list: vec![] };
@@ -28,7 +28,7 @@ pub(super) fn local_intersects(
     if a.abs() < constants::EPSILON {
         // but could intersect with caps
         if closed {
-            intersect_caps(cylinder, min, max, ray, &mut xs)
+            intersect_caps(cylinder, min, max, &ray, &mut xs)
         };
         return if xs.list.is_empty() { None } else { Some(xs) };
     } else {
@@ -55,7 +55,7 @@ pub(super) fn local_intersects(
             xs.list.push(Intersection::new(i2, cylinder))
         }
         if closed {
-            intersect_caps(cylinder, min, max, ray, &mut xs);
+            intersect_caps(cylinder, min, max, &ray, &mut xs);
         }
     }
     Some(xs)
@@ -80,17 +80,18 @@ pub(super) fn object_normal_at(
 
 /// Returns a `Shape` with `shape_type` `cylinder`
 /// Equivelent to `Shape::new(transformation, material, ShapeType::Cylinder)`
-pub fn new(
+pub fn new<'a>(
     transformation: Transformation,
     material: Material,
     min: f64,
     max: f64,
     closed: bool,
-) -> Shape {
+) -> Shape<'a> {
     Shape::new(
         transformation,
         material,
         ShapeType::Cylinder { min, max, closed },
+        None,
     )
 }
 
@@ -98,7 +99,7 @@ pub fn new(
 /// `shape_type` `ShapeType::Cylinder`
 /// `Material`: `Material::default()`
 /// `Transformation`: `Transformation::default()`
-pub fn default() -> Shape {
+pub fn default<'a>() -> Shape<'a> {
     Shape {
         shape_type: ShapeType::Cylinder {
             min: NEG_INFINITY,
@@ -111,7 +112,7 @@ pub fn default() -> Shape {
 
 /// Just like default, but gives you access to min, max and closed
 /// i.e, truncated cylinder
-pub fn semi_default(min: f64, max: f64, closed: bool) -> Shape {
+pub fn semi_default<'a>(min: f64, max: f64, closed: bool) -> Shape<'a> {
     Shape {
         shape_type: ShapeType::Cylinder { min, max, closed },
         ..Default::default()
@@ -129,7 +130,13 @@ fn check_cap(Ray { origin, direction }: &Ray, intersection: f64) -> bool {
 }
 
 /// mutates xs and adds the intersections if any.
-fn intersect_caps(object: Shape, min: f64, max: f64, ray: &Ray, xs: &mut Intersections) {
+fn intersect_caps<'a>(
+    object: Shape<'a>,
+    min: f64,
+    max: f64,
+    ray: &Ray,
+    xs: &mut Intersections<'a>,
+) {
     //    check for an intersection with the LOWER end cap by intersecing
     //    the ray with the plane at  y=cylinder.min
     let intersection = (min - ray.origin.y) / ray.direction.y;

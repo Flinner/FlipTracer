@@ -7,21 +7,21 @@ use super::shape::Shape;
 
 #[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
-pub struct Intersection {
+pub struct Intersection<'a> {
     pub intersects_at: f64,
-    pub object: Shape,
+    pub object: Shape<'a>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 /// Returns list of intersections, and the id of object that the ray intersected with
-pub struct Intersections {
-    pub list: Vec<Intersection>,
+pub struct Intersections<'a> {
+    pub list: Vec<Intersection<'a>>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct PreComputed {
+pub struct PreComputed<'a> {
     pub intersects_at: f64,
-    pub object: Shape,
+    pub object: Shape<'a>,
     pub inside: bool,
     pub point: Point,
     pub eyev: Vector,
@@ -38,7 +38,7 @@ pub struct PreComputed {
     pub refractive_entered: f64,
 }
 
-impl Intersections {
+impl<'a> Intersections<'a> {
     /// count of intersections, eq to `self.list.len()`
     pub fn count(&self) -> usize {
         self.list.len()
@@ -73,7 +73,7 @@ impl Intersections {
     }
 
     /// Used to Chain `.agregate` calls
-    pub fn agregate(self, rhs: Intersection) -> Intersections {
+    pub fn agregate(self, rhs: Intersection<'a>) -> Intersections {
         let mut list = self.list;
         // TODO: sort on hit?
         list.push(rhs);
@@ -83,8 +83,8 @@ impl Intersections {
     }
 }
 
-impl Intersection {
-    pub fn new(intersects_at: f64, object: Shape) -> Self {
+impl<'a> Intersection<'a> {
+    pub fn new(intersects_at: f64, object: Shape<'a>) -> Self {
         Intersection {
             intersects_at,
             object,
@@ -92,7 +92,7 @@ impl Intersection {
     }
 
     /// Returns `Intersections`
-    pub fn agregate(self, rhs: Self) -> Intersections {
+    pub fn agregate(self, rhs: Self) -> Intersections<'a> {
         Intersections {
             list: vec![self, rhs],
         }
@@ -142,7 +142,7 @@ impl Intersection {
     }
 }
 
-impl PreComputed {
+impl PreComputed<'_> {
     /// Finds Fresnel Effect
     /// returns reflectance
     pub fn schlick(&self) -> f64 {
