@@ -10,13 +10,19 @@ pub struct Group<'a> {
     pub children: Vec<&'a Shape<'a>>,
 }
 
-impl Group<'_> {
+impl<'a> Group<'a> {
     /// returns a new empty group with `Transformation::identity`
     pub fn new() -> Self {
         Group {
             transform: Transformation::identity(),
             children: vec![],
         }
+    }
+
+    /// Adds `Shape` to `Group`
+    pub fn add(&'a mut self, shape: &'a mut Shape<'a>) {
+        shape.parent = Some(self);
+        // self.children.push(shape);
     }
 }
 
