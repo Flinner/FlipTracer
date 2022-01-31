@@ -155,7 +155,7 @@ fn multiplying_product_with_inverse() {
     let ma = Matrix::new_from_vec(a);
     let mb = Matrix::new_from_vec(b);
 
-    let mc = ma.clone() * mb.clone();
+    let mc = ma * mb;
 
     let new_ma = mc * mb.inverse().unwrap();
 

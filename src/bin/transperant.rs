@@ -11,7 +11,7 @@ use raytracer::{
     math::{point::Point, transformations::Transformation, vector::Vector},
     objects::{shape, world::World},
 };
-use std::f64::consts::{FRAC_PI_2, FRAC_PI_3};
+use std::f64::consts::{FRAC_PI_2};
 
 fn main() {
     // extreemly flattend floor with mattee textrue

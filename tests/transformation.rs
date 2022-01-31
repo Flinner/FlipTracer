@@ -21,7 +21,7 @@ mod translation {
 
         let expected = Point::new(-8.0, 7.0, 3.0);
 
-        assert_eq!(inv.clone().unwrap() * point, expected);
+        assert_eq!(inv.unwrap() * point, expected);
     }
 
     #[test]
@@ -90,7 +90,7 @@ mod rotation {
 
         let half_quarter = Transformation::rotate_x(PI / 4.0);
 
-        let e_p1 = Point::new(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
+        let e_p1 = Point::new(0.0, 2.0_f64.sqrt() / 2.0, -(2.0_f64.sqrt()) / 2.0);
 
         assert_eq!(half_quarter.inverse().unwrap() * p, e_p1);
     }
@@ -116,7 +116,7 @@ mod rotation {
         let half_quarter = Transformation::rotate_z(PI / 4.0);
         let full_quarter = Transformation::rotate_z(PI / 2.0);
 
-        let e_p1 = Point::new(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0);
+        let e_p1 = Point::new(-(2.0_f64.sqrt()) / 2.0, 2.0_f64.sqrt() / 2.0, 0.0);
         let e_p2 = Point::new(-1.0, 0.0, 0.0);
 
         assert_eq!(half_quarter * p, e_p1);

@@ -27,7 +27,7 @@ fn pixel_data_constructed() {
     canvas.write(4, 2, c3);
 
     let image = ppm::new(canvas);
-    let image_line: Vec<&str> = image.split("\n").collect();
+    let image_line: Vec<&str> = image.split('\n').collect();
 
     assert_eq!("255 0 0 0 0 0 0 0 0 0 0 0 0 0 0", image_line[3]);
     assert_eq!("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0", image_line[4]);

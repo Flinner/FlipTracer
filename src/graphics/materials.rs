@@ -82,7 +82,7 @@ impl Material {
     ) -> Color {
         let diffuse;
         let specular;
-        let ambient;
+        
         let color;
 
         // apply pattern
@@ -99,7 +99,7 @@ impl Material {
         let lightv = (light.position - position).normalize();
 
         // compute the ambient contribution
-        ambient = effective_color * self.ambient;
+        let ambient = effective_color * self.ambient;
 
         // light_dot_normal represents the cosine of the angle between
         // light vector and the normal vector. a negative number means
