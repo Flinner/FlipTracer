@@ -12,6 +12,20 @@ This project didn't use any external library/crate, everything was done from scr
 > brilliant refraction effects, and subjects composed of various
 > graphics primitives: spheres, cubes, cylinders, triangles, and more.
 
+
+# Example Scenes:
+The scene used in the book cover!
+![cover1080](https://user-images.githubusercontent.com/85732279/155856167-b9c86eb7-d507-4edc-af1d-145e6b3624c6.png)
+
+![wall](https://user-images.githubusercontent.com/85732279/155856187-ccd99930-abda-4903-84cb-0c31c228a47a.png)
+
+![4k-3balls](https://user-images.githubusercontent.com/85732279/155856219-0bee7c85-13d9-4731-8471-4eb631cf19bb.png)
+
+![reflection](https://user-images.githubusercontent.com/85732279/155856244-3c6662a1-1785-41dc-b18f-ea1c952e3ef7.png)
+
+
+# How to use
+
 To run it, do:
 
 ```
@@ -85,9 +99,5 @@ Where `Pattern` can be any of:
 
 ## Full fledged math library
 Yep, no external crates at all!
-
-
-# Example Scenes:
-
 
 
