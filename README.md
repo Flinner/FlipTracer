@@ -3,7 +3,7 @@
 
 This is my ray tracer that I wrote while following [The Ray Tracer Challenge](http://raytracerchallenge.com/)!
 
-This project didn't use any external library/crate, everything was done from scratch!
+This project didn't use any external library/crate, everything was done from scratch! With a high test coverge too :D
 
 > Brace yourself for a fun challenge: build a photorealistic 3D renderer from scratch!  
 > 
